@@ -9,9 +9,9 @@
         android:pathData="M34,22h44v16H50v12h20v14H50v22H34z" />
     <!-- Mint-Punkt mit dunklem Ring -->
     <path
-        android:fillColor="#0A0D16"
+        android:fillColor="#5865F2"
         android:pathData="M82,82m-14,0a14,14 0,1 0,28 0a14,14 0,1 0,-28 0" />
     <path
-        android:fillColor="#34D399"
+        android:fillColor="#FFFFFF"
         android:pathData="M82,82m-10,0a10,10 0,1 0,20 0a10,10 0,1 0,-20 0" />
 </vector>

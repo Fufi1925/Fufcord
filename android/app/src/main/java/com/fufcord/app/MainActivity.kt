@@ -22,6 +22,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import android.app.Dialog
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivityMainBinding
@@ -225,7 +226,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun importDialog() {
         val d = DialogImportBinding.inflate(layoutInflater)
-        val dlg = AlertDialog.Builder(this).setView(d.root).create()
+        val dlg = Dialog(this, R.style.Theme_Fufcord_Dialog)
+        dlg.setContentView(d.root)
         d.etJson.typeface = Typeface.MONOSPACE
         d.btnPaste.setOnClickListener {
             val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -261,6 +263,9 @@ class MainActivity : AppCompatActivity() {
             doImport(raw)
         }
         dlg.show()
+        // 92 % Breite, 86 % Höhe: Text scrollt, Buttons bleiben immer sichtbar
+        val wm = resources.displayMetrics
+        dlg.window?.setLayout((wm.widthPixels * 0.92).toInt(), (wm.heightPixels * 0.86).toInt())
     }
 
     private fun doImport(text: String) {

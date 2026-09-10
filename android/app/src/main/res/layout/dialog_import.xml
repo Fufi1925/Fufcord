@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Import-Dialog: Kopf fix, Text scrollt, Buttons immer sichtbar -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="20dp">
 
+    <!-- Kopf -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +23,8 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_download" />
+                android:src="@drawable/ic_download"
+                android:tint="@color/white" />
         </FrameLayout>
 
         <LinearLayout
@@ -40,47 +43,59 @@
                 android:textStyle="bold" />
 
             <TextView
-                style="@style/Text.Fufcord.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@string/import_sub" />
+                android:text="@string/import_sub"
+                android:textColor="@color/text_tertiary"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Fufcord.Input"
+    <!-- Scrollbereich: langes JSON scrollt hier, Buttons bleiben erreichbar -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/import_hint">
+        android:layout_height="0dp"
+        android:layout_marginTop="14dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etJson"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top|start"
-            android:inputType="textMultiLine"
-            android:minLines="6"
-            android:scrollbars="vertical"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txtError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text=""
-        android:textColor="@color/danger"
-        android:textSize="13sp"
-        android:visibility="gone" />
+            <EditText
+                android:id="@+id/etJson"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="160dp"
+                android:background="@drawable/rounded_input"
+                android:gravity="top|start"
+                android:hint="@string/import_hint"
+                android:inputType="textMultiLine"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
+                android:textSize="13sp" />
 
+            <TextView
+                android:id="@+id/txtError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/danger"
+                android:textSize="13sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Buttons: immer sichtbar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="14dp"
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
@@ -88,23 +103,22 @@
             style="@style/Widget.Fufcord.Button.Secondary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"
+            android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:background="@drawable/btn_secondary"
             android:text="@string/import_paste"
-            android:textColor="@color/text_primary"
-            app:icon="@drawable/ic_download"
-            app:iconGravity="textStart"
-            app:iconTint="@color/cyan" />
+            android:textColor="@color/text_primary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnClear"
-            style="@style/Widget.Fufcord.Button.Ghost"
+            style="@style/Widget.Fufcord.Button.Secondary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="1"
-            android:text="@string/import_clear" />
+            android:background="@drawable/btn_secondary"
+            android:text="@string/import_clear"
+            android:textColor="@color/text_primary" />
     </LinearLayout>
 
     <LinearLayout
@@ -115,24 +129,23 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancel"
-            style="@style/Widget.Fufcord.Button.Ghost"
+            style="@style/Widget.Fufcord.Button.Secondary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"
+            android:layout_marginEnd="5dp"
             android:layout_weight="1"
-            android:text="@string/dlg_cancel" />
+            android:background="@drawable/btn_secondary"
+            android:text="@string/dlg_cancel"
+            android:textColor="@color/text_primary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGo"
             style="@style/Widget.Fufcord.Button.Primary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:background="@drawable/btn_primary"
-            android:text="@string/import_go"
-            app:icon="@drawable/ic_check"
-            app:iconGravity="textStart"
-            app:iconTint="@color/white" />
+            android:text="@string/import_go" />
     </LinearLayout>
 </LinearLayout>

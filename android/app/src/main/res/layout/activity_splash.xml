@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Splash: Logo + Lade-Animation beim App-Start -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <FrameLayout
+        android:id="@+id/splashLogo"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:background="@drawable/logo_badge_bg">
+
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_bolt"
+            android:tint="@color/white" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/splashTitle"
+        style="@style/Text.Fufcord.H1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/app_name" />
+
+    <TextView
+        android:id="@+id/splashTag"
+        style="@style/Text.Fufcord.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/tagline" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/splashBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:indeterminate="true"
+        app:indicatorColor="@color/violet"
+        app:indicatorSize="44dp"
+        app:trackColor="#1E2430"
+        app:trackCornerRadius="2dp"
+        app:trackThickness="4dp" />
+
+    <TextView
+        android:id="@+id/txtSplashVersion"
+        style="@style/Text.Fufcord.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="v1.03" />
+</LinearLayout>
