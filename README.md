@@ -1,3 +1,10 @@
+# FUFCORD 📱 — Custom Discord Rich Presence
+
+> **📱 NEU: Echte Android-App (APK) — kein Termux nötig!**
+> → APK laden: **Actions** → „Android APK bauen" → Artifacts, oder siehe **`android/README.md`**.
+> Die App läuft im Hintergrund, hat Bilder-Upload, 1:1-Vorschau & Setup-Assistent.
+> Die Termux-Version unten bleibt als Alternative erhalten.
+
 # FUFCORD 📱 — Custom Discord Rich Presence für Termux
 
 Wie **Vencord Custom Rich Presence** — aber fürs **Handy** (Termux / Android).

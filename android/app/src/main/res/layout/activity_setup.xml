@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚡ FUFCORD Setup"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtSetupInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Schritt 1 von 3"
+            android:textColor="@color/gray_text"
+            android:textSize="13sp" />
+
+        <!-- Schritt 1: Token -->
+        <LinearLayout
+            android:id="@+id/step1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔑 Schritt 1: Dein Discord User-Token"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Nur mit Handy holbar — siehe TOKEN-HOLEN.md im Repo (Firefox-Methode). Niemals teilen!"
+                android:textColor="@color/gray_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etToken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Token hier einfügen..."
+                android:inputType="textVisiblePassword"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTestToken"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="🔍 Token testen" />
+
+            <TextView
+                android:id="@+id/txtTokenResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNext1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Weiter →" />
+        </LinearLayout>
+
+        <!-- Schritt 2: App-ID -->
+        <LinearLayout
+            android:id="@+id/step2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🆔 Schritt 2: Application ID (für Bilder)"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="discord.com/developers → New Application → ID kopieren. Ohne ID geht nur Text."
+                android:textColor="@color/gray_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etAppId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="z.B. 123456789012345678"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTestApp"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="🔍 App-ID testen" />
+
+            <TextView
+                android:id="@+id/txtAppResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNext2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Weiter →" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSkip2"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Überspringen (nur Text)" />
+        </LinearLayout>
+
+        <!-- Schritt 3: Fertig -->
+        <LinearLayout
+            android:id="@+id/step3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎉 Fertig!"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tippe START — deine Rich Presence läuft dann im Hintergrund, auch wenn die App zu ist. Bilder lädst du im Editor per ⬆ Upload hoch."
+                android:textColor="@color/gray_text"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFinish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="🚀 Los gehts!" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

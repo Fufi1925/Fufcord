@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎨 Presence bearbeiten"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <include
+            android:id="@+id/previewCard"
+            layout="@layout/view_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Name"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="z.B. Minecraft"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Typ"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/spType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Details (Zeile 1)"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/etDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="z.B. ⛏️ Grinding Diamonds"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="State (Zeile 2)"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/etState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="z.B. Server: Fufcord SMP"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="🖼️ Großes Bild (Asset-Name)"
+            android:textColor="@color/gray_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="z.B. logo"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUploadLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="⬆ Upload" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etLargeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hover-Text (optional)"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="🔹 Kleines Bild (Asset-Name)"
+            android:textColor="@color/gray_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="(leer = keins)"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUploadSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="⬆ Upload" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etSmallText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hover-Text (optional)"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="☁️ Hochgeladene Bilder (antippen = übernehmen)"
+                android:textColor="@color/gray_text"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRefreshAssets"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↻" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/assetList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="🔴 Stream-URL (nur bei Typ Streamt)"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/etStream"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="https://twitch.tv/..."
+            android:inputType="textUri"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="🔘 Button 1 (keine Emojis!)"
+            android:textColor="@color/gray_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etBtn1Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Text (leer = kein Button)"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <EditText
+            android:id="@+id/etBtn1Url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="https://..."
+            android:inputType="textUri"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="🔘 Button 2"
+            android:textColor="@color/gray_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etBtn2Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Text (leer = kein Button)"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <EditText
+            android:id="@+id/etBtn2Url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="https://..."
+            android:inputType="textUri"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray_text" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="⏱ Verstrichene Zeit anzeigen"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Online-Status"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/spStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etPartyCur"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:hint="Party: aktuell (0=aus)"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_text" />
+
+            <EditText
+                android:id="@+id/etPartyMax"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:hint="Party: max (0=aus)"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_text" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:text="✅ SPEICHERN"
+            android:textSize="16sp" />
+    </LinearLayout>
+</ScrollView>

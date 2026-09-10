@@ -1,0 +1,45 @@
+name: Android APK bauen
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code holen
+        uses: actions/checkout@v4
+
+      - name: Java 17 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK einrichten
+        uses: android-actions/setup-android@v3
+
+      - name: Gradle einrichten
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Debug-APK bauen
+        run: gradle :app:assembleDebug --no-daemon -p android
+
+      - name: APK hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fufcord-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Release erstellen (nur bei Tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: android/app/build/outputs/apk/debug/app-debug.apk

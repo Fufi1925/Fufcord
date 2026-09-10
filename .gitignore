@@ -5,3 +5,8 @@ __pycache__/
 *.log
 .venv/
 meine-presence.json
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
+*.apk
