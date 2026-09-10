@@ -111,6 +111,10 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.Fufcord.Input"
+                    app:boxCornerTopStart="16dp"
+                    app:boxCornerTopEnd="16dp"
+                    app:boxCornerBottomStart="16dp"
+                    app:boxCornerBottomEnd="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -193,6 +197,10 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.Fufcord.Input"
+                    app:boxCornerTopStart="16dp"
+                    app:boxCornerTopEnd="16dp"
+                    app:boxCornerBottomStart="16dp"
+                    app:boxCornerBottomEnd="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"

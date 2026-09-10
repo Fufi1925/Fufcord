@@ -39,10 +39,6 @@
 
     <!-- Eingabefelder -->
     <style name="Widget.Fufcord.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxCornerTopStart">16dp</item>
-        <item name="boxCornerTopEnd">16dp</item>
-        <item name="boxCornerBottomStart">16dp</item>
-        <item name="boxCornerBottomEnd">16dp</item>
         <item name="boxBackgroundColor">@color/card2</item>
         <item name="boxStrokeColor">@color/glass_stroke</item>
         <item name="boxStrokeWidth">1dp</item>
@@ -72,7 +68,11 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <!-- Typografie -->
+    <!-- Typografie (Basis-Stil, damit implizite Parents auflösen) -->
+    <style name="Text.Fufcord" parent="android:Widget.Material.TextView">
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
     <style name="Text.Fufcord.H1">
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">30sp</item>
