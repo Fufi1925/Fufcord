@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ============ Fufcord v4.0 „Aurora" Theme ============ -->
     <style name="Theme.Fufcord" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/violet</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -7,7 +8,10 @@
         <item name="colorSecondary">@color/cyan</item>
         <item name="colorTertiary">@color/mint</item>
         <item name="colorError">@color/rose</item>
-        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:windowBackground">@drawable/bg_aurora</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/bg_deep</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="colorSurface">@color/card</item>
         <item name="colorOnSurface">@color/ink</item>
         <item name="colorSurfaceVariant">@color/card2</item>
@@ -31,5 +35,77 @@
     <style name="Shape.Fufcord.Large" parent="ShapeAppearance.Material3.LargeComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">26dp</item>
+    </style>
+
+    <!-- Eingabefelder -->
+    <style name="Widget.Fufcord.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerTopStart">16dp</item>
+        <item name="boxCornerTopEnd">16dp</item>
+        <item name="boxCornerBottomStart">16dp</item>
+        <item name="boxCornerBottomEnd">16dp</item>
+        <item name="boxBackgroundColor">@color/card2</item>
+        <item name="boxStrokeColor">@color/glass_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_tertiary</item>
+    </style>
+
+    <!-- Buttons -->
+    <style name="Widget.Fufcord.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">58dp</item>
+        <item name="cornerRadius">18dp</item>
+    </style>
+
+    <style name="Widget.Fufcord.Button.Secondary" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <style name="Widget.Fufcord.Button.Ghost" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- Typografie -->
+    <style name="Text.Fufcord.H1">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Text.Fufcord.H2">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Text.Fufcord.Section">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+    </style>
+
+    <style name="Text.Fufcord.Body">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Text.Fufcord.Caption">
+        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Text.Fufcord.Badge">
+        <item name="android:textColor">@color/cyan</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.12</item>
     </style>
 </resources>

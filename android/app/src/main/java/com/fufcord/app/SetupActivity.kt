@@ -18,13 +18,14 @@ class SetupActivity : AppCompatActivity() {
 
     private lateinit var b: ActivitySetupBinding
     private lateinit var prefs: PrefsManager
+    private var step = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         b = ActivitySetupBinding.inflate(layoutInflater)
         setContentView(b.root)
         prefs = PrefsManager(this)
-        showStep(1)
+        showStep(1, animate = false)
 
         b.btnTestToken.setOnClickListener {
             val t = b.etToken.text.toString().trim().replace(" ", "")
@@ -32,7 +33,7 @@ class SetupActivity : AppCompatActivity() {
                 b.txtTokenResult.text = "❌ Zu kurz — kompletten Token einfügen!"
                 return@setOnClickListener
             }
-            b.txtTokenResult.text = "⏳ Prüfe..."
+            b.txtTokenResult.text = "⏳ Prüfe …"
             b.btnTestToken.isEnabled = false
             Thread {
                 val (ok, name) = DiscordApi.getMe(t)
@@ -63,7 +64,7 @@ class SetupActivity : AppCompatActivity() {
                 b.txtAppResult.text = "❌ Muss eine lange Zahl sein!"
                 return@setOnClickListener
             }
-            b.txtAppResult.text = "⏳ Prüfe..."
+            b.txtAppResult.text = "⏳ Prüfe …"
             b.btnTestApp.isEnabled = false
             Thread {
                 val (ok, apps) = DiscordApi.listApps(prefs.token)
@@ -84,6 +85,11 @@ class SetupActivity : AppCompatActivity() {
         }
         b.btnNext2.setOnClickListener {
             val id = b.etAppId.text.toString().trim()
+            // FIX: ungültige (nicht-leere) App-ID nicht still übernehmen.
+            if (id.isNotEmpty() && !validAppId(id)) {
+                Toast.makeText(this, "App-ID ungültig — prüfen oder überspringen!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             if (id.isNotEmpty()) prefs.appId = id
             showStep(3)
         }
@@ -93,13 +99,27 @@ class SetupActivity : AppCompatActivity() {
             prefs.setupDone = true
             startActivity(Intent(this, MainActivity::class.java))
             finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
     }
 
-    private fun showStep(n: Int) {
-        b.step1.visibility = if (n == 1) View.VISIBLE else View.GONE
-        b.step2.visibility = if (n == 2) View.VISIBLE else View.GONE
-        b.step3.visibility = if (n == 3) View.VISIBLE else View.GONE
-        b.txtSetupInfo.text = "Schritt $n von 3"
+    private fun showStep(n: Int, animate: Boolean = true) {
+        step = n
+        val views = listOf(b.step1, b.step2, b.step3)
+        views.forEachIndexed { i, v ->
+            if (i == n - 1) {
+                if (animate) AnimUtils.fadeSlideIn(v) else v.visibility = View.VISIBLE
+            } else {
+                v.visibility = View.GONE
+            }
+        }
+        b.txtSetupInfo.text = getString(R.string.setup_step, n)
+        b.setupProgress.setProgress(n * 100 / 3, animate)
+    }
+
+    @Deprecated("Zurück = eine Stufe hoch")
+    override fun onBackPressed() {
+        if (step > 1) showStep(step - 1)
+        else super.onBackPressed()
     }
 }

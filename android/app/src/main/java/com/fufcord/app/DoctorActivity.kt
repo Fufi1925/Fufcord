@@ -7,14 +7,21 @@
 package com.fufcord.app
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivityDoctorBinding
+import com.fufcord.app.databinding.ItemDoctorRowBinding
 
 /** 🩺 Doktor: prüft Token/App/Bilder bei Discord + Auto-Reparatur. */
 class DoctorActivity : AppCompatActivity() {
+
+    companion object {
+        private const val OK = 0
+        private const val WARN = 1
+        private const val ERROR = 2
+    }
 
     private lateinit var b: ActivityDoctorBinding
     private lateinit var prefs: PrefsManager
@@ -27,45 +34,65 @@ class DoctorActivity : AppCompatActivity() {
         setContentView(b.root)
         prefs = PrefsManager(this)
 
+        b.toolbarBack.setOnClickListener { AnimUtils.finish(this) }
         b.btnFixAll.setOnClickListener { fixAll() }
         b.btnNoButtons.setOnClickListener {
             val a = prefs.loadAct()
             a.buttons.clear()
             prefs.saveAct(a)
-            Toast.makeText(this, "✅ Buttons entfernt!", Toast.LENGTH_SHORT).show()
-            runChecks()
+            afterLocalFix("✅ Buttons entfernt!")
         }
         b.btnNoImages.setOnClickListener {
             val a = prefs.loadAct()
             a.largeImage = ""; a.largeText = ""; a.smallImage = ""; a.smallText = ""
             prefs.saveAct(a)
-            Toast.makeText(this, "✅ Bilder entfernt!", Toast.LENGTH_SHORT).show()
-            runChecks()
+            afterLocalFix("✅ Bilder entfernt!")
         }
         b.btnSafeToggle.setOnClickListener {
             prefs.safeMode = !prefs.safeMode
             updateSafeBtn()
+            if (RpcService.isRunning) RpcService.refresh(this)
             Toast.makeText(this,
                 if (prefs.safeMode) "🛡️ Sicher-Modus AN (nur Text)" else "Sicher-Modus AUS (voll)",
                 Toast.LENGTH_SHORT).show()
         }
-        b.btnClose.setOnClickListener { finish() }
+        b.btnClose.setOnClickListener { AnimUtils.finish(this) }
         updateSafeBtn()
         runChecks()
     }
 
+    private fun afterLocalFix(msg: String) {
+        if (RpcService.isRunning) RpcService.refresh(this)
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        runChecks()
+    }
+
     private fun updateSafeBtn() {
-        b.btnSafeToggle.text = if (prefs.safeMode) "🛡️ Sicher-Modus: AN (ausschalten?)"
+        b.btnSafeToggle.text = if (prefs.safeMode) "🛡️ Sicher-Modus: AN — ausschalten?"
         else "🛡️ Sicher-Modus einschalten"
     }
 
-    private fun row(sym: String, txt: String) {
-        val t = TextView(this)
-        t.text = "$sym $txt"
-        t.textSize = 14f
-        t.setPadding(0, 8, 0, 8)
-        t.setTextColor(0xFFFFFFFF.toInt())
-        b.resultList.addView(t)
+    private fun row(type: Int, txt: String) {
+        val r = ItemDoctorRowBinding.inflate(LayoutInflater.from(this), b.resultList, false)
+        when (type) {
+            OK -> {
+                r.rowBadge.setBackgroundResource(R.drawable.badge_success)
+                r.rowIcon.setImageResource(R.drawable.ic_check)
+                r.rowIcon.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.success))
+            }
+            WARN -> {
+                r.rowBadge.setBackgroundResource(R.drawable.badge_warning)
+                r.rowIcon.setImageResource(R.drawable.ic_warn)
+                r.rowIcon.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.warning))
+            }
+            else -> {
+                r.rowBadge.setBackgroundResource(R.drawable.badge_error)
+                r.rowIcon.setImageResource(R.drawable.ic_close)
+                r.rowIcon.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.danger))
+            }
+        }
+        r.rowText.text = txt
+        b.resultList.addView(r.root)
     }
 
     private fun runChecks() {
@@ -78,28 +105,25 @@ class DoctorActivity : AppCompatActivity() {
         val appId = prefs.appId.trim()
         val appOk = validAppId(appId)
 
-        if (!tokenSet) row("🔴", "Kein Token! → ⚙️ Einstellungen")
-        if (appId.isNotEmpty() && !appOk) row("🔴", "App-ID ungültig ('$appId') — muss lange Zahl sein!")
+        if (!tokenSet) row(ERROR, "Kein Token! → Start → Zahnrad → Token eintragen.")
+        if (appId.isNotEmpty() && !appOk) row(ERROR, "App-ID ungültig ('$appId') — muss lange Zahl sein!")
         if (appId.isEmpty() && (act.largeImage.isNotEmpty() || act.buttons.isNotEmpty()))
-            row("🟡", "Bilder/Buttons ohne App-ID → werden weggelassen (nur Text).")
+            row(WARN, "Bilder/Buttons ohne App-ID → werden weggelassen (nur Text).")
         for ((v, label) in listOf(act.largeImage to "Großes Bild", act.smallImage to "Kleines Bild")) {
             if (v.isEmpty()) continue
             if (!v.matches(Regex("[a-z0-9_]{1,32}")))
-                row("🔴", "$label '$v': ungültiger Name! (nur a-z, 0-9, _)")
+                row(ERROR, "$label '$v': ungültiger Name! (nur a-z, 0-9, _)")
         }
         for ((i, btn) in act.buttons.withIndex()) {
             if (ActConfig.hasEmoji(btn.label))
-                row("🔴", "Button ${i + 1}: Emojis BLOCKIEREN die Anzeige!")
+                row(ERROR, "Button ${i + 1}: Emojis BLOCKIEREN die Anzeige!")
             if (!(btn.url.startsWith("https://") || btn.url.startsWith("http://")))
-                row("🔴", "Button ${i + 1}: Link ungültig!")
+                row(ERROR, "Button ${i + 1}: Link ungültig!")
         }
         if (act.buttons.isNotEmpty())
-            row("🟡", "Hinweis: Buttons werden von Discord manchmal ignoriert — im Zweifel entfernen.")
+            row(WARN, "Hinweis: Buttons werden von Discord manchmal ignoriert — im Zweifel entfernen.")
 
-        val netRow = TextView(this)
-        netRow.text = "🌐 Frage Discord-API..."
-        netRow.setTextColor(0xFF8B93B0.toInt())
-        b.resultList.addView(netRow)
+        b.doctorProgress.visibility = View.VISIBLE
 
         Thread {
             val tokValid: Boolean?
@@ -125,28 +149,28 @@ class DoctorActivity : AppCompatActivity() {
                 }
             }
             runOnUiThread {
-                netRow.visibility = View.GONE
+                b.doctorProgress.visibility = View.GONE
                 when (tokValid) {
-                    true -> row("🟢", "Token GÜLTIG (Account: $user).")
-                    false -> row("🔴", "Token UNGÜLTIG! Neuen holen (TOKEN-HOLEN.md).")
-                    null -> if (tokenSet) row("🟡", "Token nicht prüfbar (Internet?).")
+                    true -> row(OK, "Token GÜLTIG (Account: $user).")
+                    false -> row(ERROR, "Token UNGÜLTIG! Neuen holen (TOKEN-HOLEN.md).")
+                    null -> if (tokenSet) row(WARN, "Token nicht prüfbar (Internet?).")
                 }
                 when (appExists) {
-                    true -> row("🟢", "App existiert: $appName.")
+                    true -> row(OK, "App existiert: $appName.")
                     false -> {
-                        row("🔴", "App-ID existiert NICHT in deinem Account! (erfunden?)")
+                        row(ERROR, "App-ID existiert NICHT in deinem Account! (erfunden?)")
                         appMissing = true
                     }
-                    null -> if (appOk) row("🟡", "App nicht prüfbar (Internet?).")
+                    null -> if (appOk) row(WARN, "App nicht prüfbar (Internet?).")
                 }
                 if (appExists == true) {
                     val names = assets.map { it.second }.toSet()
                     val miss = mutableSetOf<String>()
                     for ((v, label) in listOf(act.largeImage to "Großes Bild", act.smallImage to "Kleines Bild")) {
                         if (v.isEmpty()) continue
-                        if (v in names) row("🟢", "$label '$v': hochgeladen ✅")
+                        if (v in names) row(OK, "$label '$v': hochgeladen ✅")
                         else {
-                            row("🔴", "$label '$v': NICHT hochgeladen! → Activity unsichtbar!")
+                            row(ERROR, "$label '$v': NICHT hochgeladen! → Activity unsichtbar!")
                             miss.add(v)
                         }
                     }
@@ -169,9 +193,16 @@ class DoctorActivity : AppCompatActivity() {
             notes.add("Bild '$m' nicht hochgeladen → entfernt.")
         }
         prefs.saveAct(clean)
+        if (RpcService.isRunning) RpcService.refresh(this)
         Toast.makeText(this,
             "✅ Repariert!\n• " + (notes.take(5).joinToString("\n• ").ifEmpty { "alles schon sauber" }),
             Toast.LENGTH_LONG).show()
         runChecks()
+    }
+
+    @Deprecated("Alte Back-Animation")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 }

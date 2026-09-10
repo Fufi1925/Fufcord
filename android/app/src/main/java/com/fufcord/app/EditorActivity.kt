@@ -8,6 +8,8 @@ package com.fufcord.app
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -28,16 +30,18 @@ import java.io.ByteArrayOutputStream
 /** Presence-Editor: alle Felder + Bilder-Upload + Asset-Liste + Live-Vorschau. */
 class EditorActivity : AppCompatActivity() {
 
+    companion object {
+        private const val MAX_UPLOAD = 480 * 1024 // Discord mag keine Riesen-Dateien
+    }
+
     private lateinit var b: ActivityEditorBinding
     private lateinit var prefs: PrefsManager
     private var uploadTarget: String = "large" // oder "small"
-    private var pickedBytes: ByteArray? = null
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri == null) return@registerForActivityResult
         try {
             val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@registerForActivityResult
-            pickedBytes = bytes
             showUploadDialog(bytes)
         } catch (e: Exception) {
             Toast.makeText(this, "Bildfehler: ${e.message}", Toast.LENGTH_LONG).show()
@@ -50,10 +54,15 @@ class EditorActivity : AppCompatActivity() {
         setContentView(b.root)
         prefs = PrefsManager(this)
 
-        b.spType.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+        // FIX: eigene dunkle Spinner-Layouts (System-Layouts waren hell/falsch).
+        val typeAdapter = ArrayAdapter(this, R.layout.spinner_item,
             ActConfig.TYPES.toSortedMap().values.toList())
-        b.spStatus.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+        typeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        b.spType.adapter = typeAdapter
+        val statusAdapter = ArrayAdapter(this, R.layout.spinner_item,
             ActConfig.STATUS.values.toList())
+        statusAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        b.spStatus.adapter = statusAdapter
 
         loadFields()
 
@@ -65,12 +74,14 @@ class EditorActivity : AppCompatActivity() {
         for (et in listOf(b.etName, b.etDetails, b.etState, b.etLarge, b.etSmall,
             b.etBtn1Label, b.etBtn2Label)) et.addTextChangedListener(watcher)
 
+        b.toolbarBack.setOnClickListener { AnimUtils.finish(this) }
         b.btnUploadLarge.setOnClickListener { uploadTarget = "large"; pickImage.launch("image/*") }
         b.btnUploadSmall.setOnClickListener { uploadTarget = "small"; pickImage.launch("image/*") }
         b.btnRefreshAssets.setOnClickListener { loadAssets() }
         b.btnSave.setOnClickListener { save() }
         updatePreview()
         loadAssets()
+        AnimUtils.stagger(b.formRoot, 90L)
     }
 
     private fun loadFields() {
@@ -129,49 +140,51 @@ class EditorActivity : AppCompatActivity() {
 
     private fun updatePreview() {
         try {
-            PreviewBinder.bind(b.previewCard, readFields(), false)
+            // FIX: Vorschau respektiert den Sicher-Modus (keine falschen Bilder mehr).
+            PreviewBinder.bind(b.previewCard, readFields(), prefs.safeMode)
         } catch (e: Exception) { /* während Tippen egal */ }
     }
 
     private fun save() {
         val (clean, warns) = ActConfig.sanitize(readFields().toJson())
         prefs.saveAct(clean)
+        // FIX: Auto-Fix-Hinweise werden IMMER gezeigt (vorher nur bei gestopptem Service).
         var msg = "✅ Gespeichert!"
         if (warns.isNotEmpty()) msg += "\n🔧 Auto-Fix:\n• " + warns.take(4).joinToString("\n• ")
         if (RpcService.isRunning) {
             RpcService.refresh(this)
-            Toast.makeText(this, "✅ Gespeichert & live aktualisiert!", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+            msg += "\n⚡ Live aktualisiert!"
         }
-        finish()
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        AnimUtils.finish(this)
     }
 
     // ---------------- Bilder-Upload ----------------
     private fun showUploadDialog(bytes: ByteArray) {
         if (!validAppId(prefs.appId)) {
-            Toast.makeText(this, "❌ Erst App-ID eintragen! (Hauptmenü → ⚙️)", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "❌ Erst App-ID eintragen! (Start → Zahnrad)", Toast.LENGTH_LONG).show()
             return
         }
         val lay = LinearLayout(this)
         lay.orientation = LinearLayout.VERTICAL
         lay.setPadding(48, 24, 48, 24)
         val img = ImageView(this)
-        img.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
+        // FIX: nur verkleinertes Thumbnail dekodieren (kein OOM bei Riesen-Bildern).
+        img.setImageBitmap(decodeSampled(bytes, 512))
         img.adjustViewBounds = true
         img.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, 500)
         img.scaleType = ImageView.ScaleType.CENTER_INSIDE
         lay.addView(img)
         val et = EditText(this)
-        et.hint = "Asset-Name (klein, z.B. logo)"
+        et.hint = getString(R.string.upload_name_hint)
         val current = if (uploadTarget == "large") b.etLarge.text.toString() else b.etSmall.text.toString()
         if (current.isNotEmpty()) et.setText(current)
         lay.addView(et)
         AlertDialog.Builder(this)
-            .setTitle("🖼️ Bild hochladen → Discord-App")
+            .setTitle(getString(R.string.upload_title))
             .setView(lay)
-            .setPositiveButton("Hochladen") { _, _ ->
+            .setPositiveButton(getString(R.string.upload_go)) { _, _ ->
                 val name = et.text.toString().trim().lowercase()
                 if (!name.matches(Regex("[a-z0-9_]{1,32}"))) {
                     Toast.makeText(this, "❌ Name: nur a-z, 0-9, _ (max 32)!", Toast.LENGTH_LONG).show()
@@ -179,30 +192,20 @@ class EditorActivity : AppCompatActivity() {
                 }
                 doUpload(name, bytes)
             }
-            .setNegativeButton("Abbrechen", null)
+            .setNegativeButton(getString(R.string.dlg_cancel), null)
             .show()
     }
 
     private fun doUpload(name: String, bytes: ByteArray) {
-        Toast.makeText(this, "⏳ Lade hoch...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "⏳ Lade hoch …", Toast.LENGTH_SHORT).show()
         Thread {
             try {
-                var bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    ?: throw Exception("Bild defekt")
-                // Auf max 1024 skalieren (Discord-Limit)
-                val maxSide = maxOf(bmp.width, bmp.height)
-                if (maxSide > 1024) {
-                    val scale = 1024f / maxSide
-                    bmp = Bitmap.createScaledBitmap(bmp,
-                        (bmp.width * scale).toInt(), (bmp.height * scale).toInt(), true)
-                }
-                val hasAlpha = bmp.hasAlpha()
-                val out = ByteArrayOutputStream()
-                if (hasAlpha) bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
-                else bmp.compress(Bitmap.CompressFormat.JPEG, 92, out)
-                val mime = if (hasAlpha) "image/png" else "image/jpeg"
+                // FIX: direkt verkleinert dekodieren (max 1024) statt Vollbild in RAM.
+                val bmp = decodeSampled(bytes, 1024) ?: throw Exception("Bild defekt")
+                // FIX: Größen-Limit einhalten (Qualitäts-/Größen-Schleife).
+                val (data, mime) = compressForDiscord(bmp)
                 val dataUrl = "data:$mime;base64," +
-                        Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+                        Base64.encodeToString(data, Base64.NO_WRAP)
                 val (ok, res) = DiscordApi.uploadAsset(prefs.token, prefs.appId, name, dataUrl)
                 runOnUiThread {
                     if (ok) {
@@ -223,39 +226,130 @@ class EditorActivity : AppCompatActivity() {
         }.start()
     }
 
+    /** Dekodiert ein Bitmap auf max. maxSide herunter (speicherschonend). */
+    private fun decodeSampled(bytes: ByteArray, maxSide: Int): Bitmap? {
+        return try {
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+            var sample = 1
+            val maxOrig = maxOf(bounds.outWidth, bounds.outHeight)
+            if (maxOrig <= 0) return null
+            while (maxOrig / sample > maxSide) sample *= 2
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size,
+                BitmapFactory.Options().apply { inSampleSize = sample })
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /** Komprimiert für Discord: PNG bei Transparenz, sonst JPEG-Schleife bis Limit. */
+    private fun compressForDiscord(src: Bitmap): Pair<ByteArray, String> {
+        var bmp = src
+        val maxSide = maxOf(bmp.width, bmp.height)
+        if (maxSide > 1024) {
+            val s = 1024f / maxSide
+            bmp = Bitmap.createScaledBitmap(bmp,
+                (bmp.width * s).toInt(), (bmp.height * s).toInt(), true)
+        }
+        if (bmp.hasAlpha()) {
+            val out = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+            if (out.size() <= MAX_UPLOAD) return out.toByteArray() to "image/png"
+        }
+        var cur = flatten(bmp)
+        var q = 92
+        repeat(8) {
+            val out = ByteArrayOutputStream()
+            cur.compress(Bitmap.CompressFormat.JPEG, q, out)
+            if (out.size() <= MAX_UPLOAD) return out.toByteArray() to "image/jpeg"
+            q -= 12
+            if (q < 45) {
+                q = 85
+                cur = Bitmap.createScaledBitmap(cur,
+                    (cur.width * 0.8).toInt().coerceAtLeast(64),
+                    (cur.height * 0.8).toInt().coerceAtLeast(64), true)
+            }
+        }
+        val out = ByteArrayOutputStream()
+        cur.compress(Bitmap.CompressFormat.JPEG, 70, out)
+        return out.toByteArray() to "image/jpeg"
+    }
+
+    /** Malt transparente Bereiche weiß (für JPEG ohne schwarze Ränder). */
+    private fun flatten(bmp: Bitmap): Bitmap {
+        if (!bmp.hasAlpha()) return bmp
+        val flat = Bitmap.createBitmap(bmp.width, bmp.height, Bitmap.Config.ARGB_8888)
+        val c = Canvas(flat)
+        c.drawColor(Color.WHITE)
+        c.drawBitmap(bmp, 0f, 0f, null)
+        return flat
+    }
+
     private fun loadAssets() {
         b.assetList.removeAllViews()
-        if (!validAppId(prefs.appId)) return
+        b.txtAssetsHint.visibility = View.GONE
+        if (!validAppId(prefs.appId)) {
+            b.txtAssetsHint.text = "Erst App-ID eintragen (Start → Zahnrad), dann lädst du hier Bilder hoch."
+            b.txtAssetsHint.visibility = View.VISIBLE
+            return
+        }
+        AnimUtils.startSpin(b.btnRefreshAssets)
         Thread {
             val (ok, assets) = DiscordApi.listAssets(prefs.token, prefs.appId)
             runOnUiThread {
-                if (!ok || assets.isEmpty()) return@runOnUiThread
+                AnimUtils.stopSpin(b.btnRefreshAssets)
+                if (!ok) {
+                    b.txtAssetsHint.text = "⚠️ Konnte Assets nicht laden (Internet?)."
+                    b.txtAssetsHint.visibility = View.VISIBLE
+                    return@runOnUiThread
+                }
+                if (assets.isEmpty()) {
+                    b.txtAssetsHint.text = "Noch keine Bilder — lade oben per Upload-Button eins hoch."
+                    b.txtAssetsHint.visibility = View.VISIBLE
+                    return@runOnUiThread
+                }
                 for ((id, name) in assets) {
-                    val row = ItemAssetBinding.inflate(layoutInflater)
+                    val row = ItemAssetBinding.inflate(layoutInflater, b.assetList, false)
                     row.assetName.text = name
                     ImageLoader.load(ImageLoader.appAssetUrl(prefs.appId, id), row.assetThumb)
-                    row.assetThumb.setOnClickListener {
-                        // Antippen = als großes Bild übernehmen
-                        b.etLarge.setText(name)
-                        updatePreview()
-                        Toast.makeText(this, "'$name' als großes Bild ✓", Toast.LENGTH_SHORT).show()
-                    }
+                    row.root.setOnClickListener { takeAssetDialog(name) }
                     row.btnAssetDel.setOnClickListener {
                         AlertDialog.Builder(this)
-                            .setTitle("Löschen?")
+                            .setTitle(getString(R.string.asset_del_title))
                             .setMessage("Asset '$name' aus Discord-App löschen?")
-                            .setPositiveButton("Löschen") { _, _ ->
+                            .setPositiveButton(getString(R.string.dlg_delete)) { _, _ ->
                                 Thread {
                                     DiscordApi.deleteAsset(prefs.token, prefs.appId, id)
                                     runOnUiThread { loadAssets() }
                                 }.start()
                             }
-                            .setNegativeButton("Nein", null)
+                            .setNegativeButton(getString(R.string.dlg_no), null)
                             .show()
                     }
                     b.assetList.addView(row.root)
                 }
             }
         }.start()
+    }
+
+    /** FIX: Auswahl ob als großes oder kleines Bild übernehmen (vorher nur groß). */
+    private fun takeAssetDialog(name: String) {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.asset_take_title))
+            .setItems(arrayOf(
+                getString(R.string.asset_take_large),
+                getString(R.string.asset_take_small))) { _, which ->
+                if (which == 0) b.etLarge.setText(name) else b.etSmall.setText(name)
+                updatePreview()
+                Toast.makeText(this, "'$name' übernommen ✓", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(getString(R.string.dlg_cancel), null)
+            .show()
+    }
+
+    @Deprecated("Alte Back-Animation")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 }

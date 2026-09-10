@@ -21,6 +21,15 @@ class GatewayClient {
 
     companion object {
         @Volatile var lastMessageMs: Long = 0
+
+        // FIX: EIN Client für alle Reconnects — sonst leaked jeder Reconnect
+        // Threads + Connection-Pools.
+        private val sharedClient: OkHttpClient by lazy {
+            OkHttpClient.Builder()
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(0, TimeUnit.SECONDS) // kein Timeout — Heartbeat hält am Leben
+                .build()
+        }
     }
 
     interface Listener {
@@ -29,10 +38,8 @@ class GatewayClient {
         fun onFailure(msg: String)
     }
 
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(20, TimeUnit.SECONDS)
-        .readTimeout(0, TimeUnit.SECONDS) // kein Timeout — Heartbeat hält am Leben
-        .build()
+    // Ein geteilter Client (siehe Companion) — kein neuer pro Reconnect.
+    private val client: OkHttpClient get() = sharedClient
 
     private var ws: WebSocket? = null
     private var seq: Int? = null

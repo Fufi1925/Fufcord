@@ -1,4 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Fufcord</string>
+    <string name="tagline">Custom Rich Presence</string>
+
+    <!-- Onboarding -->
+    <string name="on_skip">Überspringen</string>
+    <string name="on_next">Weiter</string>
+    <string name="on_start">Los gehts</string>
+    <string name="on1_title">Dein Status.\nDeine Regeln.</string>
+    <string name="on1_text">Wie Vencord Custom Rich Presence — aber fürs Handy. Name, Bilder, Buttons, Timer: alles frei einstellbar.</string>
+    <string name="on2_title">Sicher verbunden</string>
+    <string name="on2_text">Dein Token bleibt auf deinem Handy und wird verschlüsselt gespeichert. Er verlässt das Gerät nur Richtung Discord.</string>
+    <string name="on3_title">Bilder &amp; Buttons</string>
+    <string name="on3_text">Eigene Bilder direkt aus der Galerie in deine Discord-App hochladen — ganz ohne Developer-Portal.</string>
+    <string name="on4_title">Bereit in 2 Minuten</string>
+    <string name="on4_text">Token eintragen, Presence gestalten, START tippen — läuft im Hintergrund weiter, sogar bei geschlossener App.</string>
+
+    <!-- Setup -->
+    <string name="setup_title">Einrichtung</string>
+    <string name="setup_step">Schritt %1$d von 3</string>
+    <string name="setup1_badge">Schritt 1 · Zugang</string>
+    <string name="setup1_title">Dein Discord-Token</string>
+    <string name="setup1_text">Nur mit dem Handy holbar — siehe TOKEN-HOLEN.md im Repo (Firefox-Methode, 5 Min). Niemals teilen!</string>
+    <string name="setup1_hint">Token hier einfügen …</string>
+    <string name="setup1_test">Token testen</string>
+    <string name="setup1_next">Weiter</string>
+    <string name="setup2_badge">Schritt 2 · Bilder</string>
+    <string name="setup2_title">Application ID</string>
+    <string name="setup2_text">discord.com/developers → New Application → ID kopieren. Ohne ID funktioniert nur Text.</string>
+    <string name="setup2_hint">z. B. 123456789012345678</string>
+    <string name="setup2_test">App-ID testen</string>
+    <string name="setup2_next">Weiter</string>
+    <string name="setup2_skip">Überspringen (nur Text)</string>
+    <string name="setup3_badge">Schritt 3 · Fertig</string>
+    <string name="setup3_title">Alles bereit!</string>
+    <string name="setup3_text">Tippe START — deine Rich Presence läuft im Hintergrund, auch wenn die App zu ist. Bilder lädst du im Studio hoch.</string>
+    <string name="setup3_finish">Los gehts</string>
+
+    <!-- Main -->
+    <string name="main_status_stopped">Gestoppt</string>
+    <string name="main_status_hint">Tippe Start — läuft im Hintergrund weiter</string>
+    <string name="main_start">Start</string>
+    <string name="main_stop">Stop</string>
+    <string name="main_section_preview">Live-Vorschau</string>
+    <string name="main_section_preview_sub">Exakt so sieht es in Discord aus</string>
+    <string name="main_section_presets">Presets</string>
+    <string name="main_section_presets_sub">Antippen = laden · Lange drücken = eigene löschen</string>
+    <string name="main_section_tools">Werkzeuge</string>
+    <string name="main_tool_studio">Studio</string>
+    <string name="main_tool_studio_sub">Presence gestalten</string>
+    <string name="main_tool_doctor">Doktor</string>
+    <string name="main_tool_doctor_sub">Prüfen &amp; reparieren</string>
+    <string name="main_tool_export">Export</string>
+    <string name="main_tool_export_sub">JSON für KI teilen</string>
+    <string name="main_tool_import">Import</string>
+    <string name="main_tool_import_sub">JSON einfügen</string>
+    <string name="main_footer">Token bleibt verschlüsselt auf deinem Handy</string>
+
+    <!-- Editor -->
+    <string name="ed_title">Studio</string>
+    <string name="ed_subtitle">Vorschau lebt beim Tippen</string>
+    <string name="ed_section_text">Text</string>
+    <string name="ed_name">Name</string>
+    <string name="ed_name_hint">z. B. Minecraft</string>
+    <string name="ed_type">Typ</string>
+    <string name="ed_details">Details (Zeile 1)</string>
+    <string name="ed_details_hint">z. B. Grinding Diamonds</string>
+    <string name="ed_state">State (Zeile 2)</string>
+    <string name="ed_state_hint">z. B. Server: Fufcord SMP</string>
+    <string name="ed_section_images">Bilder</string>
+    <string name="ed_large">Großes Bild (Asset-Name)</string>
+    <string name="ed_large_hint">z. B. logo</string>
+    <string name="ed_hover_hint">Hover-Text (optional)</string>
+    <string name="ed_small">Kleines Bild (Asset-Name)</string>
+    <string name="ed_small_hint">(leer = keins)</string>
+    <string name="ed_assets_title">Hochgeladene Assets</string>
+    <string name="ed_assets_sub">Antippen = übernehmen</string>
+    <string name="ed_section_extras">Buttons &amp; Extras</string>
+    <string name="ed_stream">Stream-URL (nur bei Typ „Streamt“)</string>
+    <string name="ed_stream_hint">https://twitch.tv/…</string>
+    <string name="ed_btn1">Button 1 (keine Emojis!)</string>
+    <string name="ed_btn_label_hint">Text (leer = kein Button)</string>
+    <string name="ed_btn_url_hint">https://…</string>
+    <string name="ed_btn2">Button 2</string>
+    <string name="ed_time">Verstrichene Zeit anzeigen</string>
+    <string name="ed_status">Online-Status</string>
+    <string name="ed_party_cur">Party: aktuell (0 = aus)</string>
+    <string name="ed_party_max">Party: max (0 = aus)</string>
+    <string name="ed_save">Speichern</string>
+
+    <!-- Doktor -->
+    <string name="doc_title">Doktor</string>
+    <string name="doc_subtitle">Prüft Token, App &amp; Bilder direkt bei Discord</string>
+    <string name="doc_checking">Frage Discord-API …</string>
+    <string name="doc_fix_all">Alles automatisch reparieren</string>
+    <string name="doc_no_buttons">Buttons entfernen</string>
+    <string name="doc_no_images">Bilder entfernen</string>
+    <string name="doc_back">Zurück</string>
+
+    <!-- Einstellungen -->
+    <string name="set_title">Einstellungen</string>
+    <string name="set_subtitle">Zugang, Sicher-Modus &amp; App</string>
+    <string name="set_section_access">Zugang</string>
+    <string name="set_token">User-Token (verschlüsselt gespeichert)</string>
+    <string name="set_token_hint">Token einfügen …</string>
+    <string name="set_token_test">Testen</string>
+    <string name="set_appid">Application ID</string>
+    <string name="set_appid_hint">z. B. 123456789012345678</string>
+    <string name="set_appid_test">Testen</string>
+    <string name="set_section_behavior">Verhalten</string>
+    <string name="set_safe">Sicher-Modus</string>
+    <string name="set_safe_sub">Nur Text senden — wird immer angezeigt</string>
+    <string name="set_auto">Autostart nach Handy-Neustart</string>
+    <string name="set_auto_sub">Presence startet automatisch neu</string>
+    <string name="set_section_app">App</string>
+    <string name="set_version">Version</string>
+    <string name="set_guide">Token-Anleitung (TOKEN-HOLEN.md im Repo)</string>
+    <string name="set_save">Speichern</string>
+
+    <!-- Dialoge / Sonstiges -->
+    <string name="dlg_cancel">Abbrechen</string>
+    <string name="dlg_delete">Löschen</string>
+    <string name="dlg_save">Speichern</string>
+    <string name="dlg_no">Nein</string>
+    <string name="dlg_later">Später</string>
+    <string name="dlg_skip">Überspringen</string>
+    <string name="preset_delete_title">Preset löschen?</string>
+    <string name="import_title">JSON einfügen</string>
+    <string name="import_hint">JSON-Code hier einfügen (z. B. von KI) …</string>
+    <string name="import_go">Importieren</string>
+    <string name="import_share_title">Presence-JSON teilen (z. B. an KI-App)</string>
+    <string name="preset_save_title">Als Preset speichern?</string>
+    <string name="preset_save_hint">Preset-Name (leer = nicht speichern)</string>
+    <string name="asset_take_title">Bild übernehmen als …</string>
+    <string name="asset_take_large">Großes Bild</string>
+    <string name="asset_take_small">Kleines Bild</string>
+    <string name="asset_del_title">Asset löschen?</string>
+    <string name="upload_title">Bild hochladen</string>
+    <string name="upload_name_hint">Asset-Name (klein, z. B. logo)</string>
+    <string name="upload_go">Hochladen</string>
 </resources>

@@ -51,6 +51,10 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getBoolean("setup_done", false)
         set(v) = prefs.edit().putBoolean("setup_done", v).apply()
 
+    var onboardingDone: Boolean
+        get() = prefs.getBoolean("onboarding_done", false)
+        set(v) = prefs.edit().putBoolean("onboarding_done", v).apply()
+
     var skipVersion: String
         get() = prefs.getString("skip_version", "") ?: ""
         set(v) = prefs.edit().putString("skip_version", v).apply()

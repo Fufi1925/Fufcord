@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Fufcord v3.2 Design "Neon Night": Mitternacht + Violett/Cyan -->
+    <!-- ============ Fufcord v4.0 „Aurora" ============ -->
+    <!-- Basis (Neon Night, weiterverwendet) -->
     <color name="bg">#0A0D16</color>
     <color name="card">#141A30</color>
     <color name="card2">#1B2340</color>
@@ -14,9 +15,27 @@
     <color name="ink">#F2F5FF</color>
     <color name="muted">#8B93B0</color>
     <color name="white">#FFFFFF</color>
+
+    <!-- Aurora-Erweiterung -->
+    <color name="bg_deep">#05070F</color>
+    <color name="aurora_pink">#F472B6</color>
+    <color name="glow_violet">#8B5CF6</color>
+    <color name="glow_cyan">#22D3EE</color>
+    <color name="glow_pink">#F472B6</color>
+    <color name="glass">#171F38</color>
+    <color name="glass_stroke">#2A3658</color>
+    <color name="success">#34D399</color>
+    <color name="warning">#FBBF24</color>
+    <color name="danger">#FB7185</color>
+    <color name="text_primary">#F4F6FF</color>
+    <color name="text_secondary">#A6B0C9</color>
+    <color name="text_tertiary">#66708C</color>
+    <color name="scrim">#B3000000</color>
+
     <!-- Echte Discord-Farben nur für die 1:1-Vorschau -->
     <color name="discord_bg">#1E1F22</color>
     <color name="discord_stroke">#2E2F33</color>
     <color name="discord_blurple">#5865F2</color>
     <color name="discord_text">#B5BAC1</color>
+    <color name="discord_btn">#4E5058</color>
 </resources>

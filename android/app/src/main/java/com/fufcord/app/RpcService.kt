@@ -64,6 +64,12 @@ class RpcService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
+        // FIX: Guard gegen Doppelstart (z.B. Boot + manuell) — sonst laufen
+        // zwei Gateway-Verbindungen parallel.
+        if (isRunning) {
+            updateNotif(statusText.ifEmpty { "✅ Online" })
+            return START_STICKY
+        }
         val prefs = PrefsManager(this)
         val token = prefs.token
         if (token.isEmpty()) {
@@ -106,6 +112,12 @@ class RpcService : Service() {
 
     private fun connect() {
         cancelReconnect()
+        // FIX: alten Client sauber trennen — sonst bleiben WebSocket +
+        // Heartbeat des vorherigen Versuchs offen (Leak).
+        try {
+            gw?.disconnect()
+        } catch (e: Exception) { }
+        gw = null
         val prefs = PrefsManager(this)
         statusText = "Verbinde..."
         updateNotif("Verbinde mit Discord...")

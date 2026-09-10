@@ -15,17 +15,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivityMainBinding
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.fufcord.app.databinding.ItemPresetBinding
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -33,10 +32,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var b: ActivityMainBinding
     private lateinit var prefs: PrefsManager
     private val handler = Handler(Looper.getMainLooper())
+    private var firstShow = true
+
+    // FIX: Status lebt — aktualisiert sich auch bei „Neuversuch in Xs" etc.
+    private val ticker = object : Runnable {
+        override fun run() {
+            refresh()
+            handler.postDelayed(this, 2500)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = PrefsManager(this)
+        if (!prefs.onboardingDone) {
+            startActivity(Intent(this, OnboardingActivity::class.java))
+            finish()
+            return
+        }
         if (!prefs.setupDone) {
             startActivity(Intent(this, SetupActivity::class.java))
             finish()
@@ -52,14 +65,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         b.btnToggle.setOnClickListener { toggleService() }
-        b.btnEdit.setOnClickListener { startActivity(Intent(this, EditorActivity::class.java)) }
-        b.btnDoctor.setOnClickListener { startActivity(Intent(this, DoctorActivity::class.java)) }
+        b.btnEdit.setOnClickListener { AnimUtils.launch(this, EditorActivity::class.java) }
+        b.btnDoctor.setOnClickListener { AnimUtils.launch(this, DoctorActivity::class.java) }
         b.btnExport.setOnClickListener { exportJson() }
         b.btnImport.setOnClickListener { importDialog() }
-        b.btnSettings.setOnClickListener { settingsDialog() }
+        b.btnSettings.setOnClickListener { AnimUtils.launch(this, SettingsActivity::class.java) }
         try {
+            @Suppress("DEPRECATION")
             val p = packageManager.getPackageInfo(packageName, 0)
-            b.txtVersion.text = "v${p.versionName} • Custom Rich Presence"
+            b.txtVersion.text = "v${p.versionName}"
         } catch (_: Exception) { }
         UpdateChecker.check(this)
     }
@@ -67,13 +81,41 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refresh()
+        handler.postDelayed(ticker, 2500)
+        if (firstShow) {
+            firstShow = false
+            AnimUtils.stagger(b.contentRoot)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(ticker)
+        AnimUtils.stopPulse(b.statusDot)
     }
 
     private fun refresh() {
         val running = RpcService.isRunning
-        b.statusDot.text = if (running) "🟢" else "🔴"
-        b.statusText.text = if (running) RpcService.statusText else "Gestoppt — tippe Start!"
-        b.btnToggle.text = if (running) "⏹ STOP" else "🚀 START"
+        if (running) {
+            b.statusCard.setBackgroundResource(R.drawable.status_card_on)
+            b.statusDot.setBackgroundResource(R.drawable.dot_on)
+            AnimUtils.startPulse(b.statusDot)
+            b.statusText.text = RpcService.statusText.ifEmpty { "Online" }
+            val sub = RpcService.activityName.ifEmpty { "Verbunden mit Discord" }
+            b.statusSub.text = sub
+            b.btnToggle.text = getString(R.string.main_stop)
+            b.btnToggle.setIconResource(R.drawable.ic_stop)
+            b.btnToggle.setBackgroundResource(R.drawable.btn_stop)
+        } else {
+            AnimUtils.stopPulse(b.statusDot)
+            b.statusCard.setBackgroundResource(R.drawable.status_card_off)
+            b.statusDot.setBackgroundResource(R.drawable.dot_off)
+            b.statusText.text = getString(R.string.main_status_stopped)
+            b.statusSub.text = getString(R.string.main_status_hint)
+            b.btnToggle.text = getString(R.string.main_start)
+            b.btnToggle.setIconResource(R.drawable.ic_play)
+            b.btnToggle.setBackgroundResource(R.drawable.btn_primary)
+        }
         val act = prefs.loadAct()
         PreviewBinder.bind(b.previewCard, act, prefs.safeMode)
         buildPresetRow()
@@ -85,12 +127,13 @@ class MainActivity : AppCompatActivity() {
                 startService(Intent(this, RpcService::class.java).setAction(RpcService.ACTION_STOP))
             } else {
                 if (prefs.token.isEmpty()) {
-                    Toast.makeText(this, "Erst Token eintragen! (⚙️ Einstellungen)", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Erst Token eintragen! (Zahnrad oben rechts)", Toast.LENGTH_LONG).show()
+                    AnimUtils.launch(this, SettingsActivity::class.java)
                     return
                 }
                 val i = Intent(this, RpcService::class.java).setAction(RpcService.ACTION_START)
                 if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
-                Toast.makeText(this, "Starte... (läuft im Hintergrund weiter)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Starte … (läuft im Hintergrund weiter)", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Start blockiert: ${e.message}", Toast.LENGTH_LONG).show()
@@ -101,38 +144,53 @@ class MainActivity : AppCompatActivity() {
     // ---------------- Presets ----------------
     private fun buildPresetRow() {
         b.presetRow.removeAllViews()
-        val all = prefs.loadBundledPresets() + prefs.loadCustomPresets()
+        // FIX: Custom-Presets nur EINMAL laden (vorher pro Preset neu vom Datenträger).
+        val custom = prefs.loadCustomPresets()
+        val customFiles = custom.map { it.file }.toSet()
+        val all = prefs.loadBundledPresets() + custom
         if (all.isEmpty()) {
             val t = TextView(this)
             t.text = "(keine Presets)"
-            t.setTextColor(0xFF8B93B0.toInt())
+            t.setTextColor(getColor(R.color.text_tertiary))
             b.presetRow.addView(t)
             return
         }
         for (p in all) {
-            val wrap = android.view.ContextThemeWrapper(this, com.google.android.material.R.style.Widget_Material3_Button_TonalButton)
-            val chip = MaterialButton(wrap)
-            chip.text = p.title
-            chip.isAllCaps = false
+            val item = ItemPresetBinding.inflate(LayoutInflater.from(this), b.presetRow, false)
+            item.presetTitle.text = p.title
             if (p.icon.isNotEmpty()) {
                 val res = resources.getIdentifier(p.icon, "drawable", packageName)
-                if (res != 0) chip.setIconResource(res)
+                if (res != 0) {
+                    item.presetIcon.setImageResource(res)
+                    item.presetIcon.visibility = View.VISIBLE
+                    item.presetLetter.visibility = View.GONE
+                } else {
+                    showLetter(item, p.title)
+                }
+            } else {
+                showLetter(item, p.title)
             }
-            val lp = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            lp.setMargins(0, 0, 16, 0)
-            chip.layoutParams = lp
-            chip.setOnClickListener { applyPreset(p) }
-            if (p.file.isNotEmpty() && prefs.loadCustomPresets().any { it.file == p.file }) {
-                chip.setOnLongClickListener { confirmDeletePreset(p); true }
+            item.root.setOnClickListener { applyPreset(p) }
+            if (p.file in customFiles) {
+                item.root.setOnLongClickListener { confirmDeletePreset(p); true }
             }
-            b.presetRow.addView(chip)
+            b.presetRow.addView(item.root)
         }
+    }
+
+    private fun showLetter(item: ItemPresetBinding, title: String) {
+        item.presetIcon.visibility = View.GONE
+        item.presetLetter.visibility = View.VISIBLE
+        item.presetLetter.text = title.trim().firstOrNull()?.uppercase() ?: "★"
     }
 
     private fun applyPreset(p: Preset) {
         p.act.status = p.status
         prefs.saveAct(p.act)
+        // FIX: Custom-Preset mit eigener App-ID? → übernehmen (wie in Termux-Version).
+        if (p.appId.isNotEmpty() && validAppId(p.appId)) {
+            prefs.appId = p.appId
+        }
         if (RpcService.isRunning) RpcService.refresh(this)
         refresh()
         Toast.makeText(this, "✅ Preset '${p.title}' geladen!", Toast.LENGTH_SHORT).show()
@@ -140,13 +198,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun confirmDeletePreset(p: Preset) {
         AlertDialog.Builder(this)
-            .setTitle("Preset löschen?")
+            .setTitle(getString(R.string.preset_delete_title))
             .setMessage("'${p.title}' wirklich löschen?")
-            .setPositiveButton("Löschen") { _, _ ->
+            .setPositiveButton(getString(R.string.dlg_delete)) { _, _ ->
                 prefs.deleteCustomPreset(p.file)
                 refresh()
             }
-            .setNegativeButton("Abbrechen", null)
+            .setNegativeButton(getString(R.string.dlg_cancel), null)
             .show()
     }
 
@@ -160,23 +218,24 @@ class MainActivity : AppCompatActivity() {
         val send = Intent(Intent.ACTION_SEND)
         send.type = "text/plain"
         send.putExtra(Intent.EXTRA_TEXT, o.toString(2))
-        startActivity(Intent.createChooser(send, "Presence-JSON teilen (z.B. an KI-App)"))
+        startActivity(Intent.createChooser(send, getString(R.string.import_share_title)))
     }
 
     private fun importDialog() {
         val et = EditText(this)
-        et.hint = "JSON-Code hier einfügen (z.B. von KI)..."
+        et.hint = getString(R.string.import_hint)
         et.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         et.minLines = 8
         et.typeface = Typeface.MONOSPACE
         et.textSize = 12f
         val scroll = ScrollView(this)
         scroll.addView(et)
+        scroll.setPadding(48, 24, 48, 0)
         AlertDialog.Builder(this)
-            .setTitle("📥 JSON einfügen")
+            .setTitle(getString(R.string.import_title))
             .setView(scroll)
-            .setPositiveButton("Importieren") { _, _ -> doImport(et.text.toString()) }
-            .setNegativeButton("Abbrechen", null)
+            .setPositiveButton(getString(R.string.import_go)) { _, _ -> doImport(et.text.toString()) }
+            .setNegativeButton(getString(R.string.dlg_cancel), null)
             .show()
     }
 
@@ -188,6 +247,9 @@ class MainActivity : AppCompatActivity() {
         }
         try {
             val data = JSONObject(block)
+            // FIX: Status nur ändern, wenn das JSON wirklich einen enthält —
+            // sonst bleibt der bisherige erhalten.
+            val hadStatus = data.has("status")
             val actRaw: JSONObject? = if (data.optJSONObject("activity") != null) {
                 val st = data.optString("status", "online").lowercase()
                 val id = data.optString("application_id", "").trim()
@@ -195,7 +257,7 @@ class MainActivity : AppCompatActivity() {
                     if (validAppId(id)) prefs.appId = id
                     else Toast.makeText(this, "⚠️ App-ID ungültig → alte behalten", Toast.LENGTH_LONG).show()
                 }
-                if (ActConfig.STATUS.containsKey(st)) {
+                if (hadStatus && ActConfig.STATUS.containsKey(st)) {
                     val tmp = data.optJSONObject("activity")!!
                     tmp.put("status", st)
                     tmp
@@ -207,11 +269,12 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             val (clean, warns) = ActConfig.sanitize(actRaw)
+            if (!hadStatus) clean.status = prefs.loadAct().status
             prefs.saveAct(clean)
+            if (RpcService.isRunning) RpcService.refresh(this)
             refresh()
             val msg = StringBuilder("✅ Importiert!")
             for (w in warns.take(3)) msg.append("\n• $w")
-            msg.append("\n\nAls Preset speichern? (Editor → Menü)")
             Toast.makeText(this, msg.toString(), Toast.LENGTH_LONG).show()
             askSavePreset(clean)
         } catch (e: Exception) {
@@ -221,11 +284,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun askSavePreset(act: ActConfig) {
         val et = EditText(this)
-        et.hint = "Preset-Name (leer = nicht speichern)"
+        et.hint = getString(R.string.preset_save_hint)
+        et.setPadding(48, 24, 48, 24)
         AlertDialog.Builder(this)
-            .setTitle("Als Preset speichern?")
+            .setTitle(getString(R.string.preset_save_title))
             .setView(et)
-            .setPositiveButton("Speichern") { _, _ ->
+            .setPositiveButton(getString(R.string.dlg_save)) { _, _ ->
                 val n = et.text.toString().trim().lowercase()
                     .replace(Regex("[^a-z0-9-_ ]"), "").replace(" ", "-")
                 if (n.isNotEmpty()) {
@@ -234,7 +298,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "✅ Preset '$n' gespeichert!", Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Nein", null)
+            .setNegativeButton(getString(R.string.dlg_no), null)
             .show()
     }
 
@@ -261,54 +325,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return null
-    }
-
-    // ---------------- Einstellungen ----------------
-    private fun settingsDialog() {
-        val lay = LinearLayout(this)
-        lay.orientation = LinearLayout.VERTICAL
-        lay.setPadding(48, 24, 48, 24)
-        fun label(s: String): TextView {
-            val t = TextView(this)
-            t.text = s
-            t.setTextColor(0xFF8B93B0.toInt())
-            lay.addView(t)
-            return t
-        }
-        label("🔑 User-Token (verschlüsselt gespeichert)")
-        val etTok = EditText(this)
-        etTok.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        etTok.setText(prefs.token)
-        etTok.hint = "Token einfügen..."
-        lay.addView(etTok)
-        label("🆔 Application ID")
-        val etApp = EditText(this)
-        etApp.inputType = InputType.TYPE_CLASS_NUMBER
-        etApp.setText(prefs.appId)
-        etApp.hint = "z.B. 123456789012345678"
-        lay.addView(etApp)
-        val swSafe = SwitchMaterial(this)
-        swSafe.text = "🛡️ Sicher-Modus (nur Text, geht immer)"
-        swSafe.isChecked = prefs.safeMode
-        lay.addView(swSafe)
-        val swAuto = SwitchMaterial(this)
-        swAuto.text = "🔄 Autostart nach Handy-Neustart"
-        swAuto.isChecked = prefs.autostart
-        lay.addView(swAuto)
-
-        AlertDialog.Builder(this)
-            .setTitle("⚙️ Einstellungen")
-            .setView(lay)
-            .setPositiveButton("Speichern") { _, _ ->
-                val t = etTok.text.toString().trim().replace(" ", "")
-                if (t.isNotEmpty()) prefs.token = t
-                prefs.appId = etApp.text.toString().trim()
-                prefs.safeMode = swSafe.isChecked
-                prefs.autostart = swAuto.isChecked
-                refresh()
-                Toast.makeText(this, "✅ Gespeichert!", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Abbrechen", null)
-            .show()
     }
 }

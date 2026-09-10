@@ -3,21 +3,88 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="false">
 
     <LinearLayout
+        android:id="@+id/contentRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- HERO -->
+        <!-- APP BAR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient_hero"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/logo_badge_bg">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Fufcord Logo"
+                    android:src="@drawable/ic_bolt" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.12"
+                    android:text="FUFCORD"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/chip_bg"
+                    android:paddingStart="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="4dp"
+                    android:text="v4.0"
+                    android:textColor="@color/cyan"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/circle_icon_bg"
+                android:contentDescription="@string/set_title"
+                android:padding="12dp"
+                android:src="@drawable/ic_sliders" />
+        </LinearLayout>
+
+        <!-- STATUS-KARTE -->
+        <LinearLayout
+            android:id="@+id/statusCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/status_card_off"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="22dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -25,127 +92,101 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/badge_bg"
-                    android:padding="12dp"
-                    android:text="⚡"
-                    android:textSize="30sp" />
+                <FrameLayout
+                    android:layout_width="22dp"
+                    android:layout_height="22dp">
+
+                    <View
+                        android:id="@+id/statusDot"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/dot_off" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/statusText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FUFCORD"
-                        android:textColor="@color/white"
-                        android:textSize="25sp"
+                        android:text="@string/main_status_stopped"
+                        android:textColor="@color/text_primary"
+                        android:textSize="19sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/txtVersion"
+                        android:id="@+id/statusSub"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="v3.2 • Custom Rich Presence"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.85" />
+                        android:layout_marginTop="3dp"
+                        android:text="@string/main_status_hint"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
                 </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/badge_bg"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="14dp">
-
-                <TextView
-                    android:id="@+id/statusDot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🔴"
-                    android:textSize="22sp" />
-
-                <TextView
-                    android:id="@+id/statusText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:text="Gestoppt"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnToggle"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.Fufcord.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:text="🚀 START"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:strokeColor="@color/white" />
+                android:layout_marginTop="18dp"
+                android:background="@drawable/btn_primary"
+                android:text="@string/main_start"
+                app:icon="@drawable/ic_play"
+                app:iconGravity="textStart"
+                app:iconTint="@color/white" />
         </LinearLayout>
 
         <!-- VORSCHAU -->
         <TextView
+            style="@style/Text.Fufcord.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="◉ LIVE-VORSCHAU"
-            android:textColor="@color/cyan"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="28dp"
+            android:text="@string/main_section_preview" />
 
         <TextView
+            style="@style/Text.Fufcord.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Exakt so sieht es in Discord aus"
-            android:textColor="@color/muted"
-            android:textSize="12sp" />
+            android:text="@string/main_section_preview_sub" />
 
         <include
             android:id="@+id/previewCard"
             layout="@layout/view_preview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="12dp" />
 
         <!-- PRESETS -->
         <TextView
+            style="@style/Text.Fufcord.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="◉ PRESETS"
-            android:textColor="@color/cyan"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="28dp"
+            android:text="@string/main_section_presets" />
 
         <TextView
+            style="@style/Text.Fufcord.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Antippen = laden • Lange drücken = eigene löschen"
-            android:textColor="@color/muted"
-            android:textSize="12sp" />
+            android:text="@string/main_section_presets_sub" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="12dp"
+            android:clipToPadding="false"
+            android:paddingBottom="4dp">
 
             <LinearLayout
                 android:id="@+id/presetRow"
@@ -156,71 +197,185 @@
 
         <!-- WERKZEUGE -->
         <TextView
+            style="@style/Text.Fufcord.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="◉ WERKZEUGE"
-            android:textColor="@color/cyan"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="28dp"
+            android:text="@string/main_section_tools" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
+            <LinearLayout
                 android:id="@+id/btnEdit"
-                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="7dp"
                 android:layout_weight="1"
-                android:text="🎨 Studio" />
+                android:background="@drawable/tool_card_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:minHeight="118dp"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <com.google.android.material.button.MaterialButton
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="@string/main_tool_studio"
+                    android:src="@drawable/ic_edit"
+                    android:tint="@color/cyan" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/main_tool_studio"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/main_tool_studio_sub"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/btnDoctor"
-                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="7dp"
                 android:layout_weight="1"
-                android:text="🔍 Doktor" />
+                android:background="@drawable/tool_card_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:minHeight="118dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="@string/main_tool_doctor"
+                    android:src="@drawable/ic_health"
+                    android:tint="@color/success" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/main_tool_doctor"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/main_tool_doctor_sub"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
+            <LinearLayout
                 android:id="@+id/btnExport"
-                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="7dp"
                 android:layout_weight="1"
-                android:text="📤 JSON" />
+                android:background="@drawable/tool_card_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:minHeight="118dp"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <com.google.android.material.button.MaterialButton
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="@string/main_tool_export"
+                    android:src="@drawable/ic_upload"
+                    android:tint="@color/violet" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/main_tool_export"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/main_tool_export_sub"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/btnImport"
-                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="7dp"
                 android:layout_weight="1"
-                android:text="📥 JSON" />
+                android:background="@drawable/tool_card_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:minHeight="118dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="@string/main_tool_import"
+                    android:src="@drawable/ic_download"
+                    android:tint="@color/aurora_pink" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/main_tool_import"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/main_tool_import_sub"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSettings"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+        <TextView
+            style="@style/Text.Fufcord.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="8dp"
-            android:text="⚙️ Einstellungen" />
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:text="@string/main_footer" />
     </LinearLayout>
 </ScrollView>

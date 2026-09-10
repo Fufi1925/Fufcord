@@ -1,6 +1,6 @@
 # FUFCORD 📱 — Custom Discord Rich Presence
 
-> **📱 Echte Android-App (APK) — kein Termux nötig!** Aktuell: **v3.2** 🌌 (komplett neues „Neon Night"-Design!)
+> **📱 Echte Android-App (APK) — kein Termux nötig!** Aktuell: **v4.0** 🌌 (komplett neues „Aurora"-Design mit Onboarding, Animationen & Einstellungs-Screen!)
 > → APK laden unter **[Releases](https://github.com/Fufi1925/Fufcord/releases)** (einfach installieren & updaten — die App meldet neue Versionen automatisch per Pop-up!).
 > Hintergrund-Dienst, Bilder-Upload, 1:1-Vorschau & Setup-Assistent. Details: **`android/README.md`**.
 > Die Termux-Version unten bleibt als Alternative erhalten.

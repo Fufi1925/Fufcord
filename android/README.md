@@ -2,6 +2,8 @@
 
 Echte Android-App — **kein Termux nötig**: läuft im Hintergrund, Bilder-Upload direkt in die Discord-App, 1:1-Vorschau, Setup-Assistent, Presets, KI-JSON, Doktor.
 
+**Aktuell: v4.0 „Aurora"** — komplett neues Design (Glass/Aurora-Look, Animationen, Onboarding, eigener Einstellungs-Screen).
+
 ## 📥 APK installieren
 
 **Option A — Fertige APK von GitHub:**

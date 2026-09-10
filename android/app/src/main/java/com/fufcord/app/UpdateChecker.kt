@@ -91,8 +91,8 @@ object UpdateChecker {
                     act.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 } catch (e: Exception) { }
             }
-            .setNeutralButton("Überspringen") { _, _ -> prefs.skipVersion = tag }
-            .setNegativeButton("Später", null)
+            .setNeutralButton(act.getString(R.string.dlg_skip)) { _, _ -> prefs.skipVersion = tag }
+            .setNegativeButton(act.getString(R.string.dlg_later), null)
             .show()
     }
 }

@@ -2,14 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/card_glass_soft"
+    android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="6dp">
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/assetThumb"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:background="@drawable/rounded_img"
         android:contentDescription="Asset-Bild"
         android:scaleType="centerCrop" />
@@ -18,16 +22,21 @@
         android:id="@+id/assetName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="12dp"
         android:layout_weight="1"
+        android:maxLines="1"
         android:text="logo"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-    <com.google.android.material.button.MaterialButton
+    <ImageButton
         android:id="@+id/btnAssetDel"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="✖" />
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:background="@drawable/circle_icon_bg"
+        android:contentDescription="@string/asset_del_title"
+        android:padding="11dp"
+        android:src="@drawable/ic_close"
+        android:tint="@color/danger" />
 </LinearLayout>
