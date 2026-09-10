@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- AURORA — Dashboard -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="16dp">
 
-        <!-- HERO -->
+        <!-- ══════════ HERO ══════════ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,9 +34,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/badge_bg"
-                    android:padding="12dp"
+                    android:padding="13dp"
                     android:text="⚡"
-                    android:textSize="30sp" />
+                    android:textSize="27sp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -41,39 +46,40 @@
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/Text.Aurora.HeroTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FUFCORD"
-                        android:textColor="@color/white"
-                        android:textSize="25sp"
-                        android:textStyle="bold" />
+                        android:text="FUFCORD" />
 
                     <TextView
                         android:id="@+id/txtVersion"
+                        style="@style/Text.Aurora.HeroSub"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="v3.2 • Custom Rich Presence"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.85" />
+                        android:layout_marginTop="2dp"
+                        android:text="v4.0 • Custom Rich Presence" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Status-Pill -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/badge_bg"
+                android:background="@drawable/pill_dark"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="14dp">
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp">
 
                 <TextView
                     android:id="@+id/statusDot"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🔴"
-                    android:textSize="22sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/statusText"
@@ -89,104 +95,95 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnToggle"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Btn.Aurora.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="🚀 START"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:strokeColor="@color/white" />
+                android:text="🚀 START" />
         </LinearLayout>
 
-        <!-- VORSCHAU -->
+        <!-- ══════════ LIVE-VORSCHAU ══════════ -->
         <TextView
+            style="@style/Text.Aurora.Overline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="◉ LIVE-VORSCHAU"
-            android:textColor="@color/cyan"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="26dp"
+            android:text="Live-Vorschau" />
 
         <TextView
+            style="@style/Text.Aurora.Hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Exakt so sieht es in Discord aus"
-            android:textColor="@color/muted"
-            android:textSize="12sp" />
+            android:layout_marginTop="3dp"
+            android:text="Exakt so sieht es in Discord aus" />
 
         <include
             android:id="@+id/previewCard"
             layout="@layout/view_preview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="12dp" />
 
-        <!-- PRESETS -->
+        <!-- ══════════ PRESETS ══════════ -->
         <TextView
+            style="@style/Text.Aurora.Overline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="◉ PRESETS"
-            android:textColor="@color/cyan"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="26dp"
+            android:text="Presets" />
 
         <TextView
+            style="@style/Text.Aurora.Hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Antippen = laden • Lange drücken = eigene löschen"
-            android:textColor="@color/muted"
-            android:textSize="12sp" />
+            android:layout_marginTop="3dp"
+            android:text="Antippen = laden • Lange drücken = eigene löschen" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="12dp"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/presetRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:orientation="horizontal"
+                android:paddingBottom="4dp" />
         </HorizontalScrollView>
 
-        <!-- WERKZEUGE -->
+        <!-- ══════════ STEUERUNG ══════════ -->
         <TextView
+            style="@style/Text.Aurora.Overline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="◉ WERKZEUGE"
-            android:textColor="@color/cyan"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="26dp"
+            android:text="Steuerung" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Btn.Aurora.Tonal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="🎨 Studio" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDoctor"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Btn.Aurora.Tonal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="🔍 Doktor" />
+                android:text="🩺 Doktor" />
         </LinearLayout>
 
         <LinearLayout
@@ -197,30 +194,42 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnExport"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Btn.Aurora.Tonal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:text="📤 JSON" />
+                android:text="📤 JSON export" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnImport"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Btn.Aurora.Tonal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="📥 JSON" />
+                android:text="📥 JSON import" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSettings"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Btn.Aurora.Ghost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="8dp"
             android:text="⚙️ Einstellungen" />
+
+        <!-- ══════════ FOOTER ══════════ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:text="FUFCORD • AURORA"
+            android:textAllCaps="true"
+            android:textColor="@color/faint"
+            android:textSize="10sp" />
     </LinearLayout>
 </ScrollView>

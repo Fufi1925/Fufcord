@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- AURORA Icon-Hintergrund -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
     <gradient
-        android:startColor="@color/violet_dark"
-        android:centerColor="@color/violet"
-        android:endColor="@color/cyan"
+        android:startColor="@color/aurora_indigo"
+        android:centerColor="@color/aurora_violet"
+        android:endColor="@color/aurora_pink"
         android:angle="135" />
 </shape>

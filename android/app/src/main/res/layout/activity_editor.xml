@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- AURORA — Studio (Presence-Editor) -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
 
+        <!-- ══════════ HERO ══════════ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,9 +29,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/badge_bg"
-                android:padding="10dp"
+                android:padding="12dp"
                 android:text="🎨"
-                android:textSize="26sp" />
+                android:textSize="24sp" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -35,20 +41,17 @@
                 android:orientation="vertical">
 
                 <TextView
+                    style="@style/Text.Aurora.HeroTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Studio"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:text="Studio" />
 
                 <TextView
+                    style="@style/Text.Aurora.HeroSub"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Vorschau lebt beim Tippen"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:alpha="0.85" />
+                    android:layout_marginTop="2dp"
+                    android:text="Jede Änderung sofort in der Vorschau" />
             </LinearLayout>
         </LinearLayout>
 
@@ -59,215 +62,192 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp" />
 
-        <!-- TEXT -->
+        <!-- ══════════ TEXT ══════════ -->
         <LinearLayout
+            style="@style/Card.Aurora"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_card"
             android:orientation="vertical"
             android:padding="18dp">
 
             <TextView
+                style="@style/Text.Aurora.Overline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="◉ TEXT"
-                android:textColor="@color/cyan"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Text" />
 
             <TextView
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Name"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
+                android:layout_marginTop="14dp"
+                android:text="Name" />
 
             <EditText
                 android:id="@+id/etName"
+                style="@style/Input.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
+                android:layout_marginTop="5dp"
                 android:hint="z.B. Minecraft"
                 android:inputType="text"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
+                android:maxLines="1" />
 
             <TextView
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Typ"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
+                android:layout_marginTop="14dp"
+                android:text="Typ" />
 
             <Spinner
                 android:id="@+id/spType"
+                style="@style/Spin.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
-                android:padding="14dp" />
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Details (Zeile 1)"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
+                android:layout_marginTop="14dp"
+                android:text="Details (Zeile 1)" />
 
             <EditText
                 android:id="@+id/etDetails"
+                style="@style/Input.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
+                android:layout_marginTop="5dp"
                 android:hint="z.B. ⛏️ Grinding Diamonds"
                 android:inputType="text"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
+                android:maxLines="1" />
 
             <TextView
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="State (Zeile 2)"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
+                android:layout_marginTop="14dp"
+                android:text="State (Zeile 2)" />
 
             <EditText
                 android:id="@+id/etState"
+                style="@style/Input.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
+                android:layout_marginTop="5dp"
                 android:hint="z.B. Server: Fufcord SMP"
                 android:inputType="text"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
+                android:maxLines="1" />
         </LinearLayout>
 
-        <!-- BILDER -->
+        <!-- ══════════ BILDER ══════════ -->
         <LinearLayout
+            style="@style/Card.Aurora"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_card"
             android:orientation="vertical"
             android:padding="18dp">
 
             <TextView
+                style="@style/Text.Aurora.Overline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="◉ BILDER"
-                android:textColor="@color/cyan"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Bilder" />
 
             <TextView
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Großes Bild (Asset-Name)"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
+                android:layout_marginTop="14dp"
+                android:text="Großes Bild (Asset-Name)" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/etLarge"
+                    style="@style/Input.Aurora"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_input"
                     android:hint="z.B. logo"
                     android:inputType="text"
-                    android:padding="14dp"
-                    android:textColor="@color/ink"
-                    android:textColorHint="@color/muted" />
+                    android:maxLines="1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUploadLarge"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Btn.Aurora.Compact"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="⬆" />
+                    android:text="⬆ Hochladen" />
             </LinearLayout>
 
             <EditText
                 android:id="@+id/etLargeText"
+                style="@style/Input.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_input"
                 android:hint="Hover-Text (optional)"
                 android:inputType="text"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
+                android:maxLines="1" />
 
             <TextView
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Kleines Bild (Asset-Name)"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
+                android:layout_marginTop="14dp"
+                android:text="Kleines Bild (Asset-Name)" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/etSmall"
+                    style="@style/Input.Aurora"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_input"
                     android:hint="(leer = keins)"
                     android:inputType="text"
-                    android:padding="14dp"
-                    android:textColor="@color/ink"
-                    android:textColorHint="@color/muted" />
+                    android:maxLines="1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUploadSmall"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Btn.Aurora.Compact"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="⬆" />
+                    android:text="⬆ Hochladen" />
             </LinearLayout>
 
             <EditText
                 android:id="@+id/etSmallText"
+                style="@style/Input.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_input"
                 android:hint="Hover-Text (optional)"
                 android:inputType="text"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
+                android:maxLines="1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -282,188 +262,173 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRefreshAssets"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Btn.Aurora.Compact"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="↻" />
+                    android:text="↻ Neu laden" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/assetList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:orientation="vertical" />
         </LinearLayout>
 
-        <!-- BUTTONS & EXTRAS -->
+        <!-- ══════════ BUTTONS & EXTRAS ══════════ -->
         <LinearLayout
+            style="@style/Card.Aurora"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_card"
             android:orientation="vertical"
             android:padding="18dp">
 
             <TextView
+                style="@style/Text.Aurora.Overline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="◉ BUTTONS &amp; EXTRAS"
-                android:textColor="@color/cyan"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Buttons &amp; Extras" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Stream-URL (nur bei Typ Streamt)"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
-
-            <EditText
-                android:id="@+id/etStream"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
-                android:hint="https://twitch.tv/..."
-                android:inputType="textUri"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Button 1 (keine Emojis!)"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
-
-            <EditText
-                android:id="@+id/etBtn1Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
-                android:hint="Text (leer = kein Button)"
-                android:inputType="text"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
-
-            <EditText
-                android:id="@+id/etBtn1Url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_input"
-                android:hint="https://..."
-                android:inputType="textUri"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Button 2"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
-
-            <EditText
-                android:id="@+id/etBtn2Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
-                android:hint="Text (leer = kein Button)"
-                android:inputType="text"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
-
-            <EditText
-                android:id="@+id/etBtn2Url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_input"
-                android:hint="https://..."
-                android:inputType="textUri"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/swTime"
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="⏱ Verstrichene Zeit anzeigen"
-                android:textColor="@color/ink" />
+                android:text="Stream-URL (nur bei Typ Streamt)" />
+
+            <EditText
+                android:id="@+id/etStream"
+                style="@style/Input.Aurora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="https://twitch.tv/..."
+                android:inputType="textUri"
+                android:maxLines="1" />
 
             <TextView
+                style="@style/Text.Aurora.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Online-Status"
-                android:textColor="@color/muted"
-                android:textSize="12sp" />
+                android:layout_marginTop="14dp"
+                android:text="Button 1 (keine Emojis!)" />
+
+            <EditText
+                android:id="@+id/etBtn1Label"
+                style="@style/Input.Aurora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="Text (leer = kein Button)"
+                android:inputType="text"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/etBtn1Url"
+                style="@style/Input.Aurora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="https://..."
+                android:inputType="textUri"
+                android:maxLines="1" />
+
+            <TextView
+                style="@style/Text.Aurora.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Button 2" />
+
+            <EditText
+                android:id="@+id/etBtn2Label"
+                style="@style/Input.Aurora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="Text (leer = kein Button)"
+                android:inputType="text"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/etBtn2Url"
+                style="@style/Input.Aurora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="https://..."
+                android:inputType="textUri"
+                android:maxLines="1" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:minHeight="44dp"
+                android:text="⏱ Verstrichene Zeit anzeigen"
+                android:textColor="@color/ink"
+                android:textSize="14sp" />
+
+            <TextView
+                style="@style/Text.Aurora.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Online-Status" />
 
             <Spinner
                 android:id="@+id/spStatus"
+                style="@style/Spin.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_input"
-                android:padding="14dp" />
+                android:layout_marginTop="5dp" />
+
+            <TextView
+                style="@style/Text.Aurora.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Party-Zähler" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/etPartyCur"
+                    style="@style/Input.Aurora"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_input"
-                    android:hint="Party: aktuell (0=aus)"
+                    android:hint="aktuell (0 = aus)"
                     android:inputType="number"
-                    android:padding="14dp"
-                    android:textColor="@color/ink"
-                    android:textColorHint="@color/muted" />
+                    android:maxLines="1" />
 
                 <EditText
                     android:id="@+id/etPartyMax"
+                    style="@style/Input.Aurora"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_input"
-                    android:hint="Party: max (0=aus)"
+                    android:hint="max (0 = aus)"
                     android:inputType="number"
-                    android:padding="14dp"
-                    android:textColor="@color/ink"
-                    android:textColorHint="@color/muted" />
+                    android:maxLines="1" />
             </LinearLayout>
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
+            style="@style/Btn.Aurora.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="28dp"
-            android:background="@drawable/gradient_button"
-            android:text="✅ SPEICHERN"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:rippleColor="#33FFFFFF" />
+            android:text="✅ SPEICHERN" />
     </LinearLayout>
 </ScrollView>

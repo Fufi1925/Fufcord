@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 1:1 Discord-Aktivitätskarte in echten Discord-Farben -->
+<!-- 1:1 Discord-Aktivitätskarte in echten Discord-Farben (bewusst NICHT Aurora) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/preview_bg"
@@ -23,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:letterSpacing="0.04"
             android:text="SPIELT GERADE"
             android:textColor="@color/white"
             android:textSize="12sp"
@@ -130,7 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:text="⏱ läuft seit Start"
-                android:textColor="@color/mint"
+                android:textColor="@color/ok_green"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
@@ -144,21 +146,33 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/previewBtn1"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:text="Button" />
+            android:backgroundTint="@color/discord_btn"
+            android:text="Button"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            app:cornerRadius="8dp"
+            app:rippleColor="#33FFFFFF"
+            app:strokeWidth="0dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/previewBtn2"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:layout_weight="1"
-            android:text="Button" />
+            android:backgroundTint="@color/discord_btn"
+            android:text="Button"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            app:cornerRadius="8dp"
+            app:rippleColor="#33FFFFFF"
+            app:strokeWidth="0dp" />
     </LinearLayout>
 
     <TextView
@@ -167,7 +181,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="🛡️ Sicher-Modus: nur Text"
-        android:textColor="@color/mint"
+        android:textColor="@color/ok_green"
         android:textSize="12sp"
         android:visibility="gone" />
 </LinearLayout>

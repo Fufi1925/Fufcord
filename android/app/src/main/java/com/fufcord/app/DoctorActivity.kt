@@ -61,10 +61,18 @@ class DoctorActivity : AppCompatActivity() {
 
     private fun row(sym: String, txt: String) {
         val t = TextView(this)
-        t.text = "$sym $txt"
+        t.text = "$sym  $txt"
         t.textSize = 14f
         t.setPadding(0, 8, 0, 8)
-        t.setTextColor(0xFFFFFFFF.toInt())
+        // Aurora: Zeilenfarbe nach Schweregrad
+        t.setTextColor(
+            when (sym) {
+                "🔴" -> 0xFFFF5C7A.toInt() // rose
+                "🟡" -> 0xFFFFC24B.toInt() // amber
+                "🟢" -> 0xFF3DDC97.toInt() // ok_green
+                else -> 0xFFEEF2FF.toInt() // ink
+            }
+        )
         b.resultList.addView(t)
     }
 

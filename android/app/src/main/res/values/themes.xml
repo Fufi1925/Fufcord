@@ -1,35 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ================================================================ Theme -->
     <style name="Theme.Fufcord" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/violet</item>
+        <item name="colorPrimary">@color/aurora_indigo</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryContainer">@color/violet_dark</item>
-        <item name="colorSecondary">@color/cyan</item>
-        <item name="colorTertiary">@color/mint</item>
+        <item name="colorPrimaryContainer">@color/chip</item>
+        <item name="colorOnPrimaryContainer">@color/ink</item>
+        <item name="colorSecondary">@color/aqua</item>
+        <item name="colorOnSecondary">@color/bg</item>
+        <item name="colorTertiary">@color/aurora_pink</item>
         <item name="colorError">@color/rose</item>
         <item name="android:windowBackground">@color/bg</item>
-        <item name="colorSurface">@color/card</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/ink</item>
-        <item name="colorSurfaceVariant">@color/card2</item>
+        <item name="colorSurfaceVariant">@color/surface2</item>
         <item name="colorOnSurfaceVariant">@color/muted</item>
         <item name="colorOutline">@color/stroke</item>
-        <item name="shapeAppearanceSmallComponent">@style/Shape.Fufcord.Small</item>
-        <item name="shapeAppearanceMediumComponent">@style/Shape.Fufcord.Medium</item>
-        <item name="shapeAppearanceLargeComponent">@style/Shape.Fufcord.Large</item>
+        <item name="android:textColorHint">@color/faint</item>
+        <item name="shapeAppearanceSmallComponent">@style/Shape.Aurora.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/Shape.Aurora.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/Shape.Aurora.Large</item>
     </style>
 
-    <style name="Shape.Fufcord.Small" parent="ShapeAppearance.Material3.SmallComponent">
+    <style name="Shape.Aurora.Small" parent="ShapeAppearance.Material3.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">12dp</item>
+        <item name="cornerSize">14dp</item>
     </style>
 
-    <style name="Shape.Fufcord.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+    <style name="Shape.Aurora.Medium" parent="ShapeAppearance.Material3.MediumComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">18dp</item>
+        <item name="cornerSize">22dp</item>
     </style>
 
-    <style name="Shape.Fufcord.Large" parent="ShapeAppearance.Material3.LargeComponent">
+    <style name="Shape.Aurora.Large" parent="ShapeAppearance.Material3.LargeComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">26dp</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <!-- ============================================================ Typografie -->
+    <style name="Text.Aurora" parent="android:Widget.Material.TextView">
+        <item name="android:textColor">@color/ink</item>
+    </style>
+
+    <style name="Text.Aurora.HeroTitle">
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:letterSpacing">0.03</item>
+    </style>
+
+    <style name="Text.Aurora.HeroSub">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/on_hero_dim</item>
+    </style>
+
+    <style name="Text.Aurora.Overline">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.14</item>
+        <item name="android:textColor">@color/aqua</item>
+    </style>
+
+    <style name="Text.Aurora.CardTitle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/ink</item>
+    </style>
+
+    <style name="Text.Aurora.Label">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/muted</item>
+    </style>
+
+    <style name="Text.Aurora.Body">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ink</item>
+    </style>
+
+    <style name="Text.Aurora.Hint">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/faint</item>
+    </style>
+
+    <!-- =============================================================== Buttons -->
+    <style name="Btn.Aurora.Primary" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/gradient_button</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">54dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="rippleColor">#33FFFFFF</item>
+    </style>
+
+    <style name="Btn.Aurora.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">14sp</item>
+        <item name="backgroundTint">@color/surface2</item>
+        <item name="strokeColor">@color/stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="rippleColor">#226366F1</item>
+    </style>
+
+    <style name="Btn.Aurora.Ghost" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/muted</item>
+        <item name="android:textSize">14sp</item>
+        <item name="strokeColor">@color/stroke_bright</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="rippleColor">#226366F1</item>
+    </style>
+
+    <style name="Btn.Aurora.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/muted</item>
+        <item name="android:textSize">14sp</item>
+        <item name="cornerRadius">28dp</item>
+    </style>
+
+    <style name="Btn.Aurora.Compact" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">13sp</item>
+        <item name="backgroundTint">@color/surface2</item>
+        <item name="strokeColor">@color/stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="rippleColor">#226366F1</item>
+    </style>
+
+    <!-- ================================================================= Inputs -->
+    <style name="Input.Aurora">
+        <item name="android:background">@drawable/rounded_input</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingTop">13dp</item>
+        <item name="android:paddingBottom">13dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textColorHint">@color/faint</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Spin.Aurora">
+        <item name="android:background">@drawable/rounded_input</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingTop">13dp</item>
+        <item name="android:paddingBottom">13dp</item>
+    </style>
+
+    <!-- =================================================================== Cards -->
+    <style name="Card.Aurora">
+        <item name="android:background">@drawable/rounded_card</item>
     </style>
 </resources>

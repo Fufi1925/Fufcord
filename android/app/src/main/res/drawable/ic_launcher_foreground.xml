@@ -1,17 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AURORA Icon: neues F-Mark + Aqua-Statuspunkt -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Neues F -->
+    <!-- F (klar, geometrisch) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M34,22h44v16H50v12h20v14H50v22H34z" />
-    <!-- Mint-Punkt mit dunklem Ring -->
+        android:pathData="M38,26 H70 V40 H53 V48 H69 V61 H53 V82 H38 Z" />
+    <!-- Statuspunkt: dunkler Ring + Aqua-Kern -->
     <path
-        android:fillColor="#0A0D16"
-        android:pathData="M82,82m-14,0a14,14 0,1 0,28 0a14,14 0,1 0,-28 0" />
+        android:fillColor="#0A0F20"
+        android:pathData="M70,72 m-12,0 a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0" />
     <path
-        android:fillColor="#34D399"
-        android:pathData="M82,82m-10,0a10,10 0,1 0,20 0a10,10 0,1 0,-20 0" />
+        android:fillColor="#2DE2C5"
+        android:pathData="M70,72 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0" />
 </vector>

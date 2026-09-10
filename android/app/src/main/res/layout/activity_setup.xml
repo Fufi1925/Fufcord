@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- AURORA — Setup-Assistent (3 Schritte) -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="20dp">
 
+        <!-- ══════════ HERO ══════════ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/gradient_hero"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="22dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,9 +34,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/badge_bg"
-                    android:padding="12dp"
+                    android:padding="13dp"
                     android:text="⚡"
-                    android:textSize="30sp" />
+                    android:textSize="27sp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -40,75 +46,94 @@
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/Text.Aurora.HeroTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FUFCORD"
-                        android:textColor="@color/white"
-                        android:textSize="25sp"
-                        android:textStyle="bold" />
+                        android:text="FUFCORD" />
 
                     <TextView
                         android:id="@+id/txtSetupInfo"
+                        style="@style/Text.Aurora.HeroSub"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Schritt 1 von 3"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.85" />
+                        android:layout_marginTop="2dp"
+                        android:text="Schritt 1 von 3" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- Schritt-Fortschritt -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/pill_dark"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/aqua" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="3dp"
+                    android:layout_weight="1"
+                    android:background="#40FFFFFF" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="3dp"
+                    android:layout_weight="1"
+                    android:background="#40FFFFFF" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Schritt 1: Token -->
+        <!-- ══════════ SCHRITT 1: TOKEN ══════════ -->
         <LinearLayout
             android:id="@+id/step1"
+            style="@style/Card.Aurora"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_card"
             android:orientation="vertical"
             android:padding="20dp">
 
             <TextView
+                style="@style/Text.Aurora.Overline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="◉ SCHRITT 1"
-                android:textColor="@color/cyan"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Schritt 1 • Token" />
 
             <TextView
+                style="@style/Text.Aurora.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="🔑 Dein Discord User-Token" />
+
+            <TextView
+                style="@style/Text.Aurora.Hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="🔑 Dein Discord User-Token"
-                android:textColor="@color/ink"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Nur mit Handy holbar — siehe TOKEN-HOLEN.md im Repo (Firefox-Methode). Niemals teilen!"
-                android:textColor="@color/muted"
-                android:textSize="13sp" />
+                android:text="Nur mit Handy holbar — siehe TOKEN-HOLEN.md im Repo (Firefox-Methode). Niemals teilen!" />
 
             <EditText
                 android:id="@+id/etToken"
+                style="@style/Input.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/rounded_input"
+                android:layout_marginTop="14dp"
                 android:hint="Token hier einfügen..."
                 android:inputType="textVisiblePassword"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
+                android:maxLines="1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTestToken"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Btn.Aurora.Tonal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -116,72 +141,65 @@
 
             <TextView
                 android:id="@+id/txtTokenResult"
+                style="@style/Text.Aurora.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text=""
-                android:textColor="@color/ink"
-                android:textSize="14sp" />
+                android:text="" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNext1"
+                style="@style/Btn.Aurora.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:text="Weiter →" />
         </LinearLayout>
 
-        <!-- Schritt 2: App-ID -->
+        <!-- ══════════ SCHRITT 2: APP-ID ══════════ -->
         <LinearLayout
             android:id="@+id/step2"
+            style="@style/Card.Aurora"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_card"
             android:orientation="vertical"
             android:padding="20dp"
             android:visibility="gone">
 
             <TextView
+                style="@style/Text.Aurora.Overline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="◉ SCHRITT 2"
-                android:textColor="@color/cyan"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Schritt 2 • App-ID" />
 
             <TextView
+                style="@style/Text.Aurora.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="🆔 Application ID (für Bilder)" />
+
+            <TextView
+                style="@style/Text.Aurora.Hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="🆔 Application ID (für Bilder)"
-                android:textColor="@color/ink"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="discord.com/developers → New Application → ID kopieren. Ohne ID geht nur Text."
-                android:textColor="@color/muted"
-                android:textSize="13sp" />
+                android:text="discord.com/developers → New Application → ID kopieren. Ohne ID geht nur Text." />
 
             <EditText
                 android:id="@+id/etAppId"
+                style="@style/Input.Aurora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/rounded_input"
+                android:layout_marginTop="14dp"
                 android:hint="z.B. 123456789012345678"
                 android:inputType="number"
-                android:padding="14dp"
-                android:textColor="@color/ink"
-                android:textColorHint="@color/muted" />
+                android:maxLines="1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTestApp"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Btn.Aurora.Tonal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -189,15 +207,15 @@
 
             <TextView
                 android:id="@+id/txtAppResult"
+                style="@style/Text.Aurora.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text=""
-                android:textColor="@color/ink"
-                android:textSize="14sp" />
+                android:text="" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNext2"
+                style="@style/Btn.Aurora.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -205,57 +223,51 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSkip2"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Btn.Aurora.Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Überspringen (nur Text)" />
         </LinearLayout>
 
-        <!-- Schritt 3: Fertig -->
+        <!-- ══════════ SCHRITT 3: FERTIG ══════════ -->
         <LinearLayout
             android:id="@+id/step3"
+            style="@style/Card.Aurora"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_card"
             android:orientation="vertical"
             android:padding="20dp"
             android:visibility="gone">
 
             <TextView
+                style="@style/Text.Aurora.Overline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="◉ SCHRITT 3"
-                android:textColor="@color/cyan"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Schritt 3 • Fertig" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="🎉 Fertig!"
-                android:textColor="@color/ink"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <TextView
+                style="@style/Text.Aurora.CardTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Tippe START — deine Rich Presence läuft dann im Hintergrund, auch wenn die App zu ist. Bilder lädst du im Studio per ⬆ hoch."
-                android:textColor="@color/muted"
-                android:textSize="14sp" />
+                android:text="🎉 Alles bereit!"
+                android:textSize="22sp" />
+
+            <TextView
+                style="@style/Text.Aurora.Hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tippe START — deine Rich Presence läuft dann im Hintergrund, auch wenn die App zu ist. Bilder lädst du im Studio per ⬆ hoch." />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFinish"
+                style="@style/Btn.Aurora.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/gradient_button"
-                android:text="🚀 Los gehts!"
-                android:textColor="@color/white"
-                app:rippleColor="#33FFFFFF" />
+                android:layout_marginTop="18dp"
+                android:text="🚀 Los geht's!" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

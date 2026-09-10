@@ -271,7 +271,7 @@ class MainActivity : AppCompatActivity() {
         fun label(s: String): TextView {
             val t = TextView(this)
             t.text = s
-            t.setTextColor(0xFF8B93B0.toInt())
+            t.setTextColor(0xFF97A0C3.toInt())
             lay.addView(t)
             return t
         }

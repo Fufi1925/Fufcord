@@ -1,22 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Fufcord v3.2 Design "Neon Night": Mitternacht + Violett/Cyan -->
-    <color name="bg">#0A0D16</color>
-    <color name="card">#141A30</color>
-    <color name="card2">#1B2340</color>
-    <color name="stroke">#2B355C</color>
-    <color name="violet">#7C5CFF</color>
-    <color name="violet_dark">#5B3DF0</color>
-    <color name="cyan">#22D3EE</color>
-    <color name="mint">#34D399</color>
-    <color name="amber">#FBBF24</color>
-    <color name="rose">#FB7185</color>
-    <color name="ink">#F2F5FF</color>
-    <color name="muted">#8B93B0</color>
+    <!-- Fufcord v4.0 Design "AURORA" — Void-Glas + Indigo/Violett/Pink-Verlauf -->
+    <color name="bg">#05070F</color>
+    <color name="surface">#0D1226</color>
+    <color name="surface2">#141B38</color>
+    <color name="field">#090E20</color>
+    <color name="chip">#1C2547</color>
+    <color name="stroke">#1E2848</color>
+    <color name="stroke_soft">#161F3D</color>
+    <color name="stroke_bright">#2A3562</color>
+
+    <!-- Aurora-Verlauf -->
+    <color name="aurora_indigo">#6366F1</color>
+    <color name="aurora_violet">#8B5CF6</color>
+    <color name="aurora_pink">#EC4899</color>
+
+    <!-- Signale -->
+    <color name="aqua">#2DE2C5</color>
+    <color name="ok_green">#3DDC97</color>
+    <color name="amber">#FFC24B</color>
+    <color name="rose">#FF5C7A</color>
+
+    <!-- Text -->
+    <color name="ink">#EEF2FF</color>
+    <color name="muted">#97A0C3</color>
+    <color name="faint">#5C6588</color>
     <color name="white">#FFFFFF</color>
-    <!-- Echte Discord-Farben nur für die 1:1-Vorschau -->
+    <color name="on_hero_dim">#C9FFFFFF</color>
+
+    <!-- Glas (Badges auf Hero-Flächen) -->
+    <color name="glass">#26FFFFFF</color>
+    <color name="glass_stroke">#59FFFFFF</color>
+
+    <!-- Echte Discord-Farben — NUR für die 1:1-Vorschau -->
     <color name="discord_bg">#1E1F22</color>
     <color name="discord_stroke">#2E2F33</color>
     <color name="discord_blurple">#5865F2</color>
     <color name="discord_text">#B5BAC1</color>
+    <color name="discord_btn">#4E5058</color>
 </resources>

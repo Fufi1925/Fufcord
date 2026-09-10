@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fufcord v4.0 — Aurora Design</title>
+<style>
+  :root{
+    --bg:#05070F; --surface:#0D1226; --surface2:#141B38; --field:#090E20;
+    --chip:#1C2547; --stroke:#1E2848; --stroke-soft:#161F3D; --stroke-bright:#2A3562;
+    --indigo:#6366F1; --violet:#8B5CF6; --pink:#EC4899; --aqua:#2DE2C5;
+    --green:#3DDC97; --amber:#FFC24B; --rose:#FF5C7A;
+    --ink:#EEF2FF; --muted:#97A0C3; --faint:#5C6588;
+    --hero:linear-gradient(135deg,#6366F1 0%,#8B5CF6 50%,#EC4899 100%);
+    --btn:linear-gradient(90deg,#6366F1,#8B5CF6,#EC4899);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#020308 radial-gradient(1200px 500px at 50% -10%, rgba(99,102,241,.14), transparent 60%);
+       color:var(--ink);font-family:-apple-system,'Segoe UI',Roboto,sans-serif;padding:38px 26px 60px}
+  h1{font-size:26px;letter-spacing:.04em}
+  h1 span{background:var(--btn);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:14px;margin:6px 0 34px}
+  .gallery{display:flex;gap:26px;flex-wrap:wrap;justify-content:center}
+  .shot{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .shot-label{font-size:11px;letter-spacing:.18em;color:var(--aqua);text-transform:uppercase;font-weight:700}
+  .phone{width:340px;height:700px;background:var(--bg);border:1px solid var(--stroke);border-radius:34px;
+         padding:14px 13px;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.02)}
+  .phone::-webkit-scrollbar{display:none}
+
+  /* ==== AURORA BAUSTEINE ==== */
+  .hero{background:var(--hero);border-radius:28px;padding:20px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.19),transparent 55%);pointer-events:none}
+  .hero-row{display:flex;align-items:center;gap:14px;position:relative}
+  .badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);border-radius:18px;
+         padding:12px;font-size:24px;line-height:1}
+  .hero-title{font-size:24px;font-weight:800;color:#fff;letter-spacing:.03em}
+  .hero-sub{font-size:12px;color:rgba(255,255,255,.79);margin-top:2px}
+  .pill{background:rgba(16,21,48,.4);border:1px solid rgba(255,255,255,.25);border-radius:99px;
+        padding:11px 16px;display:flex;align-items:center;gap:10px;margin-top:16px;position:relative}
+  .pill .txt{font-size:14px;font-weight:700;color:#fff}
+  .btn{display:flex;align-items:center;justify-content:center;border-radius:99px;font-weight:700;
+       font-size:14px;padding:15px 20px;margin-top:14px;position:relative;color:#fff}
+  .btn.primary{background:var(--btn);box-shadow:0 8px 24px rgba(139,92,246,.35)}
+  .btn.tonal{background:var(--surface2);border:1px solid var(--stroke);color:var(--ink);margin-top:0}
+  .btn.ghost{background:transparent;border:1px solid var(--stroke-bright);color:var(--muted);margin-top:0}
+  .btn.text{background:transparent;color:var(--muted);margin-top:0}
+  .grid2{display:flex;gap:10px;margin-top:10px}
+  .grid2 .btn{flex:1}
+  .overline{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);margin-top:26px}
+  .hint{font-size:12px;color:var(--faint);margin-top:3px}
+  .card{background:var(--surface);border:1px solid var(--stroke);border-radius:24px;padding:18px;margin-top:12px}
+  .label{font-size:12px;color:var(--muted);margin-top:14px}
+  .input{background:var(--field);border:1px solid var(--stroke-soft);border-radius:14px;padding:13px 14px;
+         font-size:14px;color:var(--ink);margin-top:5px;min-height:46px}
+  .input .ph{color:var(--faint)}
+  .footer{margin-top:22px;text-align:center;font-size:10px;letter-spacing:.2em;color:var(--faint)}
+  .row{display:flex;gap:8px;align-items:center}
+  .row .input{flex:1;margin-top:5px}
+  .chip{background:var(--chip);border:1px solid var(--stroke);color:var(--ink);border-radius:99px;
+        padding:10px 16px;font-size:13px;white-space:nowrap}
+  .chips{display:flex;gap:8px;margin-top:12px;overflow:hidden}
+
+  /* ==== DISCORD 1:1 VORSCHAU ==== */
+  .discord{background:#1E1F22;border:1px solid #2E2F33;border-radius:20px;padding:18px;margin-top:12px}
+  .d-bar{width:4px;height:18px;background:#5865F2;border-radius:2px}
+  .d-head{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:#fff;letter-spacing:.04em}
+  .d-body{display:flex;gap:16px;margin-top:12px}
+  .d-img{width:92px;height:92px;border-radius:10px;background:#212531;border:1px solid #3F4147;
+         display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+  .d-name{font-size:17px;font-weight:700;color:#fff}
+  .d-line{font-size:14px;color:#B5BAC1;margin-top:4px}
+  .d-time{font-size:12px;color:#3DDC97;margin-top:6px}
+  .d-btns{display:flex;gap:8px;margin-top:14px}
+  .d-btn{flex:1;background:#4E5058;color:#fff;font-size:13px;text-align:center;border-radius:8px;padding:9px 0}
+
+  /* Doktor */
+  .doc-row{font-size:14px;padding:8px 0}
+  .ok{color:var(--green)} .warn{color:var(--amber)} .bad{color:var(--rose)}
+  .progress{display:flex;gap:3px;margin-top:18px;position:relative}
+  .progress i{height:4px;flex:1;border-radius:99px;background:rgba(255,255,255,.25)}
+  .progress i.on{background:var(--aqua)}
+
+  /* Palette */
+  .palette{max-width:1090px;margin:44px auto 0;background:var(--surface);border:1px solid var(--stroke);
+           border-radius:24px;padding:24px}
+  .pal-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua)}
+  .swatches{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .sw{width:118px;border-radius:14px;overflow:hidden;border:1px solid var(--stroke)}
+  .sw .c{height:52px}
+  .sw .n{font-size:11px;color:var(--muted);padding:7px 9px;background:var(--field);font-family:monospace}
+</style>
+</head>
+<body>
+
+<h1>FUFCORD <span>v4.0 — AURORA</span></h1>
+<p class="sub">Komplettes App-Redesign von Grund auf — Void-Glas, Aurora-Verlauf (Indigo → Violett → Pink), Pill-Buttons, Aqua-Overlines. Alle 4 Screens + Design-System.</p>
+
+<div class="gallery">
+
+  <!-- ═══════ DASHBOARD ═══════ -->
+  <div class="shot">
+    <div class="shot-label">Dashboard</div>
+    <div class="phone">
+      <div class="hero">
+        <div class="hero-row">
+          <div class="badge">⚡</div>
+          <div>
+            <div class="hero-title">FUFCORD</div>
+            <div class="hero-sub">v4.0 • Custom Rich Presence</div>
+          </div>
+        </div>
+        <div class="pill"><span style="font-size:17px">🟢</span><span class="txt">Online als fufi • Minecraft</span></div>
+        <div class="btn primary">⏹ STOP</div>
+      </div>
+
+      <div class="overline">Live-Vorschau</div>
+      <div class="hint">Exakt so sieht es in Discord aus</div>
+      <div class="discord">
+        <div class="d-head"><div class="d-bar"></div>SPIELT GERADE</div>
+        <div class="d-body">
+          <div class="d-img">⛏️</div>
+          <div>
+            <div class="d-name">Minecraft</div>
+            <div class="d-line">⛏️ Grinding Diamonds</div>
+            <div class="d-line">Server: Fufcord SMP</div>
+            <div class="d-time">⏱ 12:34 verstrichen</div>
+          </div>
+        </div>
+        <div class="d-btns"><div class="d-btn">Server joinen</div></div>
+      </div>
+
+      <div class="overline">Presets</div>
+      <div class="chips">
+        <div class="chip">⛏️ Gaming</div><div class="chip">💻 Coding</div><div class="chip">🎧 Musik</div><div class="chip">🍿 Netflix</div>
+      </div>
+
+      <div class="overline">Steuerung</div>
+      <div class="grid2"><div class="btn tonal">🎨 Studio</div><div class="btn tonal">🩺 Doktor</div></div>
+      <div class="grid2"><div class="btn tonal">📤 JSON export</div><div class="btn tonal">📥 JSON import</div></div>
+      <div class="grid2"><div class="btn ghost">⚙️ Einstellungen</div></div>
+      <div class="footer">FUFCORD • AURORA</div>
+    </div>
+  </div>
+
+  <!-- ═══════ STUDIO ═══════ -->
+  <div class="shot">
+    <div class="shot-label">Studio (Editor)</div>
+    <div class="phone">
+      <div class="hero">
+        <div class="hero-row">
+          <div class="badge">🎨</div>
+          <div>
+            <div class="hero-title">Studio</div>
+            <div class="hero-sub">Jede Änderung sofort in der Vorschau</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="discord" style="margin-top:14px">
+        <div class="d-head"><div class="d-bar"></div>HÖRT GERADE</div>
+        <div class="d-body">
+          <div class="d-img">🎧</div>
+          <div>
+            <div class="d-name">Spotify</div>
+            <div class="d-line">Blinding Lights — The Weeknd</div>
+            <div class="d-time">⏱ läuft seit Start</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="overline" style="margin-top:0">Text</div>
+        <div class="label">Name</div>
+        <div class="input">Spotify</div>
+        <div class="label">Typ</div>
+        <div class="input">Hört</div>
+        <div class="label">Details (Zeile 1)</div>
+        <div class="input">Blinding Lights — The Weeknd</div>
+        <div class="label">State (Zeile 2)</div>
+        <div class="input ph">z.B. Server: Fufcord SMP</div>
+      </div>
+
+      <div class="card">
+        <div class="overline" style="margin-top:0">Bilder</div>
+        <div class="label">Großes Bild (Asset-Name)</div>
+        <div class="row"><div class="input">spotify</div><div class="btn tonal" style="padding:11px 14px;border-radius:16px;font-size:13px">⬆ Hochladen</div></div>
+        <div class="label">Kleines Bild (Asset-Name)</div>
+        <div class="row"><div class="input ph">(leer = keins)</div><div class="btn tonal" style="padding:11px 14px;border-radius:16px;font-size:13px">⬆ Hochladen</div></div>
+      </div>
+
+      <div class="btn primary" style="margin-top:20px">✅ SPEICHERN</div>
+    </div>
+  </div>
+
+  <!-- ═══════ SETUP ═══════ -->
+  <div class="shot">
+    <div class="shot-label">Setup-Assistent</div>
+    <div class="phone">
+      <div class="hero">
+        <div class="hero-row">
+          <div class="badge">⚡</div>
+          <div>
+            <div class="hero-title">FUFCORD</div>
+            <div class="hero-sub">Schritt 1 von 3</div>
+          </div>
+        </div>
+        <div class="progress"><i class="on"></i><i></i><i></i></div>
+      </div>
+
+      <div class="card" style="margin-top:16px;padding:20px">
+        <div class="overline" style="margin-top:0">Schritt 1 • Token</div>
+        <div style="font-size:16px;font-weight:700;margin-top:8px">🔑 Dein Discord User-Token</div>
+        <div class="hint" style="margin-top:6px">Nur mit Handy holbar — siehe TOKEN-HOLEN.md im Repo (Firefox-Methode). Niemals teilen!</div>
+        <div class="input" style="margin-top:14px"><span class="ph">Token hier einfügen...</span></div>
+        <div class="btn tonal" style="margin-top:10px">🔍 Token testen</div>
+        <div style="font-size:14px;color:var(--green);margin-top:10px">✅ Gültig! Account: fufi</div>
+        <div class="btn primary">Weiter →</div>
+      </div>
+
+      <div class="card">
+        <div class="hint" style="margin-top:0">💡 Ohne App-ID geht nur Text-Presence. Bilder &amp; Buttons brauchen eine App aus dem Developer Portal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ DOKTOR ═══════ -->
+  <div class="shot">
+    <div class="shot-label">Doktor</div>
+    <div class="phone">
+      <div class="hero">
+        <div class="hero-row">
+          <div class="badge">🩺</div>
+          <div>
+            <div class="hero-title">Doktor</div>
+            <div class="hero-sub">Prüft Token, App &amp; Bilder direkt bei Discord</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="doc-row ok">🟢 Token GÜLTIG (Account: fufi)</div>
+        <div class="doc-row ok">🟢 App existiert: Fufcord</div>
+        <div class="doc-row ok">🟢 Großes Bild 'minecraft': hochgeladen ✅</div>
+        <div class="doc-row bad">🔴 Button 1 ('Join 🎮'): Emojis → BLOCKIEREN die Anzeige!</div>
+        <div class="doc-row warn">🟡 Hinweis: Buttons werden von Discord manchmal ignoriert.</div>
+      </div>
+
+      <div class="btn primary" style="margin-top:14px">🔧 Alles automatisch reparieren</div>
+      <div class="grid2"><div class="btn tonal">🔘 Buttons weg</div><div class="btn tonal">🖼️ Bilder weg</div></div>
+      <div class="grid2"><div class="btn ghost">🛡️ Sicher-Modus</div></div>
+      <div class="grid2"><div class="btn text">Zurück</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ DESIGN-SYSTEM ═══════ -->
+<div class="palette">
+  <div class="pal-title">Aurora Design-System</div>
+  <div class="swatches">
+    <div class="sw"><div class="c" style="background:#05070F"></div><div class="n">bg · Void</div></div>
+    <div class="sw"><div class="c" style="background:#0D1226"></div><div class="n">surface · Glas</div></div>
+    <div class="sw"><div class="c" style="background:linear-gradient(135deg,#6366F1,#8B5CF6,#EC4899)"></div><div class="n">Aurora-Verlauf</div></div>
+    <div class="sw"><div class="c" style="background:#6366F1"></div><div class="n">aurora_indigo</div></div>
+    <div class="sw"><div class="c" style="background:#8B5CF6"></div><div class="n">aurora_violet</div></div>
+    <div class="sw"><div class="c" style="background:#EC4899"></div><div class="n">aurora_pink</div></div>
+    <div class="sw"><div class="c" style="background:#2DE2C5"></div><div class="n">aqua · Overline</div></div>
+    <div class="sw"><div class="c" style="background:#EEF2FF"></div><div class="n">ink · Text</div></div>
+    <div class="sw"><div class="c" style="background:#97A0C3"></div><div class="n">muted</div></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+    <div class="btn primary" style="margin:0;padding:13px 26px">Primary · Gradient-Pill</div>
+    <div class="btn tonal" style="margin:0;padding:13px 26px">Tonal</div>
+    <div class="btn ghost" style="margin:0;padding:13px 26px">Ghost</div>
+    <div class="btn text" style="margin:0;padding:13px 26px">Text</div>
+  </div>
+  <div class="hint" style="margin-top:16px">Radien: Hero 28dp · Karte 24dp · Feld 14dp · Buttons/Chips = Pill (99dp) &nbsp;·&nbsp; Die Discord-Vorschau bleibt bewusst in echten Discord-Farben (1:1-Prinzip).</div>
+</div>
+
+</body>
+</html>
