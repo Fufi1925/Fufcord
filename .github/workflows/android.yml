@@ -41,3 +41,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: android/app/build/outputs/apk/debug/app-debug.apk
+          generate_release_notes: true
+          body: |
+            ## 📱 Fufcord — Custom Discord Rich Presence (Android-App)
+
+            **Installation:** APK aufs Handy laden → installieren → im Setup-Assistenten Token eintragen → START.
+            Die App läuft im Hintergrund, meldet neue Versionen automatisch per Pop-up und updated per Download von hier.
+
+            **Enthalten:** Hintergrund-Service, Bilder-Upload, 1:1-Discord-Vorschau, Setup-Assistent, Presets, JSON Im-/Export (KI), Doktor mit Auto-Reparatur, Sicher-Modus.
+
+            **Quellcode:** Vollständig Open Source (MIT-Lizenz) — siehe Tab **Code** → Ordner `android/`. © 2026 Fufcord, alle Rechte vorbehalten.
