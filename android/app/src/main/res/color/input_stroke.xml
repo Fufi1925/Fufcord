@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Custom Feld-Rahmen: Blurple bei Fokus, ruhig sonst -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/violet" android:state_focused="true" />
+    <item android:color="#1E2430" android:state_enabled="false" />
+    <item android:color="@color/glass_stroke" />
+</selector>

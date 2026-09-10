@@ -76,6 +76,24 @@ class HelpActivity : AppCompatActivity() {
         }
         updateSafeBtn()
         runChecks()
+        loadCredits()
+    }
+
+    /** Credits: Name + Profilbild von Aleks per Discord-ID laden. */
+    private fun loadCredits() {
+        Thread {
+            val u = if (prefs.token.isNotEmpty())
+                DiscordApi.getUser(prefs.token, "1303627964734246944")
+            else DiscordApi.DiscordUser(false, "", "", "")
+            runOnUiThread {
+                if (u.ok) {
+                    b.txtCreditsName.text = u.name
+                    b.txtCreditsId.text = "${u.handle} • 1303627964734246944"
+                    b.imgCreditsAvatar.visibility = View.VISIBLE
+                    ImageLoader.load(u.avatarUrl, b.imgCreditsAvatar)
+                }
+            }
+        }.start()
     }
 
     /** FAQ-Akkordeon: Frage antippen → Antwort auf/zu. */

@@ -174,4 +174,8 @@
     <string name="help_sec_about">Über</string>
     <string name="help_update">Update prüfen</string>
     <string name="help_updating">Suche nach Updates …</string>
+    <string name="help_sec_credits">Credits</string>
+    <string name="help_credits_fallback">Aleks</string>
+    <string name="help_credits_made">Gemacht von Aleks</string>
+    <string name="help_credits_id">Discord-ID: 1303627964734246944</string>
 </resources>

@@ -59,14 +59,26 @@
         <item name="cornerSize">20dp</item>
     </style>
 
-    <!-- Eingabefelder -->
+    <!-- Eingabefelder: komplett custom — 14dp-Form, Blurple-Rahmen bei Fokus -->
     <style name="Widget.Fufcord.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/card2</item>
-        <item name="boxStrokeColor">@color/glass_stroke</item>
+        <item name="boxStrokeColor">@color/input_stroke</item>
+        <item name="boxStrokeErrorColor">@color/danger</item>
         <item name="boxStrokeWidth">1dp</item>
         <item name="boxStrokeWidthFocused">2dp</item>
         <item name="hintTextColor">@color/text_secondary</item>
         <item name="android:textColorHint">@color/text_tertiary</item>
+        <item name="shapeAppearanceOverlay">@style/Shape.Fufcord.Input</item>
+    </style>
+
+    <style name="Shape.Fufcord.Input" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+
+    <style name="Shape.Fufcord.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 
     <!-- Buttons (backgroundTint @null = eigene flache Drawables, kein Farb-Mix) -->

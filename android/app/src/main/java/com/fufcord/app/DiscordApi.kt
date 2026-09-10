@@ -46,6 +46,30 @@ object DiscordApi {
         }
     }
 
+    /** Fremden User per ID laden (für Credits). */
+    data class DiscordUser(val ok: Boolean, val name: String, val handle: String, val avatarUrl: String)
+
+    fun getUser(token: String, userId: String): DiscordUser {
+        return try {
+            val (code, body) = get("/users/$userId", token)
+            if (code != 200) return DiscordUser(false, "", "", "")
+            val o = JSONObject(body)
+            val username = o.optString("username", "?")
+            val global = o.optString("global_name", "")
+                .takeIf { it.isNotEmpty() && it != "null" } ?: username
+            val av = o.optString("avatar", "")
+            val url = if (av.isNotEmpty() && av != "null")
+                "https://cdn.discordapp.com/avatars/$userId/$av.png?size=128"
+            else {
+                val idx = (userId.toLongOrNull()?.shr(22) ?: 0) % 6
+                "https://cdn.discordapp.com/embed/avatars/$idx.png"
+            }
+            DiscordUser(true, global, "@$username", url)
+        } catch (e: Exception) {
+            DiscordUser(false, "", "", "")
+        }
+    }
+
     /** Eigene Apps → (ok, [(id, name)]) */
     fun listApps(token: String): Pair<Boolean, List<Pair<String, String>>> {
         return try {
@@ -83,7 +107,8 @@ object DiscordApi {
     /** Bild hochladen → (ok, assetId_oder_fehler). imageDataUrl = data:image/png;base64,... */
     fun uploadAsset(token: String, appId: String, name: String, imageDataUrl: String): Pair<Boolean, String> {
         return try {
-            val body = JSONObject().put("name", name).put("type", 1).put("image", imageDataUrl).toString()
+            // FIX: type als String "1" wie im offiziellen Portal — Int wird mit 400 abgelehnt.
+            val body = JSONObject().put("name", name).put("type", "1").put("image", imageDataUrl).toString()
                 .toRequestBody("application/json".toMediaType())
             val req = Request.Builder().url("$BASE/applications/$appId/assets")
                 .header("Authorization", token).header("User-Agent", UA)
@@ -91,7 +116,7 @@ object DiscordApi {
             client.newCall(req).execute().use { r ->
                 val txt = r.body?.string() ?: ""
                 if (r.code in 200..299) true to JSONObject(txt).optString("id", "?")
-                else false to "HTTP ${r.code}: ${txt.take(120)}"
+                else false to "HTTP ${r.code}: ${txt.take(160)}"
             }
         } catch (e: Exception) {
             false to (e.message ?: "Netzwerkfehler")

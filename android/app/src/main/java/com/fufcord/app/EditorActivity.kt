@@ -42,6 +42,10 @@ class EditorActivity : AppCompatActivity() {
         if (uri == null) return@registerForActivityResult
         try {
             val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return@registerForActivityResult
+            if (bytes.size > 25 * 1024 * 1024) {
+                Toast.makeText(this, "❌ Bild zu groß (max 25 MB)!", Toast.LENGTH_LONG).show()
+                return@registerForActivityResult
+            }
             showUploadDialog(bytes)
         } catch (e: Exception) {
             Toast.makeText(this, "Bildfehler: ${e.message}", Toast.LENGTH_LONG).show()
@@ -196,6 +200,10 @@ class EditorActivity : AppCompatActivity() {
 
     // ---------------- Bilder-Upload ----------------
     private fun showUploadDialog(bytes: ByteArray) {
+        if (prefs.token.isEmpty()) {
+            Toast.makeText(this, "❌ Erst Token eintragen! (Start → Zahnrad)", Toast.LENGTH_LONG).show()
+            return
+        }
         if (!validAppId(prefs.appId)) {
             Toast.makeText(this, "❌ Erst App-ID eintragen! (Start → Zahnrad)", Toast.LENGTH_LONG).show()
             return
@@ -212,6 +220,10 @@ class EditorActivity : AppCompatActivity() {
         img.scaleType = ImageView.ScaleType.CENTER_INSIDE
         lay.addView(img)
         val et = EditText(this)
+        et.setBackgroundResource(R.drawable.rounded_input)
+        et.setPadding(36, 32, 36, 32)
+        et.setTextColor(getColor(R.color.text_primary))
+        et.setHintTextColor(getColor(R.color.text_tertiary))
         et.hint = getString(R.string.upload_name_hint)
         val current = if (uploadTarget == "large") b.etLarge.text.toString() else b.etSmall.text.toString()
         if (current.isNotEmpty()) et.setText(current)
@@ -250,7 +262,13 @@ class EditorActivity : AppCompatActivity() {
                         loadAssets()
                         Toast.makeText(this, "✅ '$name' hochgeladen! (5 Min warten)", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(this, "❌ Upload fehlgeschlagen: $res", Toast.LENGTH_LONG).show()
+                        val msg = when {
+                            res.contains("401") -> "Token ungültig! Neuen eintragen (Start → Zahnrad)."
+                            res.contains("404") -> "App-ID falsch — prüfen!"
+                            res.contains("400") -> "Discord lehnt ab: $res"
+                            else -> "Upload fehlgeschlagen: $res"
+                        }
+                        Toast.makeText(this, "❌ $msg", Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
