@@ -31,9 +31,9 @@ Kein PC? Kein Problem. Du brauchst nur **Firefox** + eine kostenlose Erweiterung
 
 ## Schritt 5: Token kopieren
 
-1. Unten rechts erscheint der Button **🎫 Token anzeigen** (Seite ggf. neu laden)
-2. Button antippen → Token erscheint
-3. **Lang drücken → Kopieren**
+1. Nach dem Neuladen erscheint oben kurz grün **„Fufcord Helper aktiv ✅ – Token bereit!"**
+2. Unten rechts **🎫 Token anzeigen** antippen → Token erscheint **direkt auf der Seite** (kein Popup)
+3. **📋 Kopieren** antippen (oder Text lang drücken → kopieren)
 4. In Fufcord einfügen: `bash start.sh` → Menü **Punkt 2** → Token einfügen → speichern
 5. Menü **Punkt 1** → RPC starten 🚀
 
@@ -41,6 +41,7 @@ Kein PC? Kein Problem. Du brauchst nur **Firefox** + eine kostenlose Erweiterung
 
 | Problem | Lösung |
 |---|---|
+| Button reagiert nicht / kein Fenster | Script auf **v1.2+** aktualisieren (ohne Popups): alten Code komplett ersetzen → speichern → Tab neu laden |
 | Button erscheint nicht | **Tab NEU LADEN** (↻ / runterziehen) — Script greift erst nach Reload! |
 | Kein grüner „Helper aktiv ✅" nach Reload | Script läuft nicht → Dashboard prüfen: Script in Liste? Schalter AN? Gespeichert? |
 | Berechtigung fehlt | Firefox ☰ → Add-ons → Violentmonkey → Zugriff auf Websites **erlauben** |
