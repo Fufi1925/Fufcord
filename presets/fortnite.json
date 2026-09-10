@@ -1,0 +1,19 @@
+{
+  "status": "online",
+  "application_id": "",
+  "activity": {
+    "name": "Fortnite",
+    "type": 0,
+    "details": "🏆 Battle Royale – Solo",
+    "state": "🔫 12 Kills – Top 10",
+    "large_image": "fortnite",
+    "large_text": "Fortnite",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+  }
+}

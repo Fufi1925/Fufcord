@@ -1,0 +1,24 @@
+{
+  "status": "online",
+  "application_id": "",
+  "activity": {
+    "name": "Mein Stream",
+    "type": 1,
+    "details": "🔴 LIVE – Chill & Talk",
+    "state": "💬 Chat entscheidet",
+    "large_image": "twitch",
+    "large_text": "Twitch",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "https://twitch.tv/deinname",
+    "buttons": [
+      {
+        "label": "Zuschauen",
+        "url": "https://twitch.tv/deinname"
+      }
+    ],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+  }
+}

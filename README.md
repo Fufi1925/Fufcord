@@ -115,7 +115,8 @@ Dann einfach Termux minimieren — die Presence bleibt online. ✅
 Im Menü unter **Punkt 4**:
 - Aktuelle Einstellung als Preset speichern (z. B. `gaming`, `chill`)
 - Per Nummer laden — ideal zum Wechseln
-- Mitgeliefert: `gaming`, `coding`, `musik`
+- Mitgeliefert (8 Stück): `gaming` ⛏️, `coding` 💻, `musik` 🎧, `netflix` 🍿, `youtube` 📺, `twitch` 🔴, `fortnite` 🏆, `roblox` 🧱
+- Bilder dazu liegen im Ordner **`assets/`** — siehe **[assets/README.md](assets/README.md)** (hochladen + Namen exakt matchen!)
 
 ---
 
@@ -152,10 +153,8 @@ Fufcord/
 ├── requirements.txt     # Abhängigkeiten (nur websockets)
 ├── setup.sh             # Einmaliges Setup für Termux
 ├── start.sh             # Start-Skript
-├── presets/             # Gespeicherte Presets
-│   ├── gaming.json
-│   ├── coding.json
-│   └── musik.json
+├── presets/             # 8 fertige Presets (gaming, coding, musik, ...)
+├── assets/              # 8 Bilder für Discord Art Assets + Anleitung
 ├── .gitignore           # Schützt deinen Token
 └── README.md            # Diese Anleitung
 ```
