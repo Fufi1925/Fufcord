@@ -35,7 +35,7 @@
             android:name=".SetupActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".DoctorActivity" android:exported="false" />
+        <activity android:name=".HelpActivity" android:exported="false" />
         <activity android:name=".OnboardingActivity" android:exported="false" />
         <activity
             android:name=".SettingsActivity"

@@ -49,8 +49,8 @@
     <string name="main_section_tools">Werkzeuge</string>
     <string name="main_tool_studio">Studio</string>
     <string name="main_tool_studio_sub">Presence gestalten</string>
-    <string name="main_tool_doctor">Doktor</string>
-    <string name="main_tool_doctor_sub">Prüfen &amp; reparieren</string>
+    <string name="main_tool_help">Hilfe</string>
+    <string name="main_tool_help_sub">Prüfen &amp; Antworten</string>
     <string name="main_tool_export">Export</string>
     <string name="main_tool_export_sub">JSON für KI teilen</string>
     <string name="main_tool_import">Import</string>
@@ -90,13 +90,7 @@
     <string name="ed_save">Speichern</string>
 
     <!-- Doktor -->
-    <string name="doc_title">Doktor</string>
-    <string name="doc_subtitle">Prüft Token, App &amp; Bilder direkt bei Discord</string>
-    <string name="doc_checking">Frage Discord-API …</string>
-    <string name="doc_fix_all">Alles automatisch reparieren</string>
-    <string name="doc_no_buttons">Buttons entfernen</string>
-    <string name="doc_no_images">Bilder entfernen</string>
-    <string name="doc_back">Zurück</string>
+    <string name="toolbar_back">Zurück</string>
 
     <!-- Einstellungen -->
     <string name="set_title">Einstellungen</string>
@@ -148,4 +142,36 @@
     <string name="ed_offset_days">Tage</string>
     <string name="ed_offset_hours">Stunden</string>
     <string name="ed_offset_min">Minuten</string>
+    <string name="upd_title">Update verfügbar</string>
+    <string name="upd_download">Herunterladen</string>
+    <string name="upd_notes_empty">Neue Verbesserungen &amp; Fehlerbehebungen.</string>
+    <string name="help_title">Hilfe</string>
+    <string name="help_subtitle">System prüfen, reparieren &amp; Antworten finden</string>
+    <string name="help_sec_check">System prüfen</string>
+    <string name="help_checking">Prüfe …</string>
+    <string name="help_recheck">Erneut prüfen</string>
+    <string name="help_fix_all">Alles automatisch reparieren</string>
+    <string name="help_no_buttons">Buttons entfernen</string>
+    <string name="help_no_images">Bilder entfernen</string>
+    <string name="help_safe">🛡️ Sicher-Modus einschalten</string>
+    <string name="help_safe_disable">🛡️ Sicher-Modus: AN — ausschalten?</string>
+    <string name="help_safe_on">🛡️ Sicher-Modus AN (nur Text)</string>
+    <string name="help_safe_off">Sicher-Modus AUS (voll)</string>
+    <string name="help_fixed_buttons">✅ Buttons entfernt!</string>
+    <string name="help_fixed_images">✅ Bilder entfernt!</string>
+    <string name="help_status_ok">Alles in Ordnung ✅</string>
+    <string name="help_status_warn">%1$d Hinweis(e) — läuft trotzdem</string>
+    <string name="help_status_err">%1$d Problem(e) gefunden!</string>
+    <string name="help_sec_faq">Häufige Fragen</string>
+    <string name="help_faq1_q">▸ Token ungültig — was tun?</string>
+    <string name="help_faq1_a">Neu einloggen macht Tokens ungültig. Neuen Token holen (Anleitung: TOKEN-HOLEN.md auf GitHub) und unter Start → Zahnrad eintragen.</string>
+    <string name="help_faq2_q">▸ Activity wird nicht angezeigt?</string>
+    <string name="help_faq2_a">Meist fehlt das hochgeladene Bild oder die App-ID stimmt nicht. Oben „Erneut prüfen“ laufen lassen und „Alles automatisch reparieren“ tippen.</string>
+    <string name="help_faq3_q">▸ Buttons erscheinen nicht?</string>
+    <string name="help_faq3_a">Discord ignoriert Buttons manchmal. Emojis im Button-Text blockieren alles — entfernen. Notfalls Buttons ganz entfernen (Knopf oben).</string>
+    <string name="help_faq4_q">▸ App stoppt im Hintergrund?</string>
+    <string name="help_faq4_a">Akku-Optimierung für Fufcord ausschalten (System → Akku) und Autostart erlauben. Dann läuft START dauerhaft weiter.</string>
+    <string name="help_sec_about">Über</string>
+    <string name="help_update">Update prüfen</string>
+    <string name="help_updating">Suche nach Updates …</string>
 </resources>

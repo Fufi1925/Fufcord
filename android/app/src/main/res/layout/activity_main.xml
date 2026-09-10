@@ -60,7 +60,7 @@
                     android:paddingTop="4dp"
                     android:paddingEnd="10dp"
                     android:paddingBottom="4dp"
-                    android:text="v1.03"
+                    android:text="v1.04"
                     android:textColor="@color/cyan"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -248,7 +248,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnDoctor"
+                android:id="@+id/btnHelp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="7dp"
@@ -263,15 +263,15 @@
                 <ImageView
                     android:layout_width="26dp"
                     android:layout_height="26dp"
-                    android:contentDescription="@string/main_tool_doctor"
-                    android:src="@drawable/ic_health"
-                    android:tint="@color/success" />
+                    android:contentDescription="@string/main_tool_help"
+                    android:src="@drawable/ic_info"
+                    android:tint="@color/cyan" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@string/main_tool_doctor"
+                    android:text="@string/main_tool_help"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -280,7 +280,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="@string/main_tool_doctor_sub"
+                    android:text="@string/main_tool_help_sub"
                     android:textColor="@color/text_tertiary"
                     android:textSize="12sp" />
             </LinearLayout>

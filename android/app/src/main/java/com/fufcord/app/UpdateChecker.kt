@@ -6,17 +6,19 @@
 
 package com.fufcord.app
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AlertDialog
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import com.fufcord.app.databinding.DialogUpdateBinding
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
-/** Prüft GitHub-Releases auf neue Versionen → Pop-up mit Download. */
+/** Prüft GitHub-Releases auf neue Versionen → Custom-Pop-up mit Download. */
 object UpdateChecker {
 
     private const val API = "https://api.github.com/repos/Fufi1925/Fufcord/releases/latest"
@@ -42,9 +44,9 @@ object UpdateChecker {
                     val tag = o.optString("tag_name", "").trim().removePrefix("v")
                     if (tag.isEmpty() || current.isEmpty()) return@use
                     if (!isNewer(tag, current)) return@use
-                    // Sonderfall Versions-Neustart: Tag v4.2 enthält App 1.03.
+                    // Versions-Neustart: 4.x-Tags enthalten 1.x-Apps (4.2→1.03, 4.3→1.04).
                     // Ohne Guard würden 1.x-Geräte ewig zum "Update" auf die eigene Version raten.
-                    if (tag == "4.2" && current.startsWith("1.")) return@use
+                    if (tag.startsWith("4.") && current.startsWith("1.")) return@use
                     if (prefs.skipVersion == tag) return@use
                     var apkUrl = ""
                     val assets = o.optJSONArray("assets")
@@ -60,7 +62,7 @@ object UpdateChecker {
                     }
                     val url = apkUrl.ifEmpty { o.optString("html_url", "") }
                     if (url.isEmpty()) return@use
-                    val notes = o.optString("body", "").take(800)
+                    val notes = o.optString("body", "").take(1200)
                     val act = ctx as? AppCompatActivity ?: return@use
                     act.runOnUiThread { showDialog(act, prefs, tag, notes, url) }
                 }
@@ -82,20 +84,21 @@ object UpdateChecker {
 
     private fun showDialog(act: AppCompatActivity, prefs: PrefsManager,
                            tag: String, notes: String, url: String) {
-        val msg = StringBuilder("🎉 Neue Version v$tag ist da!")
-        if (notes.isNotEmpty()) msg.append("\n\n$notes")
-        msg.append("\n\nJetzt herunterladen & installieren?")
-        AlertDialog.Builder(act)
-            .setTitle("⬆️ Update verfügbar")
-            .setMessage(msg.toString())
-            .setCancelable(true)
-            .setPositiveButton("⬇️ Herunterladen") { _, _ ->
-                try {
-                    act.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                } catch (e: Exception) { }
-            }
-            .setNeutralButton(act.getString(R.string.dlg_skip)) { _, _ -> prefs.skipVersion = tag }
-            .setNegativeButton(act.getString(R.string.dlg_later), null)
-            .show()
+        val d = DialogUpdateBinding.inflate(act.layoutInflater)
+        val dlg = Dialog(act, R.style.Theme_Fufcord_Dialog)
+        dlg.setContentView(d.root)
+        d.txtUpdVersion.text = "v$tag"
+        d.txtUpdNotes.text = notes.ifEmpty { act.getString(R.string.upd_notes_empty) }
+        d.btnUpdGo.setOnClickListener {
+            try {
+                act.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            } catch (e: Exception) { }
+            dlg.dismiss()
+        }
+        d.btnUpdLater.setOnClickListener { dlg.dismiss() }
+        d.btnUpdSkip.setOnClickListener { prefs.skipVersion = tag; dlg.dismiss() }
+        dlg.show()
+        val wm = act.resources.displayMetrics
+        dlg.window?.setLayout((wm.widthPixels * 0.92).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }

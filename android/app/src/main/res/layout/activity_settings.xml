@@ -22,7 +22,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/circle_icon_bg"
-            android:contentDescription="@string/doc_back"
+            android:contentDescription="@string/toolbar_back"
             android:padding="11dp"
             android:src="@drawable/ic_arrow_left" />
 
@@ -340,7 +340,7 @@
                         android:paddingTop="4dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="4dp"
-                        android:text="v1.03"
+                        android:text="v1.04"
                         android:textColor="@color/cyan"
                         android:textSize="12sp"
                         android:textStyle="bold" />

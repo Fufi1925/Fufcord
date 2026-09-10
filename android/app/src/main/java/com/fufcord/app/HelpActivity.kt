@@ -9,13 +9,14 @@ package com.fufcord.app
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.fufcord.app.databinding.ActivityDoctorBinding
-import com.fufcord.app.databinding.ItemDoctorRowBinding
+import com.fufcord.app.databinding.ActivityHelpBinding
+import com.fufcord.app.databinding.ItemHelpRowBinding
 
-/** 🩺 Doktor: prüft Token/App/Bilder bei Discord + Auto-Reparatur. */
-class DoctorActivity : AppCompatActivity() {
+/** Hilfe: System-Prüfung + Reparatur, FAQ und Update-Check. */
+class HelpActivity : AppCompatActivity() {
 
     companion object {
         private const val OK = 0
@@ -23,42 +24,68 @@ class DoctorActivity : AppCompatActivity() {
         private const val ERROR = 2
     }
 
-    private lateinit var b: ActivityDoctorBinding
+    private lateinit var b: ActivityHelpBinding
     private lateinit var prefs: PrefsManager
     private var missingAssets = setOf<String>()
     private var appMissing = false
+    private var errCount = 0
+    private var warnCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        b = ActivityDoctorBinding.inflate(layoutInflater)
+        b = ActivityHelpBinding.inflate(layoutInflater)
         setContentView(b.root)
         prefs = PrefsManager(this)
 
         b.toolbarBack.setOnClickListener { AnimUtils.finish(this) }
-        b.btnFixAll.setOnClickListener { fixAll() }
-        b.btnNoButtons.setOnClickListener {
+        b.btnHelpRecheck.setOnClickListener { runChecks() }
+        b.btnHelpFix.setOnClickListener { fixAll() }
+        b.btnHelpNoButtons.setOnClickListener {
             val a = prefs.loadAct()
             a.buttons.clear()
             prefs.saveAct(a)
-            afterLocalFix("✅ Buttons entfernt!")
+            afterLocalFix(getString(R.string.help_fixed_buttons))
         }
-        b.btnNoImages.setOnClickListener {
+        b.btnHelpNoImages.setOnClickListener {
             val a = prefs.loadAct()
             a.largeImage = ""; a.largeText = ""; a.smallImage = ""; a.smallText = ""
             prefs.saveAct(a)
-            afterLocalFix("✅ Bilder entfernt!")
+            afterLocalFix(getString(R.string.help_fixed_images))
         }
-        b.btnSafeToggle.setOnClickListener {
+        b.btnHelpSafe.setOnClickListener {
             prefs.safeMode = !prefs.safeMode
             updateSafeBtn()
             if (RpcService.isRunning) RpcService.refresh(this)
             Toast.makeText(this,
-                if (prefs.safeMode) "🛡️ Sicher-Modus AN (nur Text)" else "Sicher-Modus AUS (voll)",
+                if (prefs.safeMode) getString(R.string.help_safe_on) else getString(R.string.help_safe_off),
                 Toast.LENGTH_SHORT).show()
         }
-        b.btnClose.setOnClickListener { AnimUtils.finish(this) }
+        faq(b.faq1Title, b.faq1Body)
+        faq(b.faq2Title, b.faq2Body)
+        faq(b.faq3Title, b.faq3Body)
+        faq(b.faq4Title, b.faq4Body)
+        try {
+            @Suppress("DEPRECATION")
+            val p = packageManager.getPackageInfo(packageName, 0)
+            b.txtHelpVersion.text = "Fufcord v${p.versionName}"
+        } catch (_: Exception) { }
+        b.btnHelpUpdate.setOnClickListener {
+            prefs.skipVersion = ""
+            UpdateChecker.check(this)
+            Toast.makeText(this, R.string.help_updating, Toast.LENGTH_SHORT).show()
+        }
         updateSafeBtn()
         runChecks()
+    }
+
+    /** FAQ-Akkordeon: Frage antippen → Antwort auf/zu. */
+    private fun faq(title: TextView, body: TextView) {
+        title.setOnClickListener {
+            val open = body.visibility != View.VISIBLE
+            body.visibility = if (open) View.VISIBLE else View.GONE
+            val t = title.text.toString().removePrefix("▾ ").removePrefix("▸ ")
+            title.text = (if (open) "▾ " else "▸ ") + t
+        }
     }
 
     private fun afterLocalFix(msg: String) {
@@ -68,12 +95,12 @@ class DoctorActivity : AppCompatActivity() {
     }
 
     private fun updateSafeBtn() {
-        b.btnSafeToggle.text = if (prefs.safeMode) "🛡️ Sicher-Modus: AN — ausschalten?"
-        else "🛡️ Sicher-Modus einschalten"
+        b.btnHelpSafe.text = if (prefs.safeMode) getString(R.string.help_safe_disable)
+        else getString(R.string.help_safe)
     }
 
     private fun row(type: Int, txt: String) {
-        val r = ItemDoctorRowBinding.inflate(LayoutInflater.from(this), b.resultList, false)
+        val r = ItemHelpRowBinding.inflate(LayoutInflater.from(this), b.resultList, false)
         when (type) {
             OK -> {
                 r.rowBadge.setBackgroundResource(R.drawable.badge_success)
@@ -81,11 +108,13 @@ class DoctorActivity : AppCompatActivity() {
                 r.rowIcon.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.success))
             }
             WARN -> {
+                warnCount++
                 r.rowBadge.setBackgroundResource(R.drawable.badge_warning)
                 r.rowIcon.setImageResource(R.drawable.ic_warn)
                 r.rowIcon.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.warning))
             }
             else -> {
+                errCount++
                 r.rowBadge.setBackgroundResource(R.drawable.badge_error)
                 r.rowIcon.setImageResource(R.drawable.ic_close)
                 r.rowIcon.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.danger))
@@ -95,10 +124,25 @@ class DoctorActivity : AppCompatActivity() {
         b.resultList.addView(r.root)
     }
 
+    private fun updateSummary() {
+        if (errCount > 0) {
+            b.helpDot.setBackgroundResource(R.drawable.badge_error)
+            b.txtHelpStatus.text = getString(R.string.help_status_err, errCount)
+        } else if (warnCount > 0) {
+            b.helpDot.setBackgroundResource(R.drawable.badge_warning)
+            b.txtHelpStatus.text = getString(R.string.help_status_warn, warnCount)
+        } else {
+            b.helpDot.setBackgroundResource(R.drawable.dot_on)
+            b.txtHelpStatus.text = getString(R.string.help_status_ok)
+        }
+    }
+
     private fun runChecks() {
         b.resultList.removeAllViews()
         missingAssets = emptySet()
         appMissing = false
+        errCount = 0
+        warnCount = 0
         val act = prefs.loadAct()
         val tok = prefs.token
         val tokenSet = tok.isNotEmpty()
@@ -122,8 +166,9 @@ class DoctorActivity : AppCompatActivity() {
         }
         if (act.buttons.isNotEmpty())
             row(WARN, "Hinweis: Buttons werden von Discord manchmal ignoriert — im Zweifel entfernen.")
+        updateSummary()
 
-        b.doctorProgress.visibility = View.VISIBLE
+        b.helpProgress.visibility = View.VISIBLE
 
         Thread {
             val tokValid: Boolean?
@@ -149,7 +194,7 @@ class DoctorActivity : AppCompatActivity() {
                 }
             }
             runOnUiThread {
-                b.doctorProgress.visibility = View.GONE
+                b.helpProgress.visibility = View.GONE
                 when (tokValid) {
                     true -> row(OK, "Token GÜLTIG (Account: $user).")
                     false -> row(ERROR, "Token UNGÜLTIG! Neuen holen (TOKEN-HOLEN.md).")
@@ -176,6 +221,7 @@ class DoctorActivity : AppCompatActivity() {
                     }
                     missingAssets = miss
                 }
+                updateSummary()
             }
         }.start()
     }

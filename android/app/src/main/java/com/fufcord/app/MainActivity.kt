@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
         b.btnToggle.setOnClickListener { toggleService() }
         b.btnEdit.setOnClickListener { AnimUtils.launch(this, EditorActivity::class.java) }
-        b.btnDoctor.setOnClickListener { AnimUtils.launch(this, DoctorActivity::class.java) }
+        b.btnHelp.setOnClickListener { AnimUtils.launch(this, HelpActivity::class.java) }
         b.btnExport.setOnClickListener { exportJson() }
         b.btnImport.setOnClickListener { importDialog() }
         b.btnSettings.setOnClickListener { AnimUtils.launch(this, SettingsActivity::class.java) }
