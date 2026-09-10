@@ -65,6 +65,8 @@ bash start.sh
 
 ### Schritt 2: Token holen
 
+> 📱 **Nur Handy, kein PC?** → Siehe **[TOKEN-HOLEN.md](TOKEN-HOLEN.md)** (Firefox-Methode, 5 Min.)
+
 1. Am **PC**: Discord im **Browser** öffnen (discord.com)
 2. **F12** drücken → Reiter **Application** (Anwendung)
 3. Links **Local Storage** → `https://discord.com`
