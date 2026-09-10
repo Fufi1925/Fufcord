@@ -44,7 +44,7 @@ object UpdateChecker {
                     val tag = o.optString("tag_name", "").trim().removePrefix("v")
                     if (tag.isEmpty() || current.isEmpty()) return@use
                     if (!isNewer(tag, current)) return@use
-                    // Versions-Neustart: 4.x-Tags enthalten 1.x-Apps (4.2→1.03, 4.3→1.04).
+                    // Versions-Neustart: alte 4.x-Tags enthielten 1.x-Apps (4.2→1.03, 4.3→1.04). Neue Tags = App-Version.
                     // Ohne Guard würden 1.x-Geräte ewig zum "Update" auf die eigene Version raten.
                     if (tag.startsWith("4.") && current.startsWith("1.")) return@use
                     if (prefs.skipVersion == tag) return@use

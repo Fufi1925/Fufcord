@@ -2,7 +2,7 @@
 
 Echte Android-App — **kein Termux nötig**: läuft im Hintergrund, Bilder-Upload direkt in die Discord-App, 1:1-Vorschau, Setup-Assistent, Presets, KI-JSON, Doktor.
 
-**Aktuell: v1.04 „Clear"** — komplett neues Design (Glass/Clear-Look, Animationen, Onboarding, eigener Einstellungs-Screen).
+**Aktuell: v1.05 „Clear"** — komplett neues Design (Glass/Clear-Look, Animationen, Onboarding, eigener Einstellungs-Screen).
 
 ## 📥 APK installieren
 
