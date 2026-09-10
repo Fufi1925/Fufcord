@@ -178,4 +178,12 @@
     <string name="help_credits_fallback">Aleks</string>
     <string name="help_credits_made">Gemacht von Aleks</string>
     <string name="help_credits_id">Discord-ID: 1303627964734246944</string>
+    <string name="tab_overview">Übersicht</string>
+    <string name="tab_presets">Presets</string>
+    <string name="tab_more">Mehr</string>
+    <string name="discord_eyebrow">FUFCORD COMMUNITY</string>
+    <string name="discord_title">Tritt unserem Discord bei</string>
+    <string name="discord_body">Werde Teil der Fufcord Community auf Discord. Erhalte wichtige Updates, gestalte die App aktiv mit und chatte mit anderen.</string>
+    <string name="discord_yes">Ja, beitreten →</string>
+    <string name="discord_no">Nein danke</string>
 </resources>

@@ -59,6 +59,10 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getString("skip_version", "") ?: ""
         set(v) = prefs.edit().putString("skip_version", v).apply()
 
+    var discordPromoSeen: Boolean
+        get() = prefs.getBoolean("discord_promo_seen", false)
+        set(v) = prefs.edit().putBoolean("discord_promo_seen", v).apply()
+
     fun loadAct(): ActConfig {
         val raw = prefs.getString("activity", "") ?: ""
         if (raw.isEmpty()) return ActConfig(

@@ -12,12 +12,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
 import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -27,6 +30,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivityMainBinding
 import com.fufcord.app.databinding.DialogImportBinding
+import com.fufcord.app.databinding.DialogDiscordBinding
 import com.fufcord.app.databinding.ItemPresetBinding
 import org.json.JSONObject
 
@@ -36,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prefs: PrefsManager
     private val handler = Handler(Looper.getMainLooper())
     private var firstShow = true
+    private var currentTab = 0
 
     // FIX: Status lebt — aktualisiert sich auch bei „Neuversuch in Xs" etc.
     private val ticker = object : Runnable {
@@ -79,6 +84,18 @@ class MainActivity : AppCompatActivity() {
             b.txtVersion.text = "v${p.versionName}"
         } catch (_: Exception) { }
         UpdateChecker.check(this)
+        currentTab = savedInstanceState?.getInt("tab", 0) ?: 0
+        selectTab(currentTab, false)
+        b.bottomNav.setOnItemSelectedListener {
+            val i = tabIndex(it.itemId)
+            if (i != currentTab) selectTab(i, true)
+            true
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("tab", currentTab)
     }
 
     override fun onResume() {
@@ -87,7 +104,8 @@ class MainActivity : AppCompatActivity() {
         handler.postDelayed(ticker, 2500)
         if (firstShow) {
             firstShow = false
-            AnimUtils.stagger(b.contentRoot)
+            AnimUtils.stagger(b.overviewInner)
+            if (!prefs.discordPromoSeen) discordDialog()
         }
     }
 
@@ -95,6 +113,46 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         handler.removeCallbacks(ticker)
         AnimUtils.stopPulse(b.statusDot)
+    }
+
+    private fun tabIndex(id: Int) = when (id) {
+        R.id.tab_presets -> 1
+        R.id.tab_more -> 2
+        else -> 0
+    }
+
+    /** Tab wechseln mit Hochblend-Animation. */
+    private fun selectTab(index: Int, animate: Boolean) {
+        currentTab = index
+        val tabs = listOf(b.tabOverview, b.tabPresets, b.tabMore)
+        tabs.forEachIndexed { i, v -> v.visibility = if (i == index) View.VISIBLE else View.GONE }
+        b.bottomNav.menu.getItem(index).isChecked = true
+        if (animate) {
+            val v = tabs[index]
+            v.alpha = 0f
+            v.translationY = 28f
+            v.animate().alpha(1f).translationY(0f).setDuration(220)
+                .setInterpolator(DecelerateInterpolator()).start()
+        }
+    }
+
+    /** Discord-Community-Popup (einmalig nach Setup). */
+    private fun discordDialog() {
+        val dc = DialogDiscordBinding.inflate(layoutInflater)
+        val dlg = Dialog(this, R.style.Theme_Fufcord_Dialog)
+        dlg.setContentView(dc.root)
+        dlg.setCanceledOnTouchOutside(false)
+        dc.btnDiscordYes.setOnClickListener {
+            prefs.discordPromoSeen = true
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/8EzjRTksJP")))
+            } catch (e: Exception) { }
+            dlg.dismiss()
+        }
+        dc.btnDiscordNo.setOnClickListener { prefs.discordPromoSeen = true; dlg.dismiss() }
+        dlg.show()
+        val wm = resources.displayMetrics
+        dlg.window?.setLayout((wm.widthPixels * 0.92).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun refresh() {
