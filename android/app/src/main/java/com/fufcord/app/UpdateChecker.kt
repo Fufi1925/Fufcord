@@ -100,5 +100,6 @@ object UpdateChecker {
         dlg.show()
         val wm = act.resources.displayMetrics
         dlg.window?.setLayout((wm.widthPixels * 0.92).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        DialogUtils.blurBehind(dlg)
     }
 }

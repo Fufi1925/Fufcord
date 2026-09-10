@@ -174,10 +174,6 @@
     <string name="help_sec_about">Über</string>
     <string name="help_update">Update prüfen</string>
     <string name="help_updating">Suche nach Updates …</string>
-    <string name="help_sec_credits">Credits</string>
-    <string name="help_credits_fallback">Aleks</string>
-    <string name="help_credits_made">Gemacht von Aleks</string>
-    <string name="help_credits_id">Discord-ID: 1303627964734246944</string>
     <string name="tab_overview">Übersicht</string>
     <string name="tab_presets">Presets</string>
     <string name="tab_more">Mehr</string>
@@ -186,4 +182,12 @@
     <string name="discord_body">Werde Teil der Fufcord Community auf Discord. Erhalte wichtige Updates, gestalte die App aktiv mit und chatte mit anderen.</string>
     <string name="discord_yes">Ja, beitreten →</string>
     <string name="discord_no">Nein danke</string>
+    <string name="tab_credits">Credits</string>
+    <string name="credits_fallback">Fufi</string>
+    <string name="credits_made">Made by Fufi</string>
+    <string name="credits_id">Discord-ID: 1303627964734246944</string>
+    <string name="credits_join">Discord beitreten</string>
+    <string name="credits_github">GitHub öffnen</string>
+    <string name="credits_thanks">Danke, dass du Fufcord nutzt ❤</string>
+    <string name="preset_tap_to_load">Antippen zum Laden</string>
 </resources>

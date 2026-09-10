@@ -6,6 +6,7 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/violet_dark</item>
         <item name="colorSecondary">@color/cyan</item>
+        <item name="colorSecondaryContainer">#1E2A44</item>
         <item name="colorTertiary">@color/success</item>
         <item name="colorError">@color/rose</item>
         <item name="android:windowBackground">@drawable/bg_app</item>

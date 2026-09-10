@@ -20,6 +20,7 @@ import android.os.Looper
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import android.view.View
 import android.widget.EditText
@@ -31,7 +32,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivityMainBinding
 import com.fufcord.app.databinding.DialogImportBinding
 import com.fufcord.app.databinding.DialogDiscordBinding
-import com.fufcord.app.databinding.ItemPresetBinding
+import com.fufcord.app.databinding.ItemPresetRowBinding
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -91,6 +92,9 @@ class MainActivity : AppCompatActivity() {
             if (i != currentTab) selectTab(i, true)
             true
         }
+        b.btnCredDiscord.setOnClickListener { openUrl("https://discord.gg/8EzjRTksJP") }
+        b.btnCredGithub.setOnClickListener { openUrl("https://github.com/Fufi1925/Fufcord") }
+        loadCredits()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -105,6 +109,7 @@ class MainActivity : AppCompatActivity() {
         if (firstShow) {
             firstShow = false
             AnimUtils.stagger(b.overviewInner)
+            b.bottomNav.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_up))
             if (!prefs.discordPromoSeen) discordDialog()
         }
     }
@@ -118,13 +123,14 @@ class MainActivity : AppCompatActivity() {
     private fun tabIndex(id: Int) = when (id) {
         R.id.tab_presets -> 1
         R.id.tab_more -> 2
+        R.id.tab_credits -> 3
         else -> 0
     }
 
     /** Tab wechseln mit Hochblend-Animation. */
     private fun selectTab(index: Int, animate: Boolean) {
         currentTab = index
-        val tabs = listOf(b.tabOverview, b.tabPresets, b.tabMore)
+        val tabs = listOf(b.tabOverview, b.tabPresets, b.tabMore, b.tabCredits)
         tabs.forEachIndexed { i, v -> v.visibility = if (i == index) View.VISIBLE else View.GONE }
         b.bottomNav.menu.getItem(index).isChecked = true
         if (animate) {
@@ -153,6 +159,30 @@ class MainActivity : AppCompatActivity() {
         dlg.show()
         val wm = resources.displayMetrics
         dlg.window?.setLayout((wm.widthPixels * 0.92).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        DialogUtils.blurBehind(dlg)
+    }
+
+    /** Credits: Name + Profilbild per Discord-ID laden. */
+    private fun loadCredits() {
+        Thread {
+            val u = if (prefs.token.isNotEmpty())
+                DiscordApi.getUser(prefs.token, "1303627964734246944")
+            else DiscordApi.DiscordUser(false, "", "", "")
+            runOnUiThread {
+                if (u.ok) {
+                    b.txtCredName.text = u.name
+                    b.txtCredId.text = "${u.handle} • 1303627964734246944"
+                    b.credAvatar.visibility = View.VISIBLE
+                    ImageLoader.load(u.avatarUrl, b.credAvatar)
+                }
+            }
+        }.start()
+    }
+
+    private fun openUrl(u: String) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(u)))
+        } catch (e: Exception) { }
     }
 
     private fun refresh() {
@@ -217,7 +247,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         for (p in all) {
-            val item = ItemPresetBinding.inflate(LayoutInflater.from(this), b.presetRow, false)
+            val item = ItemPresetRowBinding.inflate(LayoutInflater.from(this), b.presetRow, false)
             item.presetTitle.text = p.title
             if (p.icon.isNotEmpty()) {
                 val res = resources.getIdentifier(p.icon, "drawable", packageName)
@@ -239,7 +269,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showLetter(item: ItemPresetBinding, title: String) {
+    private fun showLetter(item: ItemPresetRowBinding, title: String) {
         item.presetIcon.visibility = View.GONE
         item.presetLetter.visibility = View.VISIBLE
         item.presetLetter.text = title.trim().firstOrNull()?.uppercase() ?: "★"
@@ -324,6 +354,7 @@ class MainActivity : AppCompatActivity() {
         // 92 % Breite, 86 % Höhe: Text scrollt, Buttons bleiben immer sichtbar
         val wm = resources.displayMetrics
         dlg.window?.setLayout((wm.widthPixels * 0.92).toInt(), (wm.heightPixels * 0.86).toInt())
+        DialogUtils.blurBehind(dlg)
     }
 
     private fun doImport(text: String) {

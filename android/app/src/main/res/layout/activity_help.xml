@@ -286,80 +286,6 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <!-- CREDITS -->
-            <TextView
-                style="@style/Text.Fufcord.Section"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="26dp"
-                android:text="@string/help_sec_credits" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/card_glass"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <FrameLayout
-                    android:layout_width="56dp"
-                    android:layout_height="56dp">
-
-                    <TextView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/credits_avatar_fallback"
-                        android:gravity="center"
-                        android:text="A"
-                        android:textColor="@color/white"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/imgCreditsAvatar"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:scaleType="centerCrop"
-                        android:visibility="invisible"
-                        app:shapeAppearanceOverlay="@style/Shape.Fufcord.Circle" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/txtCreditsName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/help_credits_fallback"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txtCreditsMade"
-                        style="@style/Text.Fufcord.Body"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/help_credits_made" />
-
-                    <TextView
-                        android:id="@+id/txtCreditsId"
-                        style="@style/Text.Fufcord.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/help_credits_id" />
-                </LinearLayout>
-            </LinearLayout>
-
             <!-- ÜBER -->
             <TextView
                 style="@style/Text.Fufcord.Section"
@@ -374,7 +300,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="v1.05" />
+                android:text="v1.06" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnHelpUpdate"
