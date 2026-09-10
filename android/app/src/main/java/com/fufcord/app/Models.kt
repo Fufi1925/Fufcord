@@ -28,7 +28,9 @@ data class ActConfig(
     var useTimestamp: Boolean = true,
     var partyCurrent: Int = 0,
     var partyMax: Int = 0,
-    var status: String = "online"
+    var status: String = "online",
+    var timestampMode: Int = 0, // 0 = ab Start, 1 = eigener Beginn
+    var timestampOffsetSec: Long = 0L
 ) {
     fun toJson(): JSONObject {
         val o = JSONObject()
@@ -43,6 +45,8 @@ data class ActConfig(
         o.put("use_timestamp", useTimestamp)
         o.put("party_current", partyCurrent); o.put("party_max", partyMax)
         o.put("status", status)
+        o.put("timestamp_mode", timestampMode)
+        o.put("timestamp_offset_sec", timestampOffsetSec)
         return o
     }
 
@@ -52,10 +56,13 @@ data class ActConfig(
         a.put("name", name.ifEmpty { "Fufcord" })
         a.put("type", type)
         a.put("created_at", System.currentTimeMillis())
+        // Eigener Beginn? → Startpunkt liegt in der Vergangenheit, Discord zählt live weiter.
+        val start = if (timestampMode == 1 && timestampOffsetSec > 0)
+            startTs - timestampOffsetSec * 1000 else startTs
         if (details.isNotEmpty()) a.put("details", details.take(128))
         if (state.isNotEmpty()) a.put("state", state.take(128))
         if (safe) {
-            if (useTimestamp) a.put("timestamps", JSONObject().put("start", startTs))
+            if (useTimestamp) a.put("timestamps", JSONObject().put("start", start))
             return a
         }
         if (validAppId(appId)) a.put("application_id", appId)
@@ -77,12 +84,15 @@ data class ActConfig(
             }
             if (arr.length() > 0) a.put("buttons", arr)
         }
-        if (useTimestamp) a.put("timestamps", JSONObject().put("start", startTs))
+        if (useTimestamp) a.put("timestamps", JSONObject().put("start", start))
         if (partyCurrent > 0 && partyMax > 0)
             a.put("party", JSONObject().put("id", "fufcord-party")
                 .put("size", JSONArray().put(partyCurrent).put(partyMax)))
         return a
     }
+
+    /** Lesbares Label für den Versatz, z.B. "2 Tg 3 Std" oder "100 J". */
+    fun offsetLabel(): String = formatOffset(timestampOffsetSec)
 
     companion object {
         val TYPES = mapOf(0 to "Spielt", 1 to "Streamt", 2 to "Hört",
@@ -128,6 +138,8 @@ data class ActConfig(
                 if (arr.length() > 2) warns.add("Mehr als 2 Buttons → nur erste 2 behalten.")
             }
             c.useTimestamp = raw.optBoolean("use_timestamp", true)
+            c.timestampMode = if (raw.optInt("timestamp_mode", 0) == 1) 1 else 0
+            c.timestampOffsetSec = raw.optLong("timestamp_offset_sec", 0).coerceAtLeast(0)
             c.partyCurrent = maxOf(0, raw.optInt("party_current", 0))
             c.partyMax = maxOf(0, raw.optInt("party_max", 0))
             val st = raw.optString("status", "online").lowercase()
@@ -138,6 +150,20 @@ data class ActConfig(
 
         fun hasEmoji(s: String): Boolean = EMOJI.containsMatchIn(s)
         fun stripEmoji(s: String): String = EMOJI.replace(s, "").trim()
+
+        /** Formatiert Sekunden als "100 J" / "2 Tg 3 Std" / "3 Std 15 Min" / "45 Min". */
+        fun formatOffset(secs: Long): String {
+            var r = secs.coerceAtLeast(0)
+            if (r < 60) return "0 Min"
+            val y = r / 31536000; r %= 31536000
+            val d = r / 86400; r %= 86400
+            val h = r / 3600; r %= 3600
+            val m = r / 60
+            if (y > 0) return if (d > 0) "$y J $d Tg" else "$y J"
+            if (d > 0) return if (h > 0) "$d Tg $h Std" else "$d Tg"
+            if (h > 0) return if (m > 0) "$h Std $m Min" else "$h Std"
+            return "$m Min"
+        }
     }
 }
 

@@ -139,4 +139,13 @@
     <string name="upload_title">Bild hochladen</string>
     <string name="upload_name_hint">Asset-Name (klein, z. B. logo)</string>
     <string name="upload_go">Hochladen</string>
+    <string name="import_sub">KI-JSON einfügen — wird geprüft &amp; repariert</string>
+    <string name="import_paste">Einfügen</string>
+    <string name="import_clear">Leeren</string>
+    <string name="ed_timestamp_mode">Beginn der Zeitmessung</string>
+    <string name="ed_mode_live">Ab Start</string>
+    <string name="ed_mode_custom">Eigener Beginn</string>
+    <string name="ed_offset_days">Tage</string>
+    <string name="ed_offset_hours">Stunden</string>
+    <string name="ed_offset_min">Minuten</string>
 </resources>

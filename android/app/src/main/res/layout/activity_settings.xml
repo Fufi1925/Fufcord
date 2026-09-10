@@ -340,7 +340,7 @@
                         android:paddingTop="4dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="4dp"
-                        android:text="v4.1"
+                        android:text="v1.03"
                         android:textColor="@color/cyan"
                         android:textSize="12sp"
                         android:textStyle="bold" />

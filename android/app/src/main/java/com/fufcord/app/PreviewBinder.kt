@@ -28,7 +28,13 @@ object PreviewBinder {
         p.previewState.visibility = if (act.state.isNotEmpty()) View.VISIBLE else View.GONE
         p.previewState.text = act.state
 
-        p.previewTime.visibility = if (act.useTimestamp) View.VISIBLE else View.GONE
+        if (act.useTimestamp) {
+            p.previewTime.visibility = View.VISIBLE
+            p.previewTime.text = if (act.timestampMode == 1 && act.timestampOffsetSec > 0)
+                "⏱ seit ${act.offsetLabel()} (+ live)" else "⏱ läuft seit Start"
+        } else {
+            p.previewTime.visibility = View.GONE
+        }
 
         val showRich = !safe
         // Großes Bild (Platzhalter mit Asset-Namen — Discord lädt das echte Bild)

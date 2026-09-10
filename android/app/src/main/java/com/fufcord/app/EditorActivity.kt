@@ -74,6 +74,14 @@ class EditorActivity : AppCompatActivity() {
         for (et in listOf(b.etName, b.etDetails, b.etState, b.etLarge, b.etSmall,
             b.etBtn1Label, b.etBtn2Label)) et.addTextChangedListener(watcher)
 
+        val offsetWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, a: Int, b2: Int, c: Int) {}
+            override fun onTextChanged(s: CharSequence?, a: Int, b2: Int, c: Int) {}
+            override fun afterTextChanged(s: Editable?) { updateOffsetRow(); updatePreview() }
+        }
+        for (et in listOf(b.etOffsetDays, b.etOffsetHours, b.etOffsetMin)) et.addTextChangedListener(offsetWatcher)
+        b.rgTimestamp.setOnCheckedChangeListener { _, _ -> updateOffsetRow(); updatePreview() }
+
         b.toolbarBack.setOnClickListener { AnimUtils.finish(this) }
         b.btnUploadLarge.setOnClickListener { uploadTarget = "large"; pickImage.launch("image/*") }
         b.btnUploadSmall.setOnClickListener { uploadTarget = "small"; pickImage.launch("image/*") }
@@ -106,6 +114,12 @@ class EditorActivity : AppCompatActivity() {
             b.etBtn2Url.setText(a.buttons[1].url)
         }
         b.swTime.isChecked = a.useTimestamp
+        if (a.timestampMode == 1) b.rbCustom.isChecked = true else b.rbLive.isChecked = true
+        val off = a.timestampOffsetSec.coerceAtLeast(0)
+        b.etOffsetDays.setText((off / 86400).toString())
+        b.etOffsetHours.setText(((off % 86400) / 3600).toString())
+        b.etOffsetMin.setText(((off % 3600) / 60).toString())
+        updateOffsetRow()
         b.etPartyCur.setText(a.partyCurrent.toString())
         b.etPartyMax.setText(a.partyMax.toString())
     }
@@ -134,8 +148,29 @@ class EditorActivity : AppCompatActivity() {
             useTimestamp = b.swTime.isChecked,
             partyCurrent = b.etPartyCur.text.toString().toIntOrNull() ?: 0,
             partyMax = b.etPartyMax.text.toString().toIntOrNull() ?: 0,
-            status = statusKeys.getOrElse(b.spStatus.selectedItemPosition) { "online" }
+            status = statusKeys.getOrElse(b.spStatus.selectedItemPosition) { "online" },
+            timestampMode = if (b.rbCustom.isChecked) 1 else 0,
+            timestampOffsetSec = currentOffsetSec()
         )
+    }
+
+    private fun currentOffsetSec(): Long {
+        val d = b.etOffsetDays.text.toString().toLongOrNull()?.coerceIn(0, 999999) ?: 0
+        val h = b.etOffsetHours.text.toString().toLongOrNull()?.coerceIn(0, 999999) ?: 0
+        val m = b.etOffsetMin.text.toString().toLongOrNull()?.coerceIn(0, 999999) ?: 0
+        return d * 86400 + h * 3600 + m * 60
+    }
+
+    private fun updateOffsetRow() {
+        val custom = b.rbCustom.isChecked
+        b.offsetRow.visibility = if (custom) View.VISIBLE else View.GONE
+        b.txtOffsetHint.visibility = if (custom) View.VISIBLE else View.GONE
+        if (custom) {
+            val secs = currentOffsetSec()
+            b.txtOffsetHint.text = if (secs > 0)
+                "Beginn: vor ${ActConfig.formatOffset(secs)} — läuft live weiter"
+            else "Noch kein Versatz — zeigt Zeit ab Start"
+        }
     }
 
     private fun updatePreview() {

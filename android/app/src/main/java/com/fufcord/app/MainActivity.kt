@@ -7,6 +7,8 @@
 package com.fufcord.app
 
 import android.Manifest
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Typeface
@@ -18,12 +20,12 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivityMainBinding
+import com.fufcord.app.databinding.DialogImportBinding
 import com.fufcord.app.databinding.ItemPresetBinding
 import org.json.JSONObject
 
@@ -222,21 +224,43 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun importDialog() {
-        val et = EditText(this)
-        et.hint = getString(R.string.import_hint)
-        et.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-        et.minLines = 8
-        et.typeface = Typeface.MONOSPACE
-        et.textSize = 12f
-        val scroll = ScrollView(this)
-        scroll.addView(et)
-        scroll.setPadding(48, 24, 48, 0)
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.import_title))
-            .setView(scroll)
-            .setPositiveButton(getString(R.string.import_go)) { _, _ -> doImport(et.text.toString()) }
-            .setNegativeButton(getString(R.string.dlg_cancel), null)
-            .show()
+        val d = DialogImportBinding.inflate(layoutInflater)
+        val dlg = AlertDialog.Builder(this).setView(d.root).create()
+        d.etJson.typeface = Typeface.MONOSPACE
+        d.btnPaste.setOnClickListener {
+            val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val txt = cm.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString().orEmpty()
+            if (txt.isNotEmpty()) {
+                d.etJson.setText(txt)
+                d.txtError.visibility = View.GONE
+            } else {
+                Toast.makeText(this, "Zwischenablage ist leer", Toast.LENGTH_SHORT).show()
+            }
+        }
+        d.btnClear.setOnClickListener {
+            d.etJson.text?.clear()
+            d.txtError.visibility = View.GONE
+        }
+        d.btnCancel.setOnClickListener { dlg.dismiss() }
+        d.btnGo.setOnClickListener {
+            val raw = d.etJson.text.toString()
+            val block = extractJson(raw)
+            if (block == null) {
+                d.txtError.text = "❌ Kein JSON gefunden — Code einfügen!"
+                d.txtError.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            try {
+                JSONObject(block)
+            } catch (e: Exception) {
+                d.txtError.text = "❌ JSON fehlerhaft: ${e.message}"
+                d.txtError.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            dlg.dismiss()
+            doImport(raw)
+        }
+        dlg.show()
     }
 
     private fun doImport(text: String) {
