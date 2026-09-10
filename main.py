@@ -7,7 +7,7 @@ Wie Vencord: eigene Rich Presence komplett selbst setzen.
 Funktionen:
   • Eigener Name, Typ (Spielt / Streamt / Hört / Schaut / Antritt / Custom)
   • Details + State (2 Zeilen wie Vencord)
-  • Großes + kleines Bild (aus Developer-Portal oder Bild-URL)
+  • Großes + kleines Bild (aus Developer-Portal)
   • 2 Buttons mit Link
   • Zeitstempel (Verstrichene Zeit)
   • Online-Status (online / idle / dnd / invisible)
@@ -178,18 +178,31 @@ def list_presets():
 
 
 # ================================================================= Activity bauen
+def valid_app_id(cfg):
+    """Prüft ob eine echte Application ID gesetzt ist (lange Zahl)."""
+    app_id = (cfg.get("application_id") or "").strip()
+    if not app_id or app_id.startswith("DEINE"):
+        return ""
+    if not app_id.isdigit() or len(app_id) < 15:
+        return ""
+    return app_id
+
+
 def build_activity(cfg, start_timestamp=None):
     """Baut das Discord-Activity-Objekt (wie Vencord es sendet)."""
     a = cfg.get("activity", {})
     act_type = int(a.get("type", 0))
+    now_ms = int(time.time() * 1000)
 
     activity = {
         "name": a.get("name", "Aleks") or "Aleks",
         "type": act_type,
+        "created_at": now_ms,
     }
 
-    app_id = (cfg.get("application_id") or "").strip()
-    if app_id and not app_id.startswith("DEINE"):
+    # App-ID nur wenn gültig — sonst lässt Discord ggf. die ganze Presence fallen!
+    app_id = valid_app_id(cfg)
+    if app_id:
         activity["application_id"] = app_id
 
     if a.get("details"):
@@ -197,33 +210,35 @@ def build_activity(cfg, start_timestamp=None):
     if a.get("state"):
         activity["state"] = a["state"][:128]
 
-    # Bilder
-    assets = {}
-    if a.get("large_image"):
-        assets["large_image"] = a["large_image"][:256]
-    if a.get("large_text"):
-        assets["large_text"] = a["large_text"][:128]
-    if a.get("small_image"):
-        assets["small_image"] = a["small_image"][:256]
-    if a.get("small_text"):
-        assets["small_text"] = a["small_text"][:128]
-    if assets:
-        activity["assets"] = assets
+    # Bilder NUR mit gültiger App-ID (sonst ignoriert Discord alles)
+    if app_id:
+        assets = {}
+        if a.get("large_image"):
+            assets["large_image"] = a["large_image"][:256]
+        if a.get("large_text"):
+            assets["large_text"] = a["large_text"][:128]
+        if a.get("small_image"):
+            assets["small_image"] = a["small_image"][:256]
+        if a.get("small_text"):
+            assets["small_text"] = a["small_text"][:128]
+        if assets:
+            activity["assets"] = assets
 
     # Stream-URL (nur bei Typ 1 nötig)
     if act_type == 1:
         url = a.get("stream_url") or "https://twitch.tv/"
         activity["url"] = url
 
-    # Buttons (max 2)
-    buttons = []
-    for b in (a.get("buttons") or [])[:2]:
-        label = (b.get("label") or "").strip()
-        url = (b.get("url") or "").strip()
-        if label and url:
-            buttons.append({"label": label[:32], "url": url})
-    if buttons:
-        activity["buttons"] = buttons
+    # Buttons NUR mit gültiger App-ID (max 2)
+    if app_id:
+        buttons = []
+        for b in (a.get("buttons") or [])[:2]:
+            label = (b.get("label") or "").strip()
+            url = (b.get("url") or "").strip()
+            if label and url:
+                buttons.append({"label": label[:32], "url": url})
+        if buttons:
+            activity["buttons"] = buttons
 
     # Zeitstempel
     if a.get("use_timestamp"):
@@ -312,13 +327,13 @@ def edit_presence(cfg):
         elif w == "4":
             a["state"] = ask("State — zweite Zeile", a.get("state", ""))
         elif w == "5":
-            print(f"\n{C_DIM}Tipp: Entweder Asset-Name aus dem Developer Portal (z.B. 'logo')")
-            print(f"oder direkte Bild-URL (https://...). Leer = kein Bild.{C_RESET}")
-            a["large_image"] = ask("Großes Bild (Asset-Name oder URL)", a.get("large_image", ""))
+            print(f"\n{C_DIM}Tipp: Asset-Name aus dem Developer Portal (z.B. 'logo').")
+            print(f"Bild-URLs gehen NICHT — nur hochgeladene Assets. Leer = kein Bild.{C_RESET}")
+            a["large_image"] = ask("Großes Bild (Asset-Name)", a.get("large_image", ""))
             if a["large_image"]:
                 a["large_text"] = ask("Hover-Text großes Bild", a.get("large_text", ""))
         elif w == "6":
-            a["small_image"] = ask("Kleines Bild (Asset-Name oder URL, leer = keins)", a.get("small_image", ""))
+            a["small_image"] = ask("Kleines Bild (Asset-Name, leer = keins)", a.get("small_image", ""))
             if a["small_image"]:
                 a["small_text"] = ask("Hover-Text kleines Bild", a.get("small_text", ""))
         elif w == "7":
@@ -455,12 +470,12 @@ async def run_rpc(cfg):
         pause()
         return
 
-    app_id = (cfg.get("application_id") or "").strip()
-    if not app_id or app_id.startswith("DEINE"):
-        print(f"\n{C_YELLOW}⚠️  Keine Application ID gesetzt — Bilder & Buttons brauchen eine App-ID.")
-        print(f"   Trotzdem starten? Bilder/Buttons werden evtl. nicht angezeigt.{C_RESET}")
-        if not ask_yes_no("Trotzdem starten?", False):
-            return
+    app_id = valid_app_id(cfg)
+    act = cfg.get("activity", {})
+    wants_rich = bool(act.get("large_image") or act.get("small_image") or act.get("buttons"))
+    if not app_id and wants_rich:
+        print(f"\n{C_YELLOW}⚠️  Keine gültige Application ID — Bilder & Buttons werden weggelassen (nur Text).")
+        print(f"   Für volle Rich Presence: App-ID in Menü → Punkt 2 eintragen.{C_RESET}\n")
 
     start_ts = int(time.time() * 1000)
     show_preview(cfg)
@@ -521,10 +536,20 @@ async def run_rpc(cfg):
                             if t == "READY":
                                 username = msg["d"]["user"].get("username", "?")
                                 backoff = 5
+                                # Presence nach READY nochmal explizit senden (wichtig!)
+                                try:
+                                    await ws.send(json.dumps({"op": 3, "d": build_presence(cfg, start_ts)}))
+                                except Exception:
+                                    pass
                                 print(f"{C_GREEN}✅ Online als {C_BOLD}{username}{C_RESET}{C_GREEN}! Rich Presence läuft.{C_RESET}")
-                                print(f"{C_DIM}   Handy-Display kann aus — Termux läuft weiter (Wakelock empfohlen).{C_RESET}\n")
+                                print(f"{C_DIM}   Handy-Display kann aus — Termux läuft weiter (Wakelock empfohlen).{C_RESET}")
+                                print(f"{C_DIM}   Prüfen: Server-Mitgliederliste / 2. Account / Firefox — eigenes Handy-Profil zeigt es oft nicht!{C_RESET}\n")
                             elif t == "RESUMED":
                                 print(f"{C_GREEN}✅ Verbindung wiederhergestellt.{C_RESET}")
+                                try:
+                                    await ws.send(json.dumps({"op": 3, "d": build_presence(cfg, start_ts)}))
+                                except Exception:
+                                    pass
 
                         elif op == 7:  # Reconnect
                             print(f"{C_YELLOW}↻ Discord verlangt Reconnect...{C_RESET}")
@@ -561,6 +586,32 @@ def start_rpc(cfg):
         time.sleep(1)
 
 
+def start_test_mode(cfg):
+    """Minimal-Test: nur Text, keine Bilder/Buttons/App-ID — zum Eingrenzen."""
+    test_cfg = json.loads(json.dumps(cfg))
+    test_cfg["application_id"] = ""
+    test_cfg["status"] = "online"
+    test_cfg["activity"] = {
+        "name": "Fufcord Test",
+        "type": 0,
+        "details": "Wenn du das siehst, geht alles ✅",
+        "state": "Test läuft ...",
+        "large_image": "",
+        "large_text": "",
+        "small_image": "",
+        "small_text": "",
+        "stream_url": "",
+        "buttons": [],
+        "use_timestamp": True,
+        "party_current": 0,
+        "party_max": 0,
+    }
+    print(f"\n{C_MAGENTA}{C_BOLD}🧪 TEST-MODUS — minimale Presence (nur Text, ohne Bilder/Buttons).{C_RESET}")
+    print(f"{C_DIM}   So prüfen: Server-Mitgliederliste / 2. Account / Firefox-discord.com{C_RESET}")
+    print(f"{C_DIM}   Eigenes Handy-Profil zeigt die Activity oft NICHT — das ist normal!{C_RESET}\n")
+    start_rpc(test_cfg)
+
+
 # ================================================================= Anleitung
 def show_help():
     clear()
@@ -589,6 +640,13 @@ def show_help():
    • Display aus? → 'termux-wake-lock' eingeben, damit es weiterläuft
    • Beenden: Lautstärke-Leiser + C
    • Update: 'cd ~/Fufcord && git pull'
+   • Neustart: 'bash start.sh'
+
+{C_YELLOW}5. Nichts zu sehen in Discord?{C_RESET}
+   • NICHT im eigenen Handy-Profil prüfen (zeigt es oft nicht!)
+   • Stattdessen: Server-Mitgliederliste / 2. Account / Firefox
+   • Discord: Einstellungen → Privatsphäre → Aktivitätsstatus AN
+   • Menü Punkt 7 = Test-Modus (minimal, zum Eingrenzen)
 """)
     pause()
 
@@ -615,6 +673,7 @@ def main():
         print(f"  {C_YELLOW}4{C_RESET}  📦 Presets")
         print(f"  {C_YELLOW}5{C_RESET}  👁️  Vorschau anzeigen")
         print(f"  {C_YELLOW}6{C_RESET}  📖 Anleitung")
+        print(f"  {C_MAGENTA}7{C_RESET}  🧪 Test-Modus (minimal, ohne Bilder)")
         print(f"  {C_RED}0{C_RESET}  Beenden")
         w = input(f"\n{C_BOLD}Auswahl:{C_RESET} ").strip()
 
@@ -633,6 +692,8 @@ def main():
             pause()
         elif w == "6":
             show_help()
+        elif w == "7":
+            start_test_mode(cfg)
         elif w == "0":
             print(f"\n{C_CYAN}👋 Ciao!{C_RESET}")
             break

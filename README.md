@@ -173,6 +173,12 @@ Fufcord/
 
 ## ❓ Probleme?
 
+**„Termux sagt online, aber Discord zeigt nichts":**
+→ Menü **Punkt 7 (Test-Modus)** starten und prüfen — NICHT im eigenen Handy-Profil (das zeigt die Activity oft nicht!), sondern: **Server-Mitgliederliste** (steht „Spielt ..." unter deinem Namen?), **2. Account**, oder **Firefox** (discord.com)
+→ Discord-App: Einstellungen → Privatsphäre → **„Aktuellen Aktivitätsstatus anzeigen" muss AN sein**
+→ Ohne gültige App-ID werden Bilder/Buttons automatisch weggelassen (nur Text) — volle Rich Presence braucht App-ID (Punkt 2)
+→ Discord-App komplett schließen + neu öffnen, 1–2 Minuten warten
+
 **„Token ungültig":**
 → Neuen Token holen (Discord-Passwort geändert? Dann ist der alte Token tot) → Menü Punkt 2
 
