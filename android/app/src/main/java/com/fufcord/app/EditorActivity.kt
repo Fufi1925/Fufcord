@@ -1,3 +1,9 @@
+/*
+ * Fufcord — https://github.com/Fufi1925/Fufcord
+ * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten.
+ * Lizenziert unter der MIT-Lizenz (siehe LICENSE im Repo-Root).
+ */
+
 package com.fufcord.app
 
 import android.graphics.Bitmap
@@ -132,7 +138,12 @@ class EditorActivity : AppCompatActivity() {
         prefs.saveAct(clean)
         var msg = "✅ Gespeichert!"
         if (warns.isNotEmpty()) msg += "\n🔧 Auto-Fix:\n• " + warns.take(4).joinToString("\n• ")
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        if (RpcService.isRunning) {
+            RpcService.refresh(this)
+            Toast.makeText(this, "✅ Gespeichert & live aktualisiert!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        }
         finish()
     }
 

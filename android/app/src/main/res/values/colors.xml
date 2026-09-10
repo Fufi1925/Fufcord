@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Fufcord v3.1 Design: tiefes Dunkel + Blurple/Pink Verlauf -->
     <color name="blurple">#5865F2</color>
-    <color name="bg">#1E1F22</color>
-    <color name="card">#2B2D31</color>
-    <color name="card2">#313338</color>
+    <color name="blurple_dark">#4752C4</color>
+    <color name="pink">#EB459E</color>
+    <color name="bg">#141519</color>
+    <color name="card">#1F2023</color>
+    <color name="card2">#26272B</color>
+    <color name="stroke">#3A3B41</color>
     <color name="green">#3BA55D</color>
     <color name="yellow">#E0A030</color>
     <color name="red">#ED4245</color>
     <color name="gray_text">#B5BAC1</color>
     <color name="white">#FFFFFF</color>
+    <color name="grad_start">#2B1B4D</color>
+    <color name="grad_end">#5865F2</color>
 </resources>

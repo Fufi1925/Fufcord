@@ -3,9 +3,7 @@ name: Android APK bauen
 on:
   push:
     branches: [main]
-    paths:
-      - 'android/**'
-      - '.github/workflows/android.yml'
+    tags: ['v*']
   workflow_dispatch:
 
 jobs:

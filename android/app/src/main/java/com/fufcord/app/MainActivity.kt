@@ -1,3 +1,9 @@
+/*
+ * Fufcord — https://github.com/Fufi1925/Fufcord
+ * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten.
+ * Lizenziert unter der MIT-Lizenz (siehe LICENSE im Repo-Root).
+ */
+
 package com.fufcord.app
 
 import android.Manifest
@@ -51,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         b.btnExport.setOnClickListener { exportJson() }
         b.btnImport.setOnClickListener { importDialog() }
         b.btnSettings.setOnClickListener { settingsDialog() }
+        UpdateChecker.check(this)
     }
 
     override fun onResume() {
@@ -99,7 +106,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
         for (p in all) {
-            val chip = MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle)
+            val wrap = android.view.ContextThemeWrapper(this, com.google.android.material.R.style.Widget_Material3_Button_TonalButton)
+            val chip = MaterialButton(wrap)
             chip.text = p.title
             chip.isAllCaps = false
             if (p.icon.isNotEmpty()) {
@@ -119,8 +127,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun applyPreset(p: Preset) {
+        p.act.status = p.status
         prefs.saveAct(p.act)
-        if (p.appId.isNotEmpty()) { /* Bundles haben keine App-ID — eigene behalten */ }
+        if (RpcService.isRunning) RpcService.refresh(this)
         refresh()
         Toast.makeText(this, "✅ Preset '${p.title}' geladen!", Toast.LENGTH_SHORT).show()
     }

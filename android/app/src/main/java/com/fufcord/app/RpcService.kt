@@ -1,3 +1,9 @@
+/*
+ * Fufcord — https://github.com/Fufi1925/Fufcord
+ * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten.
+ * Lizenziert unter der MIT-Lizenz (siehe LICENSE im Repo-Root).
+ */
+
 package com.fufcord.app
 
 import android.app.Notification
@@ -5,6 +11,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
@@ -21,23 +28,38 @@ class RpcService : Service() {
     companion object {
         const val ACTION_START = "com.fufcord.app.START"
         const val ACTION_STOP = "com.fufcord.app.STOP"
+        const val ACTION_REFRESH = "com.fufcord.app.REFRESH"
         const val NOTIF_ID = 1001
         const val CHANNEL_ID = "fufcord_rpc"
 
         @Volatile var isRunning = false
         @Volatile var statusText = "Gestoppt"
         @Volatile var activityName = ""
+
+        fun refresh(ctx: Context) {
+            try {
+                ctx.startService(Intent(ctx, RpcService::class.java).setAction(ACTION_REFRESH))
+            } catch (e: Exception) { }
+        }
     }
 
     private var gw: GatewayClient? = null
     private val handler = Handler(Looper.getMainLooper())
     private var backoff = 5
     private var reconnectTask: Runnable? = null
+    private var watchdogTask: Runnable? = null
     private var startTs = System.currentTimeMillis()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_REFRESH) {
+            try {
+                gw?.sendPresence(buildPresence())
+                updateNotif("✅ Online — aktualisiert • $activityName")
+            } catch (e: Exception) { }
+            return START_STICKY
+        }
         if (intent?.action == ACTION_STOP) {
             stopSelf()
             return START_NOT_STICKY
@@ -65,6 +87,7 @@ class RpcService : Service() {
         isRunning = true
         startTs = System.currentTimeMillis()
         connect()
+        startWatchdog()
         return START_STICKY
     }
 
@@ -129,6 +152,28 @@ class RpcService : Service() {
         backoff = minOf(backoff * 2, 60)
     }
 
+    private fun startWatchdog() {
+        stopWatchdog()
+        watchdogTask = object : Runnable {
+            override fun run() {
+                try {
+                    val silent = System.currentTimeMillis() - GatewayClient.lastMessageMs
+                    if (isRunning && GatewayClient.lastMessageMs > 0 && silent > 150000) {
+                        try { gw?.disconnect() } catch (e: Exception) { }
+                        connect()
+                    }
+                } catch (e: Exception) { }
+                watchdogTask?.let { handler.postDelayed(it, 60000) }
+            }
+        }
+        handler.postDelayed(watchdogTask!!, 60000)
+    }
+
+    private fun stopWatchdog() {
+        watchdogTask?.let { handler.removeCallbacks(it) }
+        watchdogTask = null
+    }
+
     private fun cancelReconnect() {
         reconnectTask?.let { handler.removeCallbacks(it) }
         reconnectTask = null
@@ -150,7 +195,7 @@ class RpcService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Fufcord RPC läuft")
             .setContentText(text)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_notif)
             .setContentIntent(openApp)
             .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", stopIt)
             .setOngoing(true)
@@ -167,6 +212,7 @@ class RpcService : Service() {
 
     override fun onDestroy() {
         cancelReconnect()
+        stopWatchdog()
         gw?.disconnect()
         gw = null
         isRunning = false

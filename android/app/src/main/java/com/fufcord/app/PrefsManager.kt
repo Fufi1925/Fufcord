@@ -1,3 +1,9 @@
+/*
+ * Fufcord — https://github.com/Fufi1925/Fufcord
+ * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten.
+ * Lizenziert unter der MIT-Lizenz (siehe LICENSE im Repo-Root).
+ */
+
 package com.fufcord.app
 
 import android.content.Context
@@ -45,6 +51,10 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getBoolean("setup_done", false)
         set(v) = prefs.edit().putBoolean("setup_done", v).apply()
 
+    var skipVersion: String
+        get() = prefs.getString("skip_version", "") ?: ""
+        set(v) = prefs.edit().putString("skip_version", v).apply()
+
     fun loadAct(): ActConfig {
         val raw = prefs.getString("activity", "") ?: ""
         if (raw.isEmpty()) return ActConfig(
@@ -81,6 +91,8 @@ class PrefsManager(ctx: Context) {
             try {
                 val o = JSONObject(f.readText())
                 val act = ActConfig.sanitize(o.optJSONObject("activity")).first
+                act.status = o.optString("status", "online").lowercase()
+                    .takeIf { ActConfig.STATUS.containsKey(it) } ?: "online"
                 out.add(Preset(f.nameWithoutExtension, f.nameWithoutExtension,
                     o.optString("status", "online"), o.optString("application_id", ""),
                     act, ""))
@@ -103,6 +115,8 @@ class PrefsManager(ctx: Context) {
             for (i in 0 until arr.length()) {
                 val o = arr.optJSONObject(i) ?: continue
                 val act = ActConfig.sanitize(o.optJSONObject("activity")).first
+                act.status = o.optString("status", "online").lowercase()
+                    .takeIf { ActConfig.STATUS.containsKey(it) } ?: "online"
                 out.add(Preset(o.optString("file"), o.optString("title"),
                     o.optString("status", "online"), "", act, o.optString("icon", "")))
             }

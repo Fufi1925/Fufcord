@@ -1,8 +1,8 @@
 # FUFCORD 📱 — Custom Discord Rich Presence
 
-> **📱 NEU: Echte Android-App (APK) — kein Termux nötig!**
-> → APK laden: **Actions** → „Android APK bauen" → Artifacts, oder siehe **`android/README.md`**.
-> Die App läuft im Hintergrund, hat Bilder-Upload, 1:1-Vorschau & Setup-Assistent.
+> **📱 Echte Android-App (APK) — kein Termux nötig!** Aktuell: **v3.1** 🎨
+> → APK laden unter **[Releases](https://github.com/Fufi1925/Fufcord/releases)** (einfach installieren & updaten — die App meldet neue Versionen automatisch per Pop-up!).
+> Hintergrund-Dienst, Bilder-Upload, 1:1-Vorschau & Setup-Assistent. Details: **`android/README.md`**.
 > Die Termux-Version unten bleibt als Alternative erhalten.
 
 # FUFCORD 📱 — Custom Discord Rich Presence für Termux
@@ -223,3 +223,16 @@ Fufcord/
 ---
 
 Made with ❤️ für Termux — **Fufcord RPC**
+
+---
+
+## 📄 Lizenz (Open Source)
+
+**Fufcord ist Open Source (MIT-Lizenz)** — der komplette Code ist öffentlich einsehbar:
+
+- ✅ Ansehen, lernen, forken & teilen
+- ✅ Privat und kommerziell nutzen
+- ⚠️ **Copyright-Vermerk + Lizenz müssen erhalten bleiben** (siehe `LICENSE`)
+- ⚠️ Ohne Gewähr — Nutzung auf eigene Gefahr
+
+© 2026 Fufcord — Alle Rechte vorbehalten.

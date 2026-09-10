@@ -1,3 +1,9 @@
+/*
+ * Fufcord — https://github.com/Fufi1925/Fufcord
+ * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten.
+ * Lizenziert unter der MIT-Lizenz (siehe LICENSE im Repo-Root).
+ */
+
 package com.fufcord.app
 
 import okhttp3.MediaType.Companion.toMediaType

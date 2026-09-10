@@ -1,3 +1,9 @@
+/*
+ * Fufcord — https://github.com/Fufi1925/Fufcord
+ * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten.
+ * Lizenziert unter der MIT-Lizenz (siehe LICENSE im Repo-Root).
+ */
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -11,8 +17,8 @@ android {
         applicationId = "com.fufcord.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "3.0"
+        versionCode = 2
+        versionName = "3.1"
     }
 
     buildTypes {

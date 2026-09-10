@@ -1,25 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 1:1 Discord-Aktivitätskarte (dunkel) -->
+<!-- 1:1 Discord-Aktivitätskarte -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_card"
     android:orientation="vertical"
-    android:padding="14dp">
-
-    <TextView
-        android:id="@+id/previewType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SPIELT GERADE"
-        android:textColor="@color/gray_text"
-        android:textSize="11sp"
-        android:textStyle="bold" />
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="4dp"
+            android:layout_height="16dp"
+            android:background="@color/blurple" />
+
+        <TextView
+            android:id="@+id/previewType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="SPIELT GERADE"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -29,8 +42,8 @@
 
             <FrameLayout
                 android:id="@+id/previewLargeWrap"
-                android:layout_width="84dp"
-                android:layout_height="84dp"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
                 android:background="@drawable/rounded_img">
 
                 <ImageView
@@ -80,7 +93,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="14dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -90,14 +103,14 @@
                 android:layout_height="wrap_content"
                 android:text="Fufcord"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/previewDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
                 android:text=""
                 android:textColor="@color/gray_text"
                 android:textSize="14sp" />
@@ -106,7 +119,7 @@
                 android:id="@+id/previewState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
                 android:text=""
                 android:textColor="@color/gray_text"
                 android:textSize="14sp" />
@@ -115,9 +128,9 @@
                 android:id="@+id/previewTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="5dp"
                 android:text="⏱ läuft seit Start"
-                android:textColor="@color/gray_text"
+                android:textColor="@color/green"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
@@ -126,7 +139,7 @@
         android:id="@+id/previewBtnRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton

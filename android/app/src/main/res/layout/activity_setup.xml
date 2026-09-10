@@ -10,36 +10,47 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="⚡ FUFCORD Setup"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:background="@drawable/gradient_header"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-        <TextView
-            android:id="@+id/txtSetupInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Schritt 1 von 3"
-            android:textColor="@color/gray_text"
-            android:textSize="13sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡ FUFCORD"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtSetupInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Schritt 1 von 3"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:alpha="0.85" />
+        </LinearLayout>
 
         <!-- Schritt 1: Token -->
         <LinearLayout
             android:id="@+id/step1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical">
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_card"
+            android:orientation="vertical"
+            android:padding="18dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🔑 Schritt 1: Dein Discord User-Token"
+                android:text="🔑 Dein Discord User-Token"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -62,7 +73,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTestToken"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -90,16 +101,18 @@
             android:id="@+id/step2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_card"
             android:orientation="vertical"
+            android:padding="18dp"
             android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🆔 Schritt 2: Application ID (für Bilder)"
+                android:text="🆔 Application ID (für Bilder)"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -122,7 +135,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTestApp"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -157,8 +170,10 @@
             android:id="@+id/step3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_card"
             android:orientation="vertical"
+            android:padding="18dp"
             android:visibility="gone">
 
             <TextView
@@ -166,14 +181,14 @@
                 android:layout_height="wrap_content"
                 android:text="🎉 Fertig!"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Tippe START — deine Rich Presence läuft dann im Hintergrund, auch wenn die App zu ist. Bilder lädst du im Editor per ⬆ Upload hoch."
+                android:text="Tippe START — deine Rich Presence läuft dann im Hintergrund, auch wenn die App zu ist. Bilder lädst du im Editor per ⬆ hoch."
                 android:textColor="@color/gray_text"
                 android:textSize="14sp" />
 

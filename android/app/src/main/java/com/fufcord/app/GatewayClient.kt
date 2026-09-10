@@ -1,3 +1,9 @@
+/*
+ * Fufcord — https://github.com/Fufi1925/Fufcord
+ * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten.
+ * Lizenziert unter der MIT-Lizenz (siehe LICENSE im Repo-Root).
+ */
+
 package com.fufcord.app
 
 import android.os.Handler
@@ -12,6 +18,10 @@ import java.util.concurrent.TimeUnit
 
 /** Discord Gateway (WebSocket): Identify, Heartbeat, Presence. */
 class GatewayClient {
+
+    companion object {
+        @Volatile var lastMessageMs: Long = 0
+    }
 
     interface Listener {
         fun onReady(username: String)
@@ -58,6 +68,7 @@ class GatewayClient {
     }
 
     private fun handleMsg(text: String, token: String, presence: JSONObject) {
+        lastMessageMs = System.currentTimeMillis()
         val msg = try {
             JSONObject(text)
         } catch (e: Exception) {
