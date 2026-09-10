@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -8,42 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <!-- Kopf mit Verlauf -->
+        <!-- HERO -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient_header"
+            android:background="@drawable/gradient_hero"
             android:orientation="vertical"
             android:padding="20dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⚡ FUFCORD"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txtVersion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="v3.1 • Custom Rich Presence"
-                android:textColor="@color/white"
-                android:textSize="13sp"
-                android:alpha="0.85" />
-        </LinearLayout>
-
-        <!-- Status-Karte -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/rounded_card"
-            android:orientation="vertical"
-            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -52,47 +26,95 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/badge_bg"
+                    android:padding="12dp"
+                    android:text="⚡"
+                    android:textSize="30sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FUFCORD"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtVersion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="v3.2 • Custom Rich Presence"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:alpha="0.85" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/badge_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <TextView
                     android:id="@+id/statusDot"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🔴"
-                    android:textSize="26sp" />
+                    android:textSize="22sp" />
 
                 <TextView
                     android:id="@+id/statusText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:text="Gestoppt"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnToggle"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 android:text="🚀 START"
-                android:textSize="16sp" />
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:strokeColor="@color/white" />
         </LinearLayout>
 
+        <!-- VORSCHAU -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="👁️ LIVE-VORSCHAU"
-            android:textColor="@color/blurple"
-            android:textSize="13sp"
+            android:layout_marginTop="24dp"
+            android:text="◉ LIVE-VORSCHAU"
+            android:textColor="@color/cyan"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="So sieht es in Discord aus"
-            android:textColor="@color/gray_text"
+            android:layout_marginTop="2dp"
+            android:text="Exakt so sieht es in Discord aus"
+            android:textColor="@color/muted"
             android:textSize="12sp" />
 
         <include
@@ -100,28 +122,30 @@
             layout="@layout/view_preview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="10dp" />
 
+        <!-- PRESETS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="📦 PRESETS"
-            android:textColor="@color/blurple"
-            android:textSize="13sp"
+            android:layout_marginTop="24dp"
+            android:text="◉ PRESETS"
+            android:textColor="@color/cyan"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="Antippen = laden • Lange drücken = eigene löschen"
-            android:textColor="@color/gray_text"
+            android:textColor="@color/muted"
             android:textSize="12sp" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="10dp">
 
             <LinearLayout
                 android:id="@+id/presetRow"
@@ -130,31 +154,34 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
+        <!-- WERKZEUGE -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="🛠️ WERKZEUGE"
-            android:textColor="@color/blurple"
-            android:textSize="13sp"
+            android:layout_marginTop="24dp"
+            android:text="◉ WERKZEUGE"
+            android:textColor="@color/cyan"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:text="🎨 Bearbeiten" />
+                android:text="🎨 Studio" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDoctor"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
@@ -165,7 +192,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -192,7 +219,7 @@
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="8dp"
             android:text="⚙️ Einstellungen" />
     </LinearLayout>

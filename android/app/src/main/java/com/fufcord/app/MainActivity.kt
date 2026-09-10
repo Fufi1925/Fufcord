@@ -57,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         b.btnExport.setOnClickListener { exportJson() }
         b.btnImport.setOnClickListener { importDialog() }
         b.btnSettings.setOnClickListener { settingsDialog() }
+        try {
+            val p = packageManager.getPackageInfo(packageName, 0)
+            b.txtVersion.text = "v${p.versionName} • Custom Rich Presence"
+        } catch (_: Exception) { }
         UpdateChecker.check(this)
     }
 
@@ -101,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         if (all.isEmpty()) {
             val t = TextView(this)
             t.text = "(keine Presets)"
-            t.setTextColor(0xFFB5BAC1.toInt())
+            t.setTextColor(0xFF8B93B0.toInt())
             b.presetRow.addView(t)
             return
         }
@@ -267,7 +271,7 @@ class MainActivity : AppCompatActivity() {
         fun label(s: String): TextView {
             val t = TextView(this)
             t.text = s
-            t.setTextColor(0xFFB5BAC1.toInt())
+            t.setTextColor(0xFF8B93B0.toInt())
             lay.addView(t)
             return t
         }

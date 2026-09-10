@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Fufcord" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/blurple</item>
+        <item name="colorPrimary">@color/violet</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/pink</item>
+        <item name="colorPrimaryContainer">@color/violet_dark</item>
+        <item name="colorSecondary">@color/cyan</item>
+        <item name="colorTertiary">@color/mint</item>
+        <item name="colorError">@color/rose</item>
         <item name="android:windowBackground">@color/bg</item>
         <item name="colorSurface">@color/card</item>
-        <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnSurface">@color/ink</item>
+        <item name="colorSurfaceVariant">@color/card2</item>
+        <item name="colorOnSurfaceVariant">@color/muted</item>
+        <item name="colorOutline">@color/stroke</item>
         <item name="shapeAppearanceSmallComponent">@style/Shape.Fufcord.Small</item>
         <item name="shapeAppearanceMediumComponent">@style/Shape.Fufcord.Medium</item>
         <item name="shapeAppearanceLargeComponent">@style/Shape.Fufcord.Large</item>
@@ -14,16 +20,16 @@
 
     <style name="Shape.Fufcord.Small" parent="ShapeAppearance.Material3.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">10dp</item>
+        <item name="cornerSize">12dp</item>
     </style>
 
     <style name="Shape.Fufcord.Medium" parent="ShapeAppearance.Material3.MediumComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>
+        <item name="cornerSize">18dp</item>
     </style>
 
     <style name="Shape.Fufcord.Large" parent="ShapeAppearance.Material3.LargeComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">20dp</item>
+        <item name="cornerSize">26dp</item>
     </style>
 </resources>

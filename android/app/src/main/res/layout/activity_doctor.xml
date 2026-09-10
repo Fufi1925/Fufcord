@@ -1,38 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_header"
-        android:orientation="vertical"
-        android:padding="18dp">
+        android:background="@drawable/gradient_hero"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🔍 Doktor"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:background="@drawable/badge_bg"
+            android:padding="10dp"
+            android:text="🔍"
+            android:textSize="26sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Prüft Token, App &amp; Bilder direkt bei Discord"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            android:alpha="0.85" />
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Doktor"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prüft Token, App &amp; Bilder direkt bei Discord"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:alpha="0.85" />
+        </LinearLayout>
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -41,20 +59,23 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_card"
             android:orientation="vertical"
-            android:padding="16dp" />
+            android:padding="18dp" />
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFixAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="🔧 Alles automatisch reparieren" />
+        android:layout_marginTop="14dp"
+        android:background="@drawable/gradient_button"
+        android:text="🔧 Alles automatisch reparieren"
+        android:textColor="@color/white"
+        app:rippleColor="#33FFFFFF" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
@@ -81,7 +102,7 @@
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:text="🛡️ Sicher-Modus" />
 
     <com.google.android.material.button.MaterialButton

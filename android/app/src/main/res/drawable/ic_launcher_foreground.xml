@@ -3,12 +3,15 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Weißes F -->
+    <!-- Neues F -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M30,22h48v12H44v14h28v12H44v24H30z" />
-    <!-- Grüner Online-Punkt -->
+        android:pathData="M34,22h44v16H50v12h20v14H50v22H34z" />
+    <!-- Mint-Punkt mit dunklem Ring -->
     <path
-        android:fillColor="#3BA55D"
-        android:pathData="M84,84m-13,0a13,13 0,1 0,26 0a13,13 0,1 0,-26 0" />
+        android:fillColor="#0A0D16"
+        android:pathData="M82,82m-14,0a14,14 0,1 0,28 0a14,14 0,1 0,-28 0" />
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M82,82m-10,0a10,10 0,1 0,20 0a10,10 0,1 0,-20 0" />
 </vector>

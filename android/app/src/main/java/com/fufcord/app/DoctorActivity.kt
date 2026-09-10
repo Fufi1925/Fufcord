@@ -98,7 +98,7 @@ class DoctorActivity : AppCompatActivity() {
 
         val netRow = TextView(this)
         netRow.text = "🌐 Frage Discord-API..."
-        netRow.setTextColor(0xFFB5BAC1.toInt())
+        netRow.setTextColor(0xFF8B93B0.toInt())
         b.resultList.addView(netRow)
 
         Thread {
