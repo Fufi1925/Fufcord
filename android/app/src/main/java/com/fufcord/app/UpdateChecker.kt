@@ -42,6 +42,9 @@ object UpdateChecker {
                     val tag = o.optString("tag_name", "").trim().removePrefix("v")
                     if (tag.isEmpty() || current.isEmpty()) return@use
                     if (!isNewer(tag, current)) return@use
+                    // Sonderfall Versions-Neustart: Tag v4.2 enthält App 1.03.
+                    // Ohne Guard würden 1.x-Geräte ewig zum "Update" auf die eigene Version raten.
+                    if (tag == "4.2" && current.startsWith("1.")) return@use
                     if (prefs.skipVersion == tag) return@use
                     var apkUrl = ""
                     val assets = o.optJSONArray("assets")
