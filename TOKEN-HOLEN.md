@@ -42,6 +42,8 @@ Kein PC? Kein Problem. Du brauchst nur **Firefox** + eine kostenlose Erweiterung
 | Problem | Lösung |
 |---|---|
 | Button reagiert nicht / kein Fenster | Script auf **v1.2+** aktualisieren (ohne Popups): alten Code komplett ersetzen → speichern → Tab neu laden |
+| „Kein Token" obwohl eingeloggt | Script auf **v1.3+** aktualisieren (läuft direkt in der Seite, `@inject-into page`) → speichern → neu laden |
+| Immer noch kein Token | 🛡️-Symbol in Adressleiste → **Tracking-Schutz für discord.com AUS** → neu laden. Hilft das nicht: Diagnose-Zeile aus dem Fenster abschreiben/screenshotten |
 | Button erscheint nicht | **Tab NEU LADEN** (↻ / runterziehen) — Script greift erst nach Reload! |
 | Kein grüner „Helper aktiv ✅" nach Reload | Script läuft nicht → Dashboard prüfen: Script in Liste? Schalter AN? Gespeichert? |
 | Berechtigung fehlt | Firefox ☰ → Add-ons → Violentmonkey → Zugriff auf Websites **erlauben** |

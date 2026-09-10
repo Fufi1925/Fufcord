@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Fufcord Token Helper
 // @namespace    https://github.com/Fufi1925/Fufcord
-// @version      1.2
-// @description  Zeigt deinen EIGENEN Discord-Token direkt auf der Seite (ohne Popups). Sendet NICHTS irgendwohin - alles bleibt lokal in deinem Browser.
+// @version      1.3
+// @description  Liest deinen EIGENEN Discord-Token direkt aus der Seite (Seiten-Kontext, ohne Popups). Sendet NICHTS irgendwohin - alles bleibt lokal in deinem Browser.
 // @match        https://discord.com/*
 // @noframes
 // @run-at       document-idle
+// @inject-into  page
 // @grant        none
 // ==/UserScript==
 
@@ -16,20 +17,73 @@
   if (window.top !== window.self) return;
   if (!location.hostname.endsWith('discord.com')) return;
 
-  // Token lesen (mehrere Versuche, ohne Popups)
-  function readToken() {
+  var diag = { storageKeys: null, storageError: null, source: '–' };
+
+  function clean(s) { return String(s).replace(/["\s]/g, ''); }
+
+  // Methode 1: Browser-Speicher (localStorage) - direkt im Seiten-Kontext
+  function readLocalStorage() {
     try {
+      var keys = [];
+      for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+      diag.storageKeys = keys;
       var raw = localStorage.getItem('token');
-      if (raw && raw.length > 10) return raw.replace(/["\s]/g, '');
-      for (var i = 0; i < localStorage.length; i++) {
-        var k = localStorage.key(i);
-        if (k && /token/i.test(k)) {
-          var v = localStorage.getItem(k);
-          if (v && v.length > 20) return v.replace(/["\s]/g, '');
+      if (raw && raw.length > 10) { diag.source = 'Browser-Speicher'; return clean(raw); }
+      for (var j = 0; j < keys.length; j++) {
+        if (keys[j] && /token/i.test(keys[j])) {
+          var v = localStorage.getItem(keys[j]);
+          if (v && v.length > 20) { diag.source = 'Browser-Speicher'; return clean(v); }
         }
       }
-    } catch (e) { /* Zugriff blockiert */ }
+    } catch (e) { diag.storageError = String(e).slice(0, 80); }
     return null;
+  }
+
+  // Methode 2: Discord-interner Speicher (Backup, falls Methode 1 leer ist)
+  function readWebpack() {
+    try {
+      var chunk = window.webpackChunkdiscord_app;
+      if (!chunk || !chunk.push) return null;
+      var found = null;
+      chunk.push([['fufcord' + Date.now()], {}, function (req) {
+        try {
+          var cache = req.c || {};
+          var ids = Object.keys(cache);
+          for (var n = 0; n < ids.length && !found; n++) {
+            var mod = null;
+            try { mod = req(ids[n]); } catch (e) { continue; }
+            found = searchExports(mod, 0);
+          }
+        } catch (e) {}
+      }]);
+      if (found) diag.source = 'Discord-Speicher';
+      return found;
+    } catch (e) { return null; }
+  }
+
+  function searchExports(obj, depth) {
+    if (!obj || depth > 4) return null;
+    try {
+      if (typeof obj.getToken === 'function') {
+        var t = obj.getToken();
+        if (typeof t === 'string' && t.length > 20) return clean(t);
+      }
+      if (depth >= 3) return null;
+      for (var k in obj) {
+        if (k === '__esModule') continue;
+        var v = null;
+        try { v = obj[k]; } catch (e) { continue; }
+        if (v && (typeof v === 'object' || typeof v === 'function')) {
+          var r = searchExports(v, depth + 1);
+          if (r) return r;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function readToken() {
+    return readLocalStorage() || readWebpack();
   }
 
   // Overlay mit Token DIREKT auf der Seite (kein Popup!)
@@ -53,7 +107,7 @@
     var warn = document.createElement('div');
     warn.textContent = token
       ? '🔴 NIEMALS teilen! Wie ein Passwort behandeln.'
-      : 'Bist du auf discord.com eingeloggt? (Desktopwebsite + Login, dann Seite neu laden)';
+      : 'Tipp: Schild-Symbol in der Adressleiste → Tracking-Schutz für discord.com AUS → Seite neu laden.';
     warn.style.cssText = 'font-size:13px;color:#faa;margin-bottom:12px;';
     card.appendChild(warn);
 
@@ -93,7 +147,22 @@
       closeBtn.addEventListener('click', function () { ov.remove(); });
       row.appendChild(closeBtn);
       card.appendChild(row);
+
+      var src = document.createElement('div');
+      src.textContent = 'Quelle: ' + diag.source;
+      src.style.cssText = 'font-size:11px;color:#b5bac1;margin-top:10px;';
+      card.appendChild(src);
     } else {
+      var d = document.createElement('div');
+      var lines = ['Quelle: ' + diag.source];
+      if (diag.storageError) lines.push('Speicher-Fehler: ' + diag.storageError);
+      else if (diag.storageKeys) lines.push('Speicher-Keys (' + diag.storageKeys.length + '): ' + (diag.storageKeys.slice(0, 20).join(', ') || 'keine'));
+      else lines.push('Speicher: nicht lesbar');
+      lines.push('Discord-App-Daten: ' + (window.webpackChunkdiscord_app ? 'gefunden' : 'nicht gefunden'));
+      d.textContent = 'Diagnose: ' + lines.join(' | ');
+      d.style.cssText = 'font-size:11px;color:#b5bac1;background:#1e1f22;border-radius:8px;padding:8px;margin-bottom:12px;word-break:break-all;';
+      card.appendChild(d);
+
       var okBtn = document.createElement('button');
       okBtn.textContent = 'OK';
       okBtn.style.cssText = 'width:100%;padding:12px;font-size:15px;font-weight:bold;background:#5865F2;color:#fff;border:none;border-radius:10px;margin-top:4px;';
@@ -112,7 +181,6 @@
     var host = document.body || document.documentElement;
     if (!host) return false;
 
-    // Status-Toast: zeigt SOFORT ob ein Token da ist
     var hasToken = !!readToken();
     var toast = document.createElement('div');
     toast.textContent = hasToken
