@@ -41,6 +41,9 @@ Kein PC? Kein Problem. Du brauchst nur **Firefox** + eine kostenlose Erweiterung
 
 | Problem | Lösung |
 |---|---|
+| Button erscheint nicht | **Tab NEU LADEN** (↻ / runterziehen) — Script greift erst nach Reload! |
+| Kein grüner „Helper aktiv ✅" nach Reload | Script läuft nicht → Dashboard prüfen: Script in Liste? Schalter AN? Gespeichert? |
+| Berechtigung fehlt | Firefox ☰ → Add-ons → Violentmonkey → Zugriff auf Websites **erlauben** |
 | Button erscheint nicht | Seite neu laden, prüfen ob Script aktiviert ist, nur auf **discord.com** (nicht in der Discord-App!) |
 | „Kein Token gefunden" | Nicht eingeloggt? → Erst einloggen, dann Button drücken |
 | Discord will App öffnen | Im Browser bleiben, **Desktopwebsite** aktivieren |
