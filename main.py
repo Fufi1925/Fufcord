@@ -588,7 +588,7 @@ def show_help():
 {C_YELLOW}4. Termux-Tipps:{C_RESET}
    • Display aus? → 'termux-wake-lock' eingeben, damit es weiterläuft
    • Beenden: Lautstärke-Leiser + C
-   • Update: 'cd ~/aleks && git pull'
+   • Update: 'cd ~/Fufcord && git pull'
 """)
     pause()
 

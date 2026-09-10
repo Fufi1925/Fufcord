@@ -32,11 +32,11 @@ Setze deine **komplett eigene Rich Presence**: Name, Bilder, 2 Zeilen Text, Butt
 
 ```bash
 pkg update -y && pkg install git -y
-git clone https://github.com/DEINNAME/aleks.git
-cd aleks
+git clone https://github.com/Fufi1925/Fufcord.git
+cd Fufcord
 ```
 
-> `DEINNAME` durch deinen GitHub-Namen ersetzen, nachdem du das Repo hochgeladen hast (siehe unten ⬇️).
+> ✅ Einfach clonen und loslegen!
 
 ### 3. Setup ausführen
 
@@ -94,14 +94,14 @@ Fertig! Dein Profil zeigt jetzt deine eigene Rich Presence. 🎉
 |---|---|
 | Display aus → RPC stoppt | Vor dem Start `termux-wake-lock` eingeben |
 | Beenden | `Lautstärke-Leiser + C` |
-| Update holen | `cd ~/aleks && git pull` |
+| Update holen | `cd ~/Fufcord && git pull` |
 | Neustart | `bash start.sh` |
 | Token ändern | Menü → Punkt 2 |
 
 ### Im Hintergrund laufen lassen
 ```bash
 termux-wake-lock   # Handy schläft nicht ein
-cd ~/aleks
+cd ~/Fufcord
 bash start.sh
 ```
 Dann einfach Termux minimieren — die Presence bleibt online. ✅
@@ -117,31 +117,23 @@ Im Menü unter **Punkt 4**:
 
 ---
 
-## ⬆️ Eigenes Repo auf GitHub hochladen
+## ⬆️ Repo ist schon online ✅
 
-Damit du (und andere) es per `git clone` laden kannst:
+Das Projekt liegt auf GitHub: **https://github.com/Fufi1925/Fufcord**
 
+Clonen mit:
 ```bash
-cd ~/aleks   # oder wo dein Ordner liegt
-git init
-git add .
-git commit -m "Aleks RPC 🎉"
+git clone https://github.com/Fufi1925/Fufcord.git
+cd Fufcord
+bash setup.sh
 ```
 
-Dann auf https://github.com/new:
-1. Repository-Name: `aleks`
-2. Public → **Create repository**
-3. Befehle von GitHub kopieren, z. B.:
-
+Eigene Änderungen hochladen:
 ```bash
-git remote add origin https://github.com/DEINNAME/aleks.git
-git branch -M main
-git push -u origin main
-```
-
-Danach kann jeder clonen mit:
-```bash
-git clone https://github.com/DEINNAME/aleks.git
+cd ~/Fufcord
+git add -A
+git commit -m "Update"
+git push origin main
 ```
 
 > 🔒 `config.json` (mit deinem Token) wird durch `.gitignore` **automatisch NICHT** hochgeladen. Sicher! ✅
@@ -151,7 +143,7 @@ git clone https://github.com/DEINNAME/aleks.git
 ## 📁 Projekt-Struktur
 
 ```
-aleks/
+Fufcord/
 ├── main.py              # Hauptprogramm (Menü + RPC)
 ├── config.example.json  # Beispiel-Config
 ├── config.json          # Deine Config (wird automatisch erstellt, privat!)
