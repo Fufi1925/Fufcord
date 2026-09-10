@@ -19,6 +19,9 @@ Setze deine **komplett eigene Rich Presence**: Name, Bilder, 2 Zeilen Text, Butt
 - 📦 **Presets** — z. B. Gaming, Coding, Musik per Klick wechseln
 - 🔄 **Auto-Reconnect** — bleibt von allein online
 - 📱 **Nur 1 Abhängigkeit** — super leicht, perfekt fürs Handy
+- 🩺 **Doktor** — prüft Token/App/Bilder direkt bei Discord + Auto-Reparatur
+- 🛡️ **Sicher-Modus** — Nur-Text-Presence, die immer angezeigt wird
+- 🔧 **Auto-Fix** — Fehler werden automatisch erkannt & repariert
 
 ---
 
@@ -123,6 +126,12 @@ Im Menü unter **Punkt 4**:
 1. **Punkt 9** → JSON-Code kopieren (wird auch als `meine-presence.json` gespeichert)
 2. Einer KI schicken (ChatGPT, Claude, Gemini...) + sagen was du willst, z. B.: *„Erstelle eine Elden-Ring-Presence im gleichen JSON-Format. Antworte NUR mit JSON, ohne Erklärung."*
 3. Antwort kopieren → **Punkt 10** → einfügen → **Punkt 1** starten 🚀
+
+## 🩺 Doktor & Sicher-Modus (v3.0)
+
+- **Punkt 11 (Doktor):** Prüft Token-Gültigkeit, ob deine App-ID wirklich existiert und ob deine Bild-Namen tatsächlich hochgeladen sind — **direkt bei Discord** — und repariert alles auf Knopfdruck (🔧 Auto-Reparatur, 🔘 Buttons weg, 🖼️ Bilder weg, 🆘 Notfall-Test)
+- **Punkt 12 (Sicher-Modus):** Sendet nur Text (ohne Bilder/Buttons) — wird **immer** angezeigt. Ideal zum Testen oder wenn Discord Bilder/Buttons blockiert
+- Beim Start läuft automatisch ein **Auto-Fix** (kaputte Werte werden bereinigt)
 
 ---
 
