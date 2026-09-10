@@ -118,6 +118,12 @@ Im Menü unter **Punkt 4**:
 - Mitgeliefert (8 Stück): `gaming` ⛏️, `coding` 💻, `musik` 🎧, `netflix` 🍿, `youtube` 📺, `twitch` 🔴, `fortnite` 🏆, `roblox` 🧱
 - Bilder dazu liegen im Ordner **`assets/`** — siehe **[assets/README.md](assets/README.md)** (hochladen + Namen exakt matchen!)
 
+## 🤖 Presence per KI erstellen (Punkt 9 + 10)
+
+1. **Punkt 9** → JSON-Code kopieren (wird auch als `meine-presence.json` gespeichert)
+2. Einer KI schicken (ChatGPT, Claude, Gemini...) + sagen was du willst, z. B.: *„Erstelle eine Elden-Ring-Presence im gleichen JSON-Format. Antworte NUR mit JSON, ohne Erklärung."*
+3. Antwort kopieren → **Punkt 10** → einfügen → **Punkt 1** starten 🚀
+
 ---
 
 ## ⬆️ Repo ist schon online ✅

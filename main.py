@@ -43,7 +43,7 @@ PRESETS_DIR = os.path.join(BASE_DIR, "presets")
 
 GATEWAY_URL = "wss://gateway.discord.gg/?v=10&encoding=json"
 
-VERSION = "2.0"
+VERSION = "2.1"
 
 # ---------------------------------------------------------------- Farben (Termux-safe ANSI)
 C_RESET = "\033[0m"
@@ -266,6 +266,73 @@ def build_presence(cfg, start_timestamp=None):
     }
 
 
+def sanitize_activity(raw):
+    """Bereinigt ein Activity-Dict (Preset/Import) — falsche Werte killen die Presence!"""
+    if not isinstance(raw, dict):
+        return json.loads(json.dumps(DEFAULT_CONFIG["activity"]))
+    clean = json.loads(json.dumps(DEFAULT_CONFIG["activity"]))
+    try:
+        t = int(raw.get("type", 0))
+        clean["type"] = t if t in ACTIVITY_TYPES else 0
+    except (ValueError, TypeError):
+        clean["type"] = 0
+    for key in ("name", "details", "state", "large_image", "large_text",
+                "small_image", "small_text", "stream_url"):
+        val = raw.get(key, "")
+        clean[key] = str(val)[:256] if val is not None else ""
+    # Buttons: max 2, nur http(s)-Links (sonst ignoriert Discord alles!)
+    btns = []
+    if isinstance(raw.get("buttons"), list):
+        for b in raw["buttons"][:2]:
+            if not isinstance(b, dict):
+                continue
+            label = str(b.get("label", "")).strip()[:32]
+            url = str(b.get("url", "")).strip()
+            if label and (url.startswith("https://") or url.startswith("http://")):
+                btns.append({"label": label, "url": url})
+    clean["buttons"] = btns
+    clean["use_timestamp"] = bool(raw.get("use_timestamp", True))
+    try:
+        clean["party_current"] = max(0, int(raw.get("party_current", 0) or 0))
+        clean["party_max"] = max(0, int(raw.get("party_max", 0) or 0))
+    except (ValueError, TypeError):
+        clean["party_current"] = 0
+        clean["party_max"] = 0
+    if not clean["name"].strip():
+        clean["name"] = "Fufcord"
+    return clean
+
+
+def extract_json_block(text):
+    """Holt den ersten {...}-Block aus Text (ignoriert ``` und KI-Gelaber)."""
+    text = text.replace("```json", "").replace("```", "")
+    start = text.find("{")
+    if start == -1:
+        return None
+    depth = 0
+    in_str = False
+    esc = False
+    for i in range(start, len(text)):
+        ch = text[i]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+        else:
+            if ch == '"':
+                in_str = True
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    return text[start:i + 1]
+    return None
+
+
 def show_preview(cfg):
     """Zeigt eine Discord-ähnliche Vorschau."""
     a = cfg.get("activity", {})
@@ -453,7 +520,7 @@ def presets_menu(cfg):
                 target = presets[idx]
                 with open(os.path.join(PRESETS_DIR, target + ".json"), "r", encoding="utf-8") as f:
                     data = json.load(f)
-                cfg["activity"] = data.get("activity", cfg["activity"])
+                cfg["activity"] = sanitize_activity(data.get("activity", cfg["activity"]))
                 cfg["status"] = data.get("status", cfg.get("status"))
                 if data.get("application_id"):
                     cfg["application_id"] = data["application_id"]
@@ -640,6 +707,110 @@ def do_update():
     pause()
 
 
+def export_json(cfg):
+    """Punkt 9: Presence als JSON anzeigen + speichern (für KI)."""
+    clear()
+    banner()
+    print(f"{C_BOLD}── 📤 Presence als JSON (für KI) ──{C_RESET}\n")
+    data = {
+        "status": cfg.get("status", "online"),
+        "application_id": cfg.get("application_id", ""),
+        "activity": cfg.get("activity", {}),
+    }
+    code = json.dumps(data, ensure_ascii=False, indent=2)
+    path = os.path.join(BASE_DIR, "meine-presence.json")
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(code)
+        print(f"{C_GREEN}✅ Gespeichert als: meine-presence.json{C_RESET}")
+    except OSError as e:
+        print(f"{C_RED}⚠️  Speichern ging nicht: {e}{C_RESET}")
+    print(f"\n{C_YELLOW}── Code zum Kopieren (lang drücken → kopieren) ──{C_RESET}\n")
+    print(code)
+    print(f"\n{C_YELLOW}── 🤖 So geht's mit KI ──{C_RESET}")
+    print(f"  1. Code oben kopieren + einer KI schicken (ChatGPT, Claude, Gemini...)")
+    print(f"  2. Dazu schreiben, z.B.:")
+    print(f'     {C_CYAN}"Erstelle mir eine Discord Rich Presence im gleichen JSON-Format.')
+    print(f'     Ich will: [z.B. Elden Ring, mystisch, mit Party 2/4].')
+    print(f'     Antworte NUR mit dem JSON-Code, ohne Erklärung."{C_RESET}')
+    print(f"  3. Antwort der KI kopieren → Fufcord Punkt 10 → einfügen → fertig! 🚀")
+    print(f"\n{C_DIM}Hinweis: Kein Token im Export — sicher zu teilen.{C_RESET}")
+    pause()
+
+
+def import_json(cfg):
+    """Punkt 10: JSON-Code einfügen (z.B. von KI) → wird deine Presence."""
+    clear()
+    banner()
+    print(f"{C_BOLD}── 📥 JSON einfügen (z.B. von KI) ──{C_RESET}\n")
+    print(f"  Füge jetzt den JSON-Code ein (lang drücken → Einfügen).")
+    print(f"  Danach eine {C_YELLOW}LEERE Zeile{C_RESET} (2x Enter) zum Fertigstellen.")
+    print(f"  Abbrechen: einfach direkt Enter auf leerer Zeile.\n")
+    lines = []
+    while True:
+        try:
+            line = input()
+        except EOFError:
+            break
+        if line.strip() == "":
+            if lines:
+                break
+            print(f"{C_DIM}Abgebrochen.{C_RESET}")
+            time.sleep(1)
+            return
+        lines.append(line)
+    block = extract_json_block("\n".join(lines))
+    if not block:
+        print(f"\n{C_RED}❌ Kein JSON gefunden! Code prüfen und nochmal versuchen.{C_RESET}")
+        pause()
+        return
+    try:
+        data = json.loads(block)
+    except json.JSONDecodeError as e:
+        print(f"\n{C_RED}❌ JSON fehlerhaft: {e}{C_RESET}")
+        print(f"{C_DIM}Tipp: Der KI sagen 'Antworte NUR mit JSON, ohne Erklärung'.{C_RESET}")
+        pause()
+        return
+    if not isinstance(data, dict):
+        print(f"\n{C_RED}❌ Das ist kein gültiges Presence-Objekt.{C_RESET}")
+        pause()
+        return
+    if isinstance(data.get("activity"), dict):
+        activity_raw = data["activity"]
+        new_status = str(data.get("status", cfg.get("status", "online"))).lower()
+        new_appid = str(data.get("application_id", "") or "").strip()
+    elif "name" in data:
+        activity_raw = data
+        new_status = cfg.get("status", "online")
+        new_appid = ""
+    else:
+        print(f"\n{C_RED}❌ Kein 'activity'/'name' gefunden — falsches Format.{C_RESET}")
+        pause()
+        return
+    cfg["activity"] = sanitize_activity(activity_raw)
+    if new_status in STATUS_LABELS:
+        cfg["status"] = new_status
+    if new_appid.isdigit() and len(new_appid) >= 15:
+        cfg["application_id"] = new_appid
+    save_config(cfg)
+    clear()
+    banner()
+    print(f"{C_GREEN}{C_BOLD}✅ Importiert! Deine neue Presence:{C_RESET}")
+    show_preview(cfg)
+    print(f"  {C_DIM}App-ID: {(cfg.get('application_id') or '(keine — Bilder/Buttons brauchen eine!)')}{C_RESET}")
+    name = ask("Als Preset speichern? Name eingeben (Enter = nein)")
+    if name.strip():
+        pname = "".join(c for c in name if c.isalnum() or c in ("-", "_", " ")).strip().replace(" ", "-").lower()
+        if pname:
+            path = os.path.join(PRESETS_DIR, pname + ".json")
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump({"status": cfg.get("status"), "application_id": cfg.get("application_id"),
+                           "activity": cfg.get("activity")}, f, ensure_ascii=False, indent=2)
+            print(f"{C_GREEN}✅ Preset '{pname}' gespeichert!{C_RESET}")
+    print(f"\n{C_GREEN}🚀 Fertig! Jetzt Punkt 1 zum Starten.{C_RESET}")
+    pause()
+
+
 # ================================================================= Anleitung
 def show_help():
     clear()
@@ -704,6 +875,8 @@ def main():
         print(f"  {C_YELLOW}6{C_RESET}  📖 Anleitung")
         print(f"  {C_MAGENTA}7{C_RESET}  🧪 Test-Modus (minimal, ohne Bilder)")
         print(f"  {C_CYAN}8{C_RESET}  🔄 Update laden (git pull)")
+        print(f"  {C_YELLOW}9{C_RESET}  📤 Presence als JSON (für KI)")
+        print(f"  {C_YELLOW}10{C_RESET} 📥 JSON einfügen (von KI)")
         print(f"  {C_RED}0{C_RESET}  Beenden")
         w = input(f"\n{C_BOLD}Auswahl:{C_RESET} ").strip()
 
@@ -726,6 +899,10 @@ def main():
             start_test_mode(cfg)
         elif w == "8":
             do_update()
+        elif w == "9":
+            export_json(cfg)
+        elif w == "10":
+            import_json(cfg)
         elif w == "0":
             print(f"\n{C_CYAN}👋 Ciao!{C_RESET}")
             break
