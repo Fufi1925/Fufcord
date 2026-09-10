@@ -147,7 +147,7 @@
     </style>
 
     <!-- ================================================================= Inputs -->
-    <style name="Input.Aurora">
+    <style name="Input.Aurora" parent="">
         <item name="android:background">@drawable/rounded_input</item>
         <item name="android:paddingLeft">14dp</item>
         <item name="android:paddingRight">14dp</item>
