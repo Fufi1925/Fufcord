@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ALEKS — Custom Discord Rich Presence für Termux (Handy)
+FUFCORD — Custom Discord Rich Presence für Termux (Handy)
 Wie Vencord: eigene Rich Presence komplett selbst setzen.
 
 Funktionen:
@@ -43,6 +43,8 @@ PRESETS_DIR = os.path.join(BASE_DIR, "presets")
 
 GATEWAY_URL = "wss://gateway.discord.gg/?v=10&encoding=json"
 
+VERSION = "2.0"
+
 # ---------------------------------------------------------------- Farben (Termux-safe ANSI)
 C_RESET = "\033[0m"
 C_BOLD = "\033[1m"
@@ -75,12 +77,12 @@ DEFAULT_CONFIG = {
     "application_id": "",
     "status": "online",
     "activity": {
-        "name": "Aleks",
+        "name": "Fufcord",
         "type": 0,
         "details": "Custom Rich Presence wie Vencord",
         "state": "läuft auf Termux 📱",
         "large_image": "logo",
-        "large_text": "Aleks RPC",
+        "large_text": "Fufcord RPC",
         "small_image": "",
         "small_text": "",
         "stream_url": "https://twitch.tv/deinname",
@@ -99,14 +101,14 @@ def clear():
 
 def banner():
     print(f"""{C_MAGENTA}{C_BOLD}
-    █████╗ ██╗     ███████╗██╗  ██╗███████╗
-   ██╔══██╗██║     ██╔════╝██║ ██╔╝██╔════╝
-   ███████║██║     █████╗  █████╔╝ ███████╗
-   ██╔══██║██║     ██╔══╝  ██╔═██╗ ╚════██║
-   ██║  ██║███████╗███████╗██║  ██╗███████║
-   ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝{C_RESET}
-  {C_CYAN}Custom Discord Rich Presence für Termux 📱{C_RESET}
-  {C_DIM}Wie Vencord — aber fürs Handy{ C_RESET if False else C_RESET}
+███████╗ ██╗   ██╗ ███████╗ ██████╗ ██████╗ ██████╗ ██████╗
+██╔════╝ ██║   ██║ ██╔════╝ ██╔════╝ ██╔═══██╗ ██╔══██╗ ██╔══██╗
+█████╗ ██║   ██║ █████╗ ██║ ██║   ██║ ██████╔╝ ██║  ██║
+██╔══╝ ██║   ██║ ██╔══╝ ██║ ██║   ██║ ██╔══██╗ ██║  ██║
+██║ ╚██████╔╝ ██║ ╚██████╗ ╚██████╔╝ ██║  ██║ ██████╔╝
+╚═╝ ╚═════╝ ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝{C_RESET}
+  {C_CYAN}Custom Discord Rich Presence für Termux 📱 {C_DIM}v{VERSION}{C_RESET}
+  {C_DIM}Wie Vencord — aber fürs Handy{C_RESET}
 """)
 
 
@@ -195,7 +197,7 @@ def build_activity(cfg, start_timestamp=None):
     now_ms = int(time.time() * 1000)
 
     activity = {
-        "name": a.get("name", "Aleks") or "Aleks",
+        "name": a.get("name", "Fufcord") or "Fufcord",
         "type": act_type,
         "created_at": now_ms,
     }
@@ -248,7 +250,7 @@ def build_activity(cfg, start_timestamp=None):
     try:
         pc, pm = int(a.get("party_current") or 0), int(a.get("party_max") or 0)
         if pc > 0 and pm > 0:
-            activity["party"] = {"id": "aleks-party", "size": [pc, pm]}
+            activity["party"] = {"id": "fufcord-party", "size": [pc, pm]}
     except (ValueError, TypeError):
         pass
 
@@ -313,7 +315,7 @@ def edit_presence(cfg):
         w = input(f"\n{C_BOLD}Auswahl:{C_RESET} ").strip().lower()
 
         if w == "1":
-            a["name"] = ask("Aktivitäts-Name (z.B. Minecraft, Spotify, Visual Studio Code)", a.get("name", "Aleks"))
+            a["name"] = ask("Aktivitäts-Name (z.B. Minecraft, Spotify, Visual Studio Code)", a.get("name", "Fufcord"))
         elif w == "2":
             print("\n  Typen: 0=Spielt  1=Streamt  2=Hört  3=Schaut zu  4=Custom  5=Tritt an")
             try:
@@ -612,6 +614,32 @@ def start_test_mode(cfg):
     start_rpc(test_cfg)
 
 
+def do_update():
+    """Git-Update direkt aus der App (git pull)."""
+    import subprocess
+    clear()
+    banner()
+    print(f"{C_BOLD}── Update ──{C_RESET}\n")
+    print(f"{C_DIM}Hole neueste Version von GitHub...{C_RESET}\n")
+    try:
+        r = subprocess.run(["git", "pull"], cwd=BASE_DIR, capture_output=True, text=True, timeout=90)
+        out = ((r.stdout or "") + "\n" + (r.stderr or "")).strip()
+        print((out[:1500] if out else "(keine Ausgabe)") + "\n")
+        if "Already up to date" in out or "bereits aktuell" in out:
+            print(f"{C_GREEN}✅ Du bist aktuell (v{VERSION}).{C_RESET}")
+        elif r.returncode == 0:
+            print(f"{C_GREEN}✅ Update geladen! Wichtig: App einmal neu starten:")
+            print(f"   Punkt 0 (Beenden) → dann: bash start.sh{C_RESET}")
+        else:
+            print(f"{C_RED}⚠️  Update unklar — versuch manuell: cd ~/Fufcord && git pull{C_RESET}")
+    except FileNotFoundError:
+        print(f"{C_RED}❌ git nicht gefunden. In Termux: pkg install git{C_RESET}")
+    except Exception as e:
+        print(f"{C_RED}❌ Update fehlgeschlagen: {e}{C_RESET}")
+        print(f"{C_DIM}Manuell: cd ~/Fufcord && git pull{C_RESET}")
+    pause()
+
+
 # ================================================================= Anleitung
 def show_help():
     clear()
@@ -620,11 +648,11 @@ def show_help():
 
 {C_YELLOW}1. Discord-App erstellen (für Bilder + App-ID):{C_RESET}
    • https://discord.com/developers/applications öffnen
-   • "New Application" → Namen wählen (z.B. Aleks)
-   • Application ID kopieren → in Aleks Menü Punkt 2 eintragen
+   • "New Application" → Namen wählen (z.B. Fufcord)
+   • Application ID kopieren → in Fufcord Menü Punkt 2 eintragen
    • Links "Rich Presence" → "Art Assets" → "Add Image(s)"
    • Bild hochladen, Namen merken (z.B. logo)
-   • Diesen Namen in Aleks bei "Großes Bild" eintragen
+   • Diesen Namen in Fufcord bei "Großes Bild" eintragen
 
 {C_YELLOW}2. Token holen:{C_RESET}
    • Am PC: Discord im Browser öffnen → F12 → Reiter "Application"
@@ -658,7 +686,7 @@ def main():
     if not (cfg.get("token") or "").strip():
         clear()
         banner()
-        print(f"{C_YELLOW}👋 Willkommen bei Aleks! Zuerst richten wir Token & App-ID ein.{C_RESET}\n")
+        print(f"{C_YELLOW}👋 Willkommen bei Fufcord! Zuerst richten wir Token & App-ID ein.{C_RESET}\n")
         pause()
         setup_token_appid(cfg)
 
@@ -666,7 +694,8 @@ def main():
         clear()
         banner()
         print(f"  Token : {mask_token(cfg.get('token', ''))}   |   App-ID: {(cfg.get('application_id') or '(keine)')[:12]}")
-        print(f"  Status: {STATUS_LABELS.get(cfg.get('status'), cfg.get('status'))}\n")
+        print(f"  Status: {STATUS_LABELS.get(cfg.get('status'), cfg.get('status'))}")
+        print(f"  📦 {len(list_presets())} Presets installiert   |   v{VERSION}\n")
         print(f"  {C_GREEN}{C_BOLD}1{C_RESET}  🚀 RPC starten")
         print(f"  {C_YELLOW}2{C_RESET}  🔑 Token & Application ID")
         print(f"  {C_YELLOW}3{C_RESET}  🎨 Presence bearbeiten (Vencord-Stil)")
@@ -674,6 +703,7 @@ def main():
         print(f"  {C_YELLOW}5{C_RESET}  👁️  Vorschau anzeigen")
         print(f"  {C_YELLOW}6{C_RESET}  📖 Anleitung")
         print(f"  {C_MAGENTA}7{C_RESET}  🧪 Test-Modus (minimal, ohne Bilder)")
+        print(f"  {C_CYAN}8{C_RESET}  🔄 Update laden (git pull)")
         print(f"  {C_RED}0{C_RESET}  Beenden")
         w = input(f"\n{C_BOLD}Auswahl:{C_RESET} ").strip()
 
@@ -694,6 +724,8 @@ def main():
             show_help()
         elif w == "7":
             start_test_mode(cfg)
+        elif w == "8":
+            do_update()
         elif w == "0":
             print(f"\n{C_CYAN}👋 Ciao!{C_RESET}")
             break

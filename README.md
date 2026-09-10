@@ -1,4 +1,4 @@
-# ALEKS 📱 — Custom Discord Rich Presence für Termux
+# FUFCORD 📱 — Custom Discord Rich Presence für Termux
 
 Wie **Vencord Custom Rich Presence** — aber fürs **Handy** (Termux / Android).
 Setze deine **komplett eigene Rich Presence**: Name, Bilder, 2 Zeilen Text, Buttons, Zeit — alles frei einstellbar.
@@ -57,8 +57,8 @@ bash start.sh
 ### Schritt 1: Discord-App erstellen (für Bilder + App-ID)
 
 1. Öffne https://discord.com/developers/applications
-2. **New Application** → Name wählen (z. B. `Aleks`) → Create
-3. **Application ID kopieren** (wird in Aleks gebraucht)
+2. **New Application** → Name wählen (z. B. `Fufcord`) → Create
+3. **Application ID kopieren** (wird in Fufcord gebraucht)
 4. Links auf **Rich Presence** → **Art Assets** → **Add Image(s)**
 5. Bild hochladen (mind. 512×512) → Namen merken, z. B. `logo`
 6. 💡 Mehrere Bilder = mehr Auswahl (z. B. `minecraft`, `spotify`, `vscode`)
@@ -76,7 +76,7 @@ bash start.sh
 > Niemals teilen, niemals auf GitHub laden, niemandem schicken.
 > Wer deinen Token hat, hat deinen Account.
 
-### Schritt 3: In Aleks eintragen
+### Schritt 3: In Fufcord eintragen
 
 1. `bash start.sh` → Menü **Punkt 2** (Token & Application ID)
 2. Token einfügen + Application ID einfügen → speichern
@@ -195,4 +195,4 @@ Fufcord/
 
 ---
 
-Made with ❤️ für Termux — **Aleks RPC**
+Made with ❤️ für Termux — **Fufcord RPC**

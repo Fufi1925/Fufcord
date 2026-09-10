@@ -1,6 +1,6 @@
 #!/bin/bash
-# Aleks — Setup für Termux (Handy) & Linux
-echo "📦 Aleks Setup startet..."
+# Fufcord — Setup für Termux (Handy) & Linux
+echo "📦 Fufcord Setup startet..."
 echo ""
 
 # Termux oder Linux erkennen
