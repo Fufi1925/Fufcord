@@ -25,6 +25,7 @@ eigene Gefahr, keinen Token weitergeben!
 import asyncio
 import json
 import os
+import re
 import sys
 import time
 
@@ -43,7 +44,7 @@ PRESETS_DIR = os.path.join(BASE_DIR, "presets")
 
 GATEWAY_URL = "wss://gateway.discord.gg/?v=10&encoding=json"
 
-VERSION = "2.1"
+VERSION = "2.2"
 
 # ---------------------------------------------------------------- Farben (Termux-safe ANSI)
 C_RESET = "\033[0m"
@@ -266,30 +267,55 @@ def build_presence(cfg, start_timestamp=None):
     }
 
 
+EMOJI_RE = re.compile("[\\U0001F000-\\U0001FAFF\\u2600-\\u27BF\\u2B00-\\u2BFF\\uFE0F\\u200D]", flags=re.UNICODE)
+
+
+def strip_emoji(text):
+    return EMOJI_RE.sub("", text)
+
+
 def sanitize_activity(raw):
-    """Bereinigt ein Activity-Dict (Preset/Import) — falsche Werte killen die Presence!"""
+    """Bereinigt ein Activity-Dict (Preset/Import) — falsche Werte killen die Presence!
+    Gibt (clean_dict, warnungen) zurück."""
+    warns = []
     if not isinstance(raw, dict):
-        return json.loads(json.dumps(DEFAULT_CONFIG["activity"]))
+        return json.loads(json.dumps(DEFAULT_CONFIG["activity"])), ["Ungültiges Format — Standard genommen."]
     clean = json.loads(json.dumps(DEFAULT_CONFIG["activity"]))
     try:
         t = int(raw.get("type", 0))
         clean["type"] = t if t in ACTIVITY_TYPES else 0
+        if clean["type"] != t:
+            warns.append("Typ ungültig → 'Spielt' gesetzt.")
     except (ValueError, TypeError):
         clean["type"] = 0
+        warns.append("Typ ungültig → 'Spielt' gesetzt.")
     for key in ("name", "details", "state", "large_image", "large_text",
                 "small_image", "small_text", "stream_url"):
         val = raw.get(key, "")
         clean[key] = str(val)[:256] if val is not None else ""
-    # Buttons: max 2, nur http(s)-Links (sonst ignoriert Discord alles!)
+    if len(str(raw.get("details", "") or "")) > 128 or len(str(raw.get("state", "") or "")) > 128:
+        warns.append("Details/State zu lang → gekürzt.")
+    # Buttons: max 2, nur http(s)-Links, KEINE Emojis (killen die Anzeige!)
     btns = []
     if isinstance(raw.get("buttons"), list):
-        for b in raw["buttons"][:2]:
+        for i, b in enumerate(raw["buttons"][:2], 1):
             if not isinstance(b, dict):
                 continue
-            label = str(b.get("label", "")).strip()[:32]
+            label = str(b.get("label", "")).strip()
             url = str(b.get("url", "")).strip()
-            if label and (url.startswith("https://") or url.startswith("http://")):
-                btns.append({"label": label, "url": url})
+            if EMOJI_RE.search(label):
+                label = strip_emoji(label).strip()
+                warns.append(f"Button {i}: Emojis entfernt (blockieren die Anzeige!).")
+            label = label[:32]
+            if not label:
+                warns.append(f"Button {i}: leer nach Bereinigung → entfernt.")
+                continue
+            if not (url.startswith("https://") or url.startswith("http://")):
+                warns.append(f"Button {i}: Link ungültig ('{url[:30]}') → entfernt.")
+                continue
+            btns.append({"label": label, "url": url})
+        if len(raw["buttons"]) > 2:
+            warns.append("Mehr als 2 Buttons → nur erste 2 behalten.")
     clean["buttons"] = btns
     clean["use_timestamp"] = bool(raw.get("use_timestamp", True))
     try:
@@ -300,7 +326,8 @@ def sanitize_activity(raw):
         clean["party_max"] = 0
     if not clean["name"].strip():
         clean["name"] = "Fufcord"
-    return clean
+        warns.append("Name leer → 'Fufcord' gesetzt.")
+    return clean, warns
 
 
 def extract_json_block(text):
@@ -520,7 +547,7 @@ def presets_menu(cfg):
                 target = presets[idx]
                 with open(os.path.join(PRESETS_DIR, target + ".json"), "r", encoding="utf-8") as f:
                     data = json.load(f)
-                cfg["activity"] = sanitize_activity(data.get("activity", cfg["activity"]))
+                cfg["activity"], _w = sanitize_activity(data.get("activity", cfg["activity"]))
                 cfg["status"] = data.get("status", cfg.get("status"))
                 if data.get("application_id"):
                     cfg["application_id"] = data["application_id"]
@@ -787,7 +814,7 @@ def import_json(cfg):
         print(f"\n{C_RED}❌ Kein 'activity'/'name' gefunden — falsches Format.{C_RESET}")
         pause()
         return
-    cfg["activity"] = sanitize_activity(activity_raw)
+    cfg["activity"], sanitize_warns = sanitize_activity(activity_raw)
     if new_status in STATUS_LABELS:
         cfg["status"] = new_status
     if new_appid.isdigit() and len(new_appid) >= 15:
@@ -796,6 +823,10 @@ def import_json(cfg):
     clear()
     banner()
     print(f"{C_GREEN}{C_BOLD}✅ Importiert! Deine neue Presence:{C_RESET}")
+    if sanitize_warns:
+        print(f"{C_YELLOW}── Automatisch repariert:{C_RESET}")
+        for wmsg in sanitize_warns:
+            print(f"  {C_YELLOW}•{C_RESET} {wmsg}")
     show_preview(cfg)
     print(f"  {C_DIM}App-ID: {(cfg.get('application_id') or '(keine — Bilder/Buttons brauchen eine!)')}{C_RESET}")
     name = ask("Als Preset speichern? Name eingeben (Enter = nein)")
@@ -809,6 +840,91 @@ def import_json(cfg):
             print(f"{C_GREEN}✅ Preset '{pname}' gespeichert!{C_RESET}")
     print(f"\n{C_GREEN}🚀 Fertig! Jetzt Punkt 1 zum Starten.{C_RESET}")
     pause()
+
+
+def check_presence(cfg):
+    """Punkt 11: Presence prüfen, Probleme finden, reparieren + Notfall-Test."""
+    while True:
+        clear()
+        banner()
+        print(f"{C_BOLD}── 🔍 Presence prüfen & reparieren ──{C_RESET}\n")
+        a = cfg.get("activity", {})
+        raw_app = (cfg.get("application_id") or "").strip()
+        app_id = valid_app_id(cfg)
+        probs = []
+
+        if raw_app and not app_id:
+            probs.append(("🔴", f"App-ID ungültig ('{raw_app[:24]}') → muss eine lange Zahl sein! Bilder/Buttons werden weggelassen."))
+        elif not raw_app and (a.get("large_image") or a.get("small_image") or a.get("buttons")):
+            probs.append(("🟡", "Bilder/Buttons gesetzt, aber KEINE App-ID → werden weggelassen (nur Text sichtbar)."))
+        elif app_id:
+            probs.append(("🟢", f"App-ID Format OK ({app_id[:6]}...)."))
+
+        for key, label in (("large_image", "Großes Bild"), ("small_image", "Kleines Bild")):
+            v = (a.get(key) or "").strip()
+            if v:
+                if re.fullmatch(r"[a-z0-9_]{1,32}", v):
+                    probs.append(("🟢", f"{label} '{v}': Format OK — existiert es auch in deiner App? (Developer Portal → Art Assets!)"))
+                else:
+                    probs.append(("🔴", f"{label} '{v}': ungültiger Name! Nur Kleinbuchstaben, Zahlen, _ (max 32)."))
+
+        btns = a.get("buttons") or []
+        if btns and not app_id:
+            probs.append(("🟡", f"{len(btns)} Button(s) gesetzt, aber ohne App-ID werden sie weggelassen."))
+        for i, b in enumerate(btns, 1):
+            if not isinstance(b, dict):
+                probs.append(("🔴", f"Button {i}: kaputtes Format → wird entfernt."))
+                continue
+            label = str(b.get("label", ""))
+            url = str(b.get("url", ""))
+            if EMOJI_RE.search(label):
+                probs.append(("🔴", f"Button {i} ('{label[:20]}'): enthält Emojis → BLOCKIERT die Anzeige! Entfernen!"))
+            if len(label) > 32:
+                probs.append(("🟡", f"Button {i}: Text zu lang ({len(label)} statt max 32) → wird gekürzt."))
+            if not (url.startswith("https://") or url.startswith("http://")):
+                probs.append(("🔴", f"Button {i}: Link ungültig ('{url[:30]}') → muss mit http(s):// anfangen."))
+        if not btns:
+            probs.append(("🟢", "Keine Buttons — unproblematisch."))
+
+        if len(a.get("details", "") or "") > 128 or len(a.get("state", "") or "") > 128:
+            probs.append(("🟡", "Details/State zu lang → wird automatisch gekürzt."))
+        try:
+            t = int(a.get("type", 0))
+            if t not in ACTIVITY_TYPES:
+                probs.append(("🔴", f"Typ {t} ungültig → wird 'Spielt'."))
+        except (ValueError, TypeError):
+            probs.append(("🔴", "Typ ungültig → wird 'Spielt'."))
+
+        for sym, txt in probs:
+            print(f"  {sym} {txt}")
+        print(f"\n  {C_DIM}Wichtig: Bild-Namen müssen in DEINER App hochgeladen sein")
+        print(f"  (discord.com/developers → deine App → Rich Presence → Art Assets).{C_RESET}\n")
+        print(f"  {C_GREEN}1{C_RESET}  🔧 Auto-Reparatur (jetzt speichern)")
+        print(f"  {C_YELLOW}2{C_RESET}  🆘 Notfall-Test: nur Text starten (Bilder/Buttons weg)")
+        print(f"  {C_RED}X{C_RESET}  Zurück")
+        w = input(f"\n{C_BOLD}Auswahl:{C_RESET} ").strip().lower()
+        if w == "1":
+            cfg["activity"], warns = sanitize_activity(a)
+            save_config(cfg)
+            print(f"\n{C_GREEN}✅ Repariert & gespeichert!{C_RESET}")
+            for wmsg in warns:
+                print(f"  {C_YELLOW}•{C_RESET} {wmsg}")
+            print(f"\n{C_DIM}Jetzt testen: Menü → Punkt 1. Falls immer noch nichts → Option 2 (Notfall-Test).{C_RESET}")
+            pause()
+            return
+        elif w == "2":
+            em = json.loads(json.dumps(cfg))
+            em["activity"]["large_image"] = ""
+            em["activity"]["large_text"] = ""
+            em["activity"]["small_image"] = ""
+            em["activity"]["small_text"] = ""
+            em["activity"]["buttons"] = []
+            print(f"\n{C_MAGENTA}{C_BOLD}🆘 NOTFALL-TEST: nur dein Text, keine Bilder/Buttons.{C_RESET}")
+            print(f"{C_DIM}   Wird DAS angezeigt → lag es an Bild/Button/App-ID!{C_RESET}\n")
+            start_rpc(em)
+            return
+        elif w == "x":
+            return
 
 
 # ================================================================= Anleitung
@@ -877,6 +993,7 @@ def main():
         print(f"  {C_CYAN}8{C_RESET}  🔄 Update laden (git pull)")
         print(f"  {C_YELLOW}9{C_RESET}  📤 Presence als JSON (für KI)")
         print(f"  {C_YELLOW}10{C_RESET} 📥 JSON einfügen (von KI)")
+        print(f"  {C_YELLOW}11{C_RESET} 🔍 Prüfen & Reparieren (zeigt nix an?)")
         print(f"  {C_RED}0{C_RESET}  Beenden")
         w = input(f"\n{C_BOLD}Auswahl:{C_RESET} ").strip()
 
@@ -903,6 +1020,8 @@ def main():
             export_json(cfg)
         elif w == "10":
             import_json(cfg)
+        elif w == "11":
+            check_presence(cfg)
         elif w == "0":
             print(f"\n{C_CYAN}👋 Ciao!{C_RESET}")
             break

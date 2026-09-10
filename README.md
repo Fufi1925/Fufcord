@@ -178,6 +178,11 @@ Fufcord/
 
 ## ❓ Probleme?
 
+**„KI-JSON importiert, aber nichts zu sehen":**
+→ Menü **Punkt 11 (Prüfen & Reparieren)** — findet kaputte Buttons/Bilder automatisch + Notfall-Test
+→ Häufigste Ursachen: **Emojis im Button-Text** (BLOCKIERT alles — entfernen!), **Bild-Name existiert nicht** in deiner App (Developer Portal → Art Assets prüfen!), **App-ID falsch/erfunden**
+→ Notfall-Test: Punkt 11 → Option 2 (nur Text) — wenn DAS angezeigt wird, lag es an Bild/Button
+
 **„Termux sagt online, aber Discord zeigt nichts":**
 → Menü **Punkt 7 (Test-Modus)** starten und prüfen — NICHT im eigenen Handy-Profil (das zeigt die Activity oft nicht!), sondern: **Server-Mitgliederliste** (steht „Spielt ..." unter deinem Namen?), **2. Account**, oder **Firefox** (discord.com)
 → Discord-App: Einstellungen → Privatsphäre → **„Aktuellen Aktivitätsstatus anzeigen" muss AN sein**
