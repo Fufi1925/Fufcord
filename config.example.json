@@ -1,0 +1,25 @@
+{
+  "token": "DEIN_USER_TOKEN_HIER",
+  "application_id": "DEINE_APPLICATION_ID_HIER",
+  "status": "online",
+  "activity": {
+    "name": "Aleks",
+    "type": 0,
+    "details": "Custom Rich Presence wie Vencord",
+    "state": "läuft auf Termux 📱",
+    "large_image": "logo",
+    "large_text": "Aleks RPC",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "https://twitch.tv/deinname",
+    "buttons": [
+      {
+        "label": "Mein Server",
+        "url": "https://discord.gg/deinlink"
+      }
+    ],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+  }
+}

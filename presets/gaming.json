@@ -1,0 +1,19 @@
+{
+  "status": "online",
+  "application_id": "",
+  "activity": {
+    "name": "Minecraft",
+    "type": 0,
+    "details": "⛏️ Grinding Diamonds",
+    "state": "Server: Aleks SMP",
+    "large_image": "minecraft",
+    "large_text": "Minecraft",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+  }
+}

@@ -1,0 +1,3 @@
+# Aleks Rich Presence — läuft auf Termux / Android / PC
+# Nur EINE Abhängigkeit, extra leicht fürs Handy
+websockets>=12.0

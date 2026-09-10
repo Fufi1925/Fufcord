@@ -1,0 +1,6 @@
+# Token & private Configs niemals auf GitHub pushen!
+config.json
+__pycache__/
+*.pyc
+*.log
+.venv/

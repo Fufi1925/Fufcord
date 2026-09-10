@@ -1,0 +1,19 @@
+{
+  "status": "idle",
+  "application_id": "",
+  "activity": {
+    "name": "Spotify",
+    "type": 2,
+    "details": "🎧 Lieblingssong auf Loop",
+    "state": "🎵 Vibe Mode",
+    "large_image": "spotify",
+    "large_text": "Spotify",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": false,
+    "party_current": 0,
+    "party_max": 0
+  }
+}

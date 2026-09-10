@@ -1,0 +1,24 @@
+{
+  "status": "dnd",
+  "application_id": "",
+  "activity": {
+    "name": "Visual Studio Code",
+    "type": 0,
+    "details": "💻 Coded an Aleks RPC",
+    "state": "📝 main.py",
+    "large_image": "vscode",
+    "large_text": "VS Code",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com/"
+      }
+    ],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+  }
+}
