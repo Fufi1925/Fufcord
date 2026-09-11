@@ -29,8 +29,19 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Debug-APK bauen
-        run: gradle :app:assembleDebug --no-daemon -p android
+      - name: Debug-APK bauen (stabil signiert)
+        run: |
+          if [ -n "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 -d > /tmp/fufcord.p12
+            export FUF_KEYSTORE_PATH=/tmp/fufcord.p12
+            export FUF_STORE_PASSWORD="${{ secrets.SIGNING_STORE_PASSWORD }}"
+            export FUF_KEY_ALIAS="${{ secrets.SIGNING_KEY_ALIAS }}"
+            export FUF_KEY_PASSWORD="${{ secrets.SIGNING_KEY_PASSWORD }}"
+            echo "Stabile Signierung aktiv."
+          else
+            echo "Kein Signatur-Secret — Standard-Debug-Signatur."
+          fi
+          gradle :app:assembleDebug --no-daemon -p android
 
       - name: APK hochladen
         uses: actions/upload-artifact@v4

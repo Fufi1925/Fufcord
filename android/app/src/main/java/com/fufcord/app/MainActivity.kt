@@ -370,7 +370,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     if (ok2) Toast.makeText(this,
                         "✅ Bild '$asset' hochgeladen! (5 Min warten)", Toast.LENGTH_LONG).show()
-                    else Toast.makeText(this, "⚠️ Bild-Upload: $res2", Toast.LENGTH_LONG).show()
+                    else Toast.makeText(this, "⚠️ Bild-Upload: ${res2.take(150)}", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) { /* still — Preset läuft auch ohne Bild */ }
         }.start()

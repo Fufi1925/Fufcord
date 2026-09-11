@@ -90,7 +90,7 @@ object DiscordApi {
     /** Assets einer App → (ok, [(assetId, name)]) */
     fun listAssets(token: String, appId: String): Pair<Boolean, List<Pair<String, String>>> {
         return try {
-            val (code, body) = get("/applications/$appId/assets", token)
+            val (code, body) = get("/oauth2/applications/$appId/assets?nocache=true", token)
             if (code != 200) return false to emptyList()
             val out = mutableListOf<Pair<String, String>>()
             val arr = JSONArray(body)
@@ -105,7 +105,9 @@ object DiscordApi {
     }
 
     /** Bild hochladen → (ok, assetId_oder_fehler). imageDataUrl = data:image/png;base64,...
-     * Robust: ersetzt gleichnamige Assets, wiederholt 400 mit anderem type-Format. */
+     * Endpunkt + Format exakt wie das Discord-Developer-Portal:
+     * POST /oauth2/applications/{id}/assets mit {name, image, type:"1"}.
+     * (Der Pfad ohne /oauth2 ist das neue V2-Schema und lehnt das ab → 400.) */
     fun uploadAsset(token: String, appId: String, name: String, imageDataUrl: String): Pair<Boolean, String> {
         val cleanName = name.trim().lowercase()
         val cleanImg = imageDataUrl.replace("\\s".toRegex(), "")
@@ -123,7 +125,7 @@ object DiscordApi {
                 val js = JSONObject().put("name", cleanName).put("image", cleanImg)
                 if (asString) js.put("type", "1") else js.put("type", 1)
                 val body = js.toString().toRequestBody("application/json".toMediaType())
-                val req = Request.Builder().url("$BASE/applications/$appId/assets")
+                val req = Request.Builder().url("$BASE/oauth2/applications/$appId/assets")
                     .header("Authorization", token).header("User-Agent", UA)
                     .post(body).build()
                 client.newCall(req).execute().use { r ->
@@ -142,7 +144,7 @@ object DiscordApi {
     /** Asset löschen. */
     fun deleteAsset(token: String, appId: String, assetId: String): Boolean {
         return try {
-            val req = Request.Builder().url("$BASE/applications/$appId/assets/$assetId")
+            val req = Request.Builder().url("$BASE/oauth2/applications/$appId/assets/$assetId")
                 .header("Authorization", token).header("User-Agent", UA)
                 .delete().build()
             client.newCall(req).execute().use { it.code in 200..299 }
