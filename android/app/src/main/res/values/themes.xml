@@ -62,7 +62,7 @@
 
     <!-- Eingabefelder: komplett custom — 14dp-Form, Blurple-Rahmen bei Fokus -->
     <style name="Widget.Fufcord.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxBackgroundColor">@color/card2</item>
+        <item name="boxBackgroundColor">@color/input_box</item>
         <item name="boxStrokeColor">@color/input_stroke</item>
         <item name="boxStrokeErrorColor">@color/danger</item>
         <item name="boxStrokeWidth">1dp</item>

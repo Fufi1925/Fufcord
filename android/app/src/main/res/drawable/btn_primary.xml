@@ -12,4 +12,13 @@
             <corners android:radius="14dp" />
         </shape>
     </item>
+    <item android:bottom="24dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#24FFFFFF"
+                android:endColor="#00FFFFFF" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
 </ripple>

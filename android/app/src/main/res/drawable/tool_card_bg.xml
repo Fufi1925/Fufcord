@@ -8,9 +8,18 @@
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/card" />
+            <solid android:color="#B814171E" />
             <corners android:radius="16dp" />
             <stroke android:width="1dp" android:color="@color/glass_stroke" />
+        </shape>
+    </item>
+    <item android:bottom="60dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#14FFFFFF"
+                android:endColor="#00FFFFFF" />
+            <corners android:radius="16dp" />
         </shape>
     </item>
 </ripple>

@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/bg_deep" />
-</shape>
+<!-- Tiefe für Glas: Verlauf + Hauch Blurple oben -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#0B0D12" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#0E1322"
+                android:centerColor="#0B0D12"
+                android:endColor="#080A10" />
+        </shape>
+    </item>
+    <item
+        android:left="40dp"
+        android:top="-220dp"
+        android:right="40dp"
+        android:bottom="420dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="300dp"
+                android:startColor="#1A5865F2"
+                android:endColor="#005865F2" />
+        </shape>
+    </item>
+</layer-list>
