@@ -6,13 +6,24 @@
 
 package com.fufcord.app
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import com.fufcord.app.databinding.ViewPreviewBinding
 
 /** 1:1-Vorschau der Discord-Aktivitätskarte (dunkles Discord-Design). */
 object PreviewBinder {
 
-    fun bind(p: ViewPreviewBinding, act: ActConfig, safe: Boolean) {
+    private val urlCache = mutableMapOf<String, String>()
+    private val resolving = mutableSetOf<String>()
+    private val main = Handler(Looper.getMainLooper())
+
+    fun bind(p: ViewPreviewBinding, act: ActConfig, safe: Boolean,
+             ctx: Context? = null, appId: String = "", token: String = "",
+             rebind: (() -> Unit)? = null) {
         p.previewType.text = when (act.type) {
             0 -> "SPIELT GERADE"
             1 -> "STREAMT GERADE"
@@ -37,13 +48,15 @@ object PreviewBinder {
         }
 
         val showRich = !safe
-        // Großes Bild (Platzhalter mit Asset-Namen — Discord lädt das echte Bild)
+        // Großes Bild: echtes Bild laden (lokal oder aus dem Discord-CDN).
         if (showRich && act.largeImage.isNotEmpty()) {
             p.previewLargeWrap.visibility = View.VISIBLE
-            p.previewLargeLabel.text = "🖼️ ${act.largeImage}"
+            bindImage(ctx, appId, token, act.largeImage.trim(),
+                p.previewLarge, p.previewLargeLabel, true, rebind)
             if (act.smallImage.isNotEmpty()) {
                 p.previewSmallWrap.visibility = View.VISIBLE
-                p.previewSmallLabel.text = act.smallImage
+                bindImage(ctx, appId, token, act.smallImage.trim(),
+                    p.previewSmall, p.previewSmallLabel, false, rebind)
             } else {
                 p.previewSmallWrap.visibility = View.GONE
             }
@@ -66,5 +79,44 @@ object PreviewBinder {
             p.previewBtnRow.visibility = View.GONE
         }
         p.previewSafe.visibility = if (safe) View.VISIBLE else View.GONE
+    }
+
+    /** Bild in die Vorschau laden: 1) lokal (alle Preset-Bilder), 2) Discord-CDN. */
+    private fun bindImage(ctx: Context?, appId: String, token: String, name: String,
+                          img: ImageView, label: TextView, big: Boolean,
+                          rebind: (() -> Unit)?) {
+        if (name.isEmpty()) return
+        // 1) Lokales Bild aus der App → sofort da, geht auch offline.
+        if (ctx != null) {
+            val resId = ctx.resources.getIdentifier(name, "drawable", ctx.packageName)
+            if (resId != 0) {
+                img.setImageResource(resId)
+                label.visibility = View.GONE
+                return
+            }
+        }
+        // 2) Bereits bekannte CDN-Adresse aus dem Zwischenspeicher.
+        val key = "$appId/$name"
+        urlCache[key]?.let {
+            ImageLoader.load(it, img)
+            label.visibility = View.GONE
+            return
+        }
+        // 3) Platzhalter + Name→Bild einmalig im Hintergrund auflösen.
+        label.visibility = View.VISIBLE
+        label.text = if (big) "🖼️ $name" else name
+        img.setImageDrawable(null)
+        if (appId.isNotEmpty() && token.isNotEmpty() && resolving.add(key)) {
+            Thread {
+                try {
+                    val (ok, assets) = DiscordApi.listAssets(token, appId)
+                    if (ok) assets.firstOrNull { it.second == name }?.let {
+                        urlCache[key] = ImageLoader.appAssetUrl(appId, it.first)
+                        main.post { rebind?.invoke() }
+                    }
+                } catch (e: Exception) { }
+                finally { resolving.remove(key) }
+            }.start()
+        }
     }
 }

@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity() {
             b.btnToggle.setBackgroundResource(R.drawable.btn_primary)
         }
         val act = prefs.loadAct()
-        PreviewBinder.bind(b.previewCard, act, prefs.safeMode)
+        PreviewBinder.bind(b.previewCard, act, prefs.safeMode, this, prefs.appId, prefs.token) { refresh() }
         buildPresetRow()
         updatePermPill()
     }
@@ -283,11 +283,53 @@ class MainActivity : AppCompatActivity() {
                 val i = Intent(this, RpcService::class.java).setAction(RpcService.ACTION_START)
                 if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
                 Toast.makeText(this, "Starte … (läuft im Hintergrund weiter)", Toast.LENGTH_SHORT).show()
+                ensureActivityImages()
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Start blockiert: ${e.message}", Toast.LENGTH_LONG).show()
         }
         handler.postDelayed({ refresh() }, 900)
+    }
+
+    /** Fehlende Status-Bilder beim Start automatisch zu Discord hochladen. */
+    private fun ensureActivityImages() {
+        val act = prefs.loadAct()
+        val names = listOf(act.largeImage.trim(), act.smallImage.trim())
+            .filter { it.isNotEmpty() }.distinct()
+        if (names.isEmpty()) return
+        if (prefs.token.isEmpty() || !validAppId(prefs.appId)) return
+        // Nur Namen mit lokalem Bild können wir automatisch liefern.
+        val local = names.mapNotNull { n ->
+            val id = resources.getIdentifier(n, "drawable", packageName)
+            if (id != 0) n to id else null
+        }
+        if (local.isEmpty()) return
+        Toast.makeText(this, "⏳ Prüfe Status-Bilder …", Toast.LENGTH_SHORT).show()
+        Thread {
+            try {
+                val (ok, assets) = DiscordApi.listAssets(prefs.token, prefs.appId)
+                val have = if (ok) assets.map { it.second }.toSet() else emptySet()
+                val missing = local.filter { !have.contains(it.first) }
+                if (missing.isEmpty()) return@Thread
+                var done = 0
+                var fail = ""
+                for ((n, resId) in missing) {
+                    val bmp = BitmapFactory.decodeResource(resources, resId) ?: continue
+                    val out = ByteArrayOutputStream()
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+                    val dataUrl = "data:image/png;base64," +
+                            Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+                    val (ok2, res2) = DiscordApi.uploadAsset(prefs.token, prefs.appId, n, dataUrl)
+                    if (ok2) done++ else fail = res2.take(120)
+                }
+                runOnUiThread {
+                    if (done > 0) Toast.makeText(this,
+                        "✅ $done Bild(er) hochgeladen! (ca. 5 Min warten)", Toast.LENGTH_LONG).show()
+                    else if (fail.isNotEmpty()) Toast.makeText(this,
+                        "⚠️ Bild-Upload: $fail", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) { /* still — Status läuft auch ohne Bild */ }
+        }.start()
     }
 
     // ---------------- Presets ----------------

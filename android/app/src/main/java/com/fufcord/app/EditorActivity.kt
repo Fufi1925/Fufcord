@@ -180,7 +180,7 @@ class EditorActivity : AppCompatActivity() {
     private fun updatePreview() {
         try {
             // FIX: Vorschau respektiert den Sicher-Modus (keine falschen Bilder mehr).
-            PreviewBinder.bind(b.previewCard, readFields(), prefs.safeMode)
+            PreviewBinder.bind(b.previewCard, readFields(), prefs.safeMode, this, prefs.appId, prefs.token) { updatePreview() }
         } catch (e: Exception) { /* während Tippen egal */ }
     }
 
