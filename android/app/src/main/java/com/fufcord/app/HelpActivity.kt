@@ -149,7 +149,7 @@ class HelpActivity : AppCompatActivity() {
         val appId = prefs.appId.trim()
         val appOk = validAppId(appId)
 
-        if (!tokenSet) row(ERROR, "Kein Token! → Start → Zahnrad → Token eintragen.")
+        if (!tokenSet) row(ERROR, "Kein Token! → Tab Einstellungen → Token eintragen.")
         if (appId.isNotEmpty() && !appOk) row(ERROR, "App-ID ungültig ('$appId') — muss lange Zahl sein!")
         if (appId.isEmpty() && (act.largeImage.isNotEmpty() || act.buttons.isNotEmpty()))
             row(WARN, "Bilder/Buttons ohne App-ID → werden weggelassen (nur Text).")

@@ -201,11 +201,11 @@ class EditorActivity : AppCompatActivity() {
     // ---------------- Bilder-Upload ----------------
     private fun showUploadDialog(bytes: ByteArray) {
         if (prefs.token.isEmpty()) {
-            Toast.makeText(this, "❌ Erst Token eintragen! (Start → Zahnrad)", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "❌ Erst Token eintragen! (Tab Einstellungen)", Toast.LENGTH_LONG).show()
             return
         }
         if (!validAppId(prefs.appId)) {
-            Toast.makeText(this, "❌ Erst App-ID eintragen! (Start → Zahnrad)", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "❌ Erst App-ID eintragen! (Tab Einstellungen)", Toast.LENGTH_LONG).show()
             return
         }
         val lay = LinearLayout(this)
@@ -263,12 +263,13 @@ class EditorActivity : AppCompatActivity() {
                         Toast.makeText(this, "✅ '$name' hochgeladen! (5 Min warten)", Toast.LENGTH_LONG).show()
                     } else {
                         val msg = when {
-                            res.contains("401") -> "Token ungültig! Neuen eintragen (Start → Zahnrad)."
+                            res.contains("401") -> "Token ungültig! Neuen eintragen (Tab Einstellungen)."
                             res.contains("404") -> "App-ID falsch — prüfen!"
-                            res.contains("400") -> "Discord lehnt ab: $res"
+                            res.contains("400") -> "Discord lehnt ab (Details folgen)"
                             else -> "Upload fehlgeschlagen: $res"
                         }
                         Toast.makeText(this, "❌ $msg", Toast.LENGTH_LONG).show()
+                        if (res.contains("400")) showUploadError(res)
                     }
                 }
             } catch (e: Exception) {
@@ -277,6 +278,15 @@ class EditorActivity : AppCompatActivity() {
                 }
             }
         }.start()
+    }
+
+    /** Zeigt die volle Discord-Fehlermeldung (Diagnose bei 400). */
+    private fun showUploadError(details: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Upload-Fehler (Details)")
+            .setMessage(details.take(1000))
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     /** Dekodiert ein Bitmap auf max. maxSide herunter (speicherschonend). */
@@ -342,7 +352,7 @@ class EditorActivity : AppCompatActivity() {
         b.assetList.removeAllViews()
         b.txtAssetsHint.visibility = View.GONE
         if (!validAppId(prefs.appId)) {
-            b.txtAssetsHint.text = "Erst App-ID eintragen (Start → Zahnrad), dann lädst du hier Bilder hoch."
+            b.txtAssetsHint.text = "Erst App-ID eintragen (Tab Einstellungen), dann lädst du hier Bilder hoch."
             b.txtAssetsHint.visibility = View.VISIBLE
             return
         }

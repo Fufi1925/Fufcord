@@ -104,20 +104,36 @@ object DiscordApi {
         }
     }
 
-    /** Bild hochladen → (ok, assetId_oder_fehler). imageDataUrl = data:image/png;base64,... */
+    /** Bild hochladen → (ok, assetId_oder_fehler). imageDataUrl = data:image/png;base64,...
+     * Robust: ersetzt gleichnamige Assets, wiederholt 400 mit anderem type-Format. */
     fun uploadAsset(token: String, appId: String, name: String, imageDataUrl: String): Pair<Boolean, String> {
+        val cleanName = name.trim().lowercase()
+        val cleanImg = imageDataUrl.replace("\\s".toRegex(), "")
+        if (!cleanName.matches(Regex("[a-z0-9_]{1,32}")))
+            return false to "Ungültiger Asset-Name: '$cleanName'"
         return try {
-            // FIX: type als String "1" wie im offiziellen Portal — Int wird mit 400 abgelehnt.
-            val body = JSONObject().put("name", name).put("type", "1").put("image", imageDataUrl).toString()
-                .toRequestBody("application/json".toMediaType())
-            val req = Request.Builder().url("$BASE/applications/$appId/assets")
-                .header("Authorization", token).header("User-Agent", UA)
-                .post(body).build()
-            client.newCall(req).execute().use { r ->
-                val txt = r.body?.string() ?: ""
-                if (r.code in 200..299) true to JSONObject(txt).optString("id", "?")
-                else false to "HTTP ${r.code}: ${txt.take(160)}"
+            // Gleichnamiges Asset erst löschen (Update = ersetzen, sonst 400).
+            try {
+                val (okL, assets) = listAssets(token, appId)
+                if (okL) assets.firstOrNull { it.second == cleanName }
+                    ?.let { deleteAsset(token, appId, it.first) }
+            } catch (e: Exception) { /* egal — Upload versuchen */ }
+            var last: Pair<Boolean, String> = false to "Unbekannter Fehler"
+            for (asString in listOf(true, false)) {
+                val js = JSONObject().put("name", cleanName).put("image", cleanImg)
+                if (asString) js.put("type", "1") else js.put("type", 1)
+                val body = js.toString().toRequestBody("application/json".toMediaType())
+                val req = Request.Builder().url("$BASE/applications/$appId/assets")
+                    .header("Authorization", token).header("User-Agent", UA)
+                    .post(body).build()
+                client.newCall(req).execute().use { r ->
+                    val txt = r.body?.string() ?: ""
+                    if (r.code in 200..299) return true to JSONObject(txt).optString("id", "?")
+                    last = false to "HTTP ${r.code}: ${txt.take(500)}"
+                    if (r.code != 400) return last
+                }
             }
+            last
         } catch (e: Exception) {
             false to (e.message ?: "Netzwerkfehler")
         }

@@ -11,7 +11,9 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
+import android.util.Base64
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -34,6 +36,7 @@ import com.fufcord.app.databinding.DialogImportBinding
 import com.fufcord.app.databinding.DialogDiscordBinding
 import com.fufcord.app.databinding.ItemPresetRowBinding
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -260,7 +263,7 @@ class MainActivity : AppCompatActivity() {
                 startService(Intent(this, RpcService::class.java).setAction(RpcService.ACTION_STOP))
             } else {
                 if (prefs.token.isEmpty()) {
-                    Toast.makeText(this, "Erst Token eintragen! (Zahnrad oben rechts)", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Erst Token eintragen! (Tab Einstellungen)", Toast.LENGTH_LONG).show()
                     AnimUtils.launch(this, SettingsActivity::class.java)
                     return
                 }
@@ -327,6 +330,37 @@ class MainActivity : AppCompatActivity() {
         if (RpcService.isRunning) RpcService.refresh(this)
         refresh()
         Toast.makeText(this, "✅ Preset '${p.title}' geladen!", Toast.LENGTH_SHORT).show()
+        maybeUploadPresetImage(p)
+    }
+
+    /** Preset-Bild aus der App zu Discord hochladen, falls es dort fehlt. */
+    private fun maybeUploadPresetImage(p: Preset) {
+        val asset = p.act.largeImage.trim()
+        if (asset.isEmpty() || p.icon.isEmpty()) return
+        val resId = resources.getIdentifier(p.icon, "drawable", packageName)
+        if (resId == 0) return
+        if (prefs.token.isEmpty() || !validAppId(prefs.appId)) {
+            Toast.makeText(this, "💡 Für Preset-Bilder: Token + App-ID eintragen!", Toast.LENGTH_LONG).show()
+            return
+        }
+        Toast.makeText(this, "⏳ Prüfe Preset-Bild …", Toast.LENGTH_SHORT).show()
+        Thread {
+            try {
+                val (ok, assets) = DiscordApi.listAssets(prefs.token, prefs.appId)
+                if (ok && assets.any { it.second == asset }) return@Thread // schon da
+                val bmp = BitmapFactory.decodeResource(resources, resId) ?: return@Thread
+                val out = ByteArrayOutputStream()
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+                val data = out.toByteArray()
+                val dataUrl = "data:image/png;base64," + Base64.encodeToString(data, Base64.NO_WRAP)
+                val (ok2, res2) = DiscordApi.uploadAsset(prefs.token, prefs.appId, asset, dataUrl)
+                runOnUiThread {
+                    if (ok2) Toast.makeText(this,
+                        "✅ Bild '$asset' hochgeladen! (5 Min warten)", Toast.LENGTH_LONG).show()
+                    else Toast.makeText(this, "⚠️ Bild-Upload: $res2", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) { /* still — Preset läuft auch ohne Bild */ }
+        }.start()
     }
 
     private fun confirmDeletePreset(p: Preset) {
