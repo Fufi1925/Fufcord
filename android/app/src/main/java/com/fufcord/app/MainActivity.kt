@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         b.btnToggle.setOnClickListener { toggleService() }
-        b.btnSettings.setOnClickListener { AnimUtils.launch(this, SettingsActivity::class.java) }
         b.rowStudio.setOnClickListener { AnimUtils.launch(this, EditorActivity::class.java) }
         b.rowImport.setOnClickListener { importDialog() }
         b.rowExport.setOnClickListener { exportJson() }
@@ -106,6 +105,10 @@ class MainActivity : AppCompatActivity() {
         currentTab = savedInstanceState?.getInt("tab", 0) ?: 0
         selectTab(currentTab, false)
         b.bottomNav.setOnItemSelectedListener {
+            if (it.itemId == R.id.tab_settings) {
+                AnimUtils.launch(this, SettingsActivity::class.java)
+                return@setOnItemSelectedListener false
+            }
             val i = tabIndex(it.itemId)
             if (i != currentTab) selectTab(i, true)
             true

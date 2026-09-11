@@ -63,14 +63,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btnSettings"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/circle_icon_bg"
-            android:contentDescription="@string/set_title"
-            android:padding="12dp"
-            android:src="@drawable/ic_sliders" />
     </LinearLayout>
 
     <!-- TAB: ÜBERSICHT -->

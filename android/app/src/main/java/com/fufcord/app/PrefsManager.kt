@@ -67,6 +67,13 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getBoolean("permissions_done", false)
         set(v) = prefs.edit().putBoolean("permissions_done", v).apply()
 
+    /** Alles löschen (Gefahrenzone): Einstellungen, Token, Presets. */
+    fun clearAll() {
+        try { prefs.edit().clear().apply() } catch (e: Exception) { }
+        try { secure.edit().clear().apply() } catch (e: Exception) { }
+        try { presetDir().deleteRecursively() } catch (e: Exception) { }
+    }
+
     fun loadAct(): ActConfig {
         val raw = prefs.getString("activity", "") ?: ""
         if (raw.isEmpty()) return ActConfig(

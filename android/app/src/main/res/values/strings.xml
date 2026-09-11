@@ -84,13 +84,11 @@
 
     <!-- Einstellungen -->
     <string name="set_title">Einstellungen</string>
-    <string name="set_subtitle">Zugang, Sicher-Modus &amp; App</string>
+    <string name="set_subtitle">Zugang, Verhalten, System &amp; App</string>
     <string name="set_section_access">Zugang</string>
     <string name="set_token">User-Token (verschlüsselt gespeichert)</string>
-    <string name="set_token_hint">Token einfügen …</string>
     <string name="set_token_test">Testen</string>
     <string name="set_appid">Application ID</string>
-    <string name="set_appid_hint">z. B. 123456789012345678</string>
     <string name="set_appid_test">Testen</string>
     <string name="set_section_behavior">Verhalten</string>
     <string name="set_safe">Sicher-Modus</string>
@@ -99,7 +97,6 @@
     <string name="set_auto_sub">Presence startet automatisch neu</string>
     <string name="set_section_app">App</string>
     <string name="set_version">Version</string>
-    <string name="set_guide">Token-Anleitung (TOKEN-HOLEN.md im Repo)</string>
     <string name="set_save">Speichern</string>
 
     <!-- Dialoge / Sonstiges -->
@@ -217,4 +214,20 @@
     <string name="perm_auto_ok">✅ Autostart aktiviert!</string>
     <string name="perm_next">Weiter</string>
     <string name="perm_later">Später</string>
+    <string name="tab_settings">Einstellungen</string>
+    <string name="set_status">Standard-Status</string>
+    <string name="set_status_sub">Für deine Presence</string>
+    <string name="set_sec_system">System</string>
+    <string name="set_bgperms">Hintergrund &amp; Rechte</string>
+    <string name="set_bgperms_sub">Assistent erneut öffnen</string>
+    <string name="set_setup_again">Assistent erneut starten</string>
+    <string name="set_setup_again_sub">Token &amp; ID neu einrichten</string>
+    <string name="set_sec_danger">Gefahrenzone</string>
+    <string name="set_wipe_token">Token entfernen</string>
+    <string name="set_wipe_token_msg">Token löschen und RPC stoppen?</string>
+    <string name="set_wipe_all">Alles löschen &amp; zurücksetzen</string>
+    <string name="set_wipe_all_msg">Wirklich ALLES löschen? Token, Einstellungen, Presets — die App startet danach neu wie frisch installiert.</string>
+    <string name="set_wiped">🗑 Alles gelöscht — Neustart …</string>
+    <string name="set_token_removed">Token entfernt.</string>
+    <string name="set_saved">✅ Gespeichert!</string>
 </resources>

@@ -16,4 +16,8 @@
         android:id="@+id/tab_credits"
         android:title="@string/tab_credits"
         android:icon="@drawable/ic_tab_star" />
+    <item
+        android:id="@+id/tab_settings"
+        android:title="@string/tab_settings"
+        android:icon="@drawable/ic_sliders" />
 </menu>
