@@ -26,6 +26,7 @@
         <activity android:name=".EditorActivity" android:exported="false" />
         <activity android:name=".SetupActivity" android:exported="false" />
         <activity android:name=".DoctorActivity" android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
 
         <service
             android:name=".RpcService"

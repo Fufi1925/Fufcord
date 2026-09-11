@@ -23,8 +23,12 @@ object UpdateChecker {
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build()
 
-    fun check(ctx: Context) {
+    fun check(ctx: Context, onDone: ((Boolean) -> Unit)? = null) {
         val prefs = PrefsManager(ctx)
+        fun done(found: Boolean) {
+            if (onDone == null) return
+            (ctx as? AppCompatActivity)?.runOnUiThread { onDone(found) }
+        }
         Thread {
             try {
                 @Suppress("DEPRECATION")
@@ -37,12 +41,12 @@ object UpdateChecker {
                     .header("User-Agent", "Fufcord-App")
                     .header("Accept", "application/vnd.github+json").build()
                 client.newCall(req).execute().use { r ->
-                    if (r.code != 200) return@use
+                    if (r.code != 200) { done(false); return@use }
                     val o = JSONObject(r.body?.string() ?: return@use)
                     val tag = o.optString("tag_name", "").trim().removePrefix("v")
-                    if (tag.isEmpty() || current.isEmpty()) return@use
-                    if (!isNewer(tag, current)) return@use
-                    if (prefs.skipVersion == tag) return@use
+                    if (tag.isEmpty() || current.isEmpty()) { done(false); return@use }
+                    if (!isNewer(tag, current)) { done(false); return@use }
+                    if (prefs.skipVersion == tag) { done(false); return@use }
                     var apkUrl = ""
                     val assets = o.optJSONArray("assets")
                     if (assets != null) {
@@ -56,12 +60,12 @@ object UpdateChecker {
                         }
                     }
                     val url = apkUrl.ifEmpty { o.optString("html_url", "") }
-                    if (url.isEmpty()) return@use
+                    if (url.isEmpty()) { done(false); return@use }
                     val notes = o.optString("body", "").take(800)
-                    val act = ctx as? AppCompatActivity ?: return@use
-                    act.runOnUiThread { showDialog(act, prefs, tag, notes, url) }
+                    val act = ctx as? AppCompatActivity ?: run { done(false); return@use }
+                    act.runOnUiThread { showDialog(act, prefs, tag, notes, url); onDone?.invoke(true) }
                 }
-            } catch (e: Exception) { /* still schweigen — kein Internet? */ }
+            } catch (e: Exception) { done(false) /* still schweigen — kein Internet? */ }
         }.start()
     }
 

@@ -25,7 +25,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivityMainBinding
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.switchmaterial.SwitchMaterial
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -56,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         b.btnDoctor.setOnClickListener { startActivity(Intent(this, DoctorActivity::class.java)) }
         b.btnExport.setOnClickListener { exportJson() }
         b.btnImport.setOnClickListener { importDialog() }
-        b.btnSettings.setOnClickListener { settingsDialog() }
+        b.btnSettings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
         try {
             val p = packageManager.getPackageInfo(packageName, 0)
             b.txtVersion.text = "v${p.versionName} • Custom Rich Presence"
@@ -261,54 +260,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return null
-    }
-
-    // ---------------- Einstellungen ----------------
-    private fun settingsDialog() {
-        val lay = LinearLayout(this)
-        lay.orientation = LinearLayout.VERTICAL
-        lay.setPadding(48, 24, 48, 24)
-        fun label(s: String): TextView {
-            val t = TextView(this)
-            t.text = s
-            t.setTextColor(0xFF8B93B0.toInt())
-            lay.addView(t)
-            return t
-        }
-        label("🔑 User-Token (verschlüsselt gespeichert)")
-        val etTok = EditText(this)
-        etTok.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        etTok.setText(prefs.token)
-        etTok.hint = "Token einfügen..."
-        lay.addView(etTok)
-        label("🆔 Application ID")
-        val etApp = EditText(this)
-        etApp.inputType = InputType.TYPE_CLASS_NUMBER
-        etApp.setText(prefs.appId)
-        etApp.hint = "z.B. 123456789012345678"
-        lay.addView(etApp)
-        val swSafe = SwitchMaterial(this)
-        swSafe.text = "🛡️ Sicher-Modus (nur Text, geht immer)"
-        swSafe.isChecked = prefs.safeMode
-        lay.addView(swSafe)
-        val swAuto = SwitchMaterial(this)
-        swAuto.text = "🔄 Autostart nach Handy-Neustart"
-        swAuto.isChecked = prefs.autostart
-        lay.addView(swAuto)
-
-        AlertDialog.Builder(this)
-            .setTitle("⚙️ Einstellungen")
-            .setView(lay)
-            .setPositiveButton("Speichern") { _, _ ->
-                val t = etTok.text.toString().trim().replace(" ", "")
-                if (t.isNotEmpty()) prefs.token = t
-                prefs.appId = etApp.text.toString().trim()
-                prefs.safeMode = swSafe.isChecked
-                prefs.autostart = swAuto.isChecked
-                refresh()
-                Toast.makeText(this, "✅ Gespeichert!", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Abbrechen", null)
-            .show()
     }
 }
