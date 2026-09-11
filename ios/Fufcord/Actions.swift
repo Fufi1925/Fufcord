@@ -11,7 +11,7 @@ import UIKit
 enum Actions {
 
     static func localImage(_ name: String) -> UIImage? {
-        if let p = Bundle.main.path(forResource: name, withExtension: "png") {
+        if let p = Bundle.main.path(forResource: name, ofType: "png") {
             return UIImage(contentsOfFile: p)
         }
         return nil

@@ -108,7 +108,7 @@ struct TokenFetchView: View {
             }
             status = "⏳ Prüfe Token …"
             Task {
-                let (ok, name) = await DiscordApi.getMe(token)
+                let (ok, _) = await DiscordApi.getMe(token)
                 await MainActor.run {
                     if ok {
                         store.token = token
