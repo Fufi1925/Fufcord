@@ -87,6 +87,30 @@ object DiscordApi {
         }
     }
 
+    /** Neue Discord-App anlegen (wie im Portal) → (ok, appId_oder_fehler). */
+    fun createApp(token: String, name: String): Pair<Boolean, String> {
+        val clean = name.trim().take(100)
+        if (clean.length < 2) return false to "Name zu kurz"
+        return try {
+            val js = JSONObject().put("name", clean)
+            val body = js.toString().toRequestBody("application/json".toMediaType())
+            val req = Request.Builder().url("$BASE/applications")
+                .header("Authorization", token).header("User-Agent", UA)
+                .post(body).build()
+            client.newCall(req).execute().use { r ->
+                val txt = r.body?.string() ?: ""
+                if (r.code in 200..299) {
+                    val id = JSONObject(txt).optString("id", "")
+                    if (id.isNotEmpty()) true to id else false to "Keine ID zurück"
+                } else {
+                    false to "HTTP ${r.code}: ${txt.take(300)}"
+                }
+            }
+        } catch (e: Exception) {
+            false to (e.message ?: "Netzwerkfehler")
+        }
+    }
+
     /** Assets einer App → (ok, [(assetId, name)]) */
     fun listAssets(token: String, appId: String): Pair<Boolean, List<Pair<String, String>>> {
         return try {

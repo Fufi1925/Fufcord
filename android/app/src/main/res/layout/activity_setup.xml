@@ -242,6 +242,19 @@
                     android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAutoAppId"
+                    style="@style/Widget.Fufcord.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/btn_secondary"
+                    android:text="@string/setup2_autofetch"
+                    android:textColor="@color/text_primary"
+                    app:icon="@drawable/ic_sparkles"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/cyan" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnNext2"
                     style="@style/Widget.Fufcord.Button.Primary"
                     android:layout_width="match_parent"

@@ -263,4 +263,19 @@ Du meldest dich dazu einmal auf der offiziellen Discord-Seite an (oder scannst d
     <string name="fetch_fail">❌ Noch nichts gefunden – erst oben einloggen, dann erneut tippen.</string>
     <string name="fetch_invalid">❌ Token ungültig – bitte neu einloggen und erneut versuchen.</string>
     <string name="fetch_fetched">✅ Automatisch geholt – Weiter tippen!</string>
+    <string name="app_title">App-ID automatisch holen</string>
+    <string name="app_loading">⏳ Lade deine Apps …</string>
+    <string name="app_tap">Antippen zum Übernehmen:</string>
+    <string name="app_none">Keine Apps gefunden – erstelle unten eine neue!</string>
+    <string name="app_fail">❌ Konnte Apps nicht laden: %1$s</string>
+    <string name="app_picked">✅ App übernommen!</string>
+    <string name="app_new_label">Oder neue App erstellen:</string>
+    <string name="app_name_hint">Name, z.B. Mein Status</string>
+    <string name="app_create">✨ Neue App erstellen</string>
+    <string name="app_creating">⏳ Erstelle App …</string>
+    <string name="app_created">✅ App erstellt &amp; übernommen!</string>
+    <string name="app_create_fail">❌ Erstellen fehlgeschlagen: %1$s</string>
+    <string name="app_need_token">❌ Erst in Schritt 1 einen Token eintragen!</string>
+    <string name="app_need_name">Bitte einen Namen eingeben!</string>
+    <string name="setup2_autofetch">🔑 App-ID automatisch holen</string>
 </resources>
