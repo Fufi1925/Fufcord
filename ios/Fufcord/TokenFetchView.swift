@@ -70,7 +70,7 @@ struct TokenFetchView: View {
             return
         }
         status = "⏳ Lese Token …"
-        let js = #"(() => {
+        let js = #"""(() => {
   try {
     const raw = localStorage.getItem('token');
     if (raw && raw.length > 10) return raw;
