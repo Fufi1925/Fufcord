@@ -4,22 +4,32 @@ Custom Discord Rich Presence fürs iPhone — nativ in SwiftUI, mit denselben
 Funktionen wie die Android-Version: Setup-Assistent, Start/Stop, Presets,
 Studio (Editor + Bild-Upload), Live-Vorschau, Credits und Einstellungen.
 
-## Installieren (Sideload)
+## Installieren — die einfache Art (empfohlen) ⭐
 
-Apple erlaubt solche Apps nicht im App Store — deshalb wird die App
-**unsigniert** gebaut und mit deiner **eigenen Apple-ID** signiert:
+Fufcord hat eine eigene **AltStore-Quelle** — danach steht die App direkt
+in AltStore wie in einem kleinen App Store, inkl. automatischer Updates:
 
-1. **AltServer** auf dem PC/Mac installieren: https://altstore.io
-2. iPhone per Kabel/WLAN verbinden, in AltServer anmelden (eigene Apple-ID)
-3. **AltStore** aufs iPhone übertragen (Mail-Plugin auf dem Mac aktivieren)
-4. Die Datei **Fufcord-iOS-unsigned.ipa** aus dem
+1. **AltStore** einmalig einrichten (kostenlos):
+   [AltServer](https://altstore.io) auf PC/Mac → iPhone verbinden →
+   mit eigener Apple-ID anmelden → AltStore aufs iPhone übertragen
+2. Auf dem iPhone in AltStore: **Settings → Sources → +** und diese URL
+   einfügen:
+   `https://raw.githubusercontent.com/Fufi1925/Fufcord/main/apps.json`
+3. Tab **Browse → Fufcord → GET** → installieren — fertig! 🎉
+4. iPhone: Einstellungen → Allgemein → VPN & Geräteverwaltung → Apple-ID
+   **vertrauen**
+
+Updates kommen danach automatisch in AltStore — einfach antippen. ✅
+
+## Installieren — manuell (Alternative)
+
+1. Die Datei **Fufcord-iOS-unsigned.ipa** aus dem
    [Release](https://github.com/Fufi1925/Fufcord/releases/latest) laden
-   (z. B. per Dateien-App / iCloud aufs iPhone)
-5. In AltStore: **+** → IPA wählen → installieren
-6. iPhone: Einstellungen → Allgemein → VPN & Geräteverwaltung → Apple-ID
-   **vertrauen** — fertig! 🎉
+   (z. B. per iCloud aufs iPhone)
+2. In AltStore: **+** → IPA wählen → installieren
+3. Apple-ID vertrauen (siehe oben)
 
-Alternative: **Sideloadly** (https://sideloadly.io) auf dem PC — iPhone
+Oder **Sideloadly** (https://sideloadly.io) auf dem PC — iPhone
 anschließen, IPA + Apple-ID, Start.
 
 > ⏳ **Wichtig:** Kostenlose Apple-IDs müssen Apps alle **7 Tage**

@@ -44,3 +44,37 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ios/Fufcord-iOS-unsigned.ipa
+
+      - name: AltStore-Quelle aktualisieren (nur bei Tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VER="${TAG#v}"
+          SIZE=$(stat -f%z ios/Fufcord-iOS-unsigned.ipa 2>/dev/null || stat -c%s ios/Fufcord-iOS-unsigned.ipa)
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          python3 - "$VER" "$SIZE" "$NOW" <<'EOF'
+          import json, sys
+          ver, size, now = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+          src = json.load(open("apps.json"))
+          app = src["apps"][0]
+          app["version"] = ver
+          app["versionDate"] = now
+          app["size"] = size
+          app["versionDescription"] = f"Version {ver} — siehe GitHub-Release für Details."
+          src["news"] = [{
+              "title": f"Version {ver} 🚀",
+              "identifier": f"v{ver}",
+              "caption": "Neue Fufcord-Version — Update einfach in AltStore laden.",
+              "date": now,
+              "tintColor": "5856F2",
+              "imageURL": app["iconURL"],
+              "appID": app["bundleIdentifier"],
+          }] + [n for n in src.get("news", []) if n.get("identifier") != f"v{ver}"][:4]
+          json.dump(src, open("apps.json", "w"), indent=2, ensure_ascii=False)
+          print("apps.json →", ver, size, "Bytes")
+          EOF
+          git config user.email "fufcord@users.noreply.github.com"
+          git config user.name "Fufcord-Bot"
+          git add apps.json
+          git commit -m "AltStore-Quelle: v$VER [skip ci]" || echo "nichts zu tun"
+          git push origin HEAD:main

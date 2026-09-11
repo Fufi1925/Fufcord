@@ -1,0 +1,38 @@
+{
+  "name": "Fufcord",
+  "identifier": "com.fufcord.source",
+  "subtitle": "Custom Discord Rich Presence",
+  "description": "Fufcord fürs iPhone — eigener Discord-Status mit Bildern, Buttons und Timer.",
+  "iconURL": "https://raw.githubusercontent.com/Fufi1925/Fufcord/main/ios/Fufcord/Assets.xcassets/AppIcon.appiconset/Icon-1024.png",
+  "website": "https://github.com/Fufi1925/Fufcord",
+  "tintColor": "5856F2",
+  "featuredApps": ["com.fufcord.app"],
+  "apps": [
+    {
+      "name": "Fufcord",
+      "bundleIdentifier": "com.fufcord.app",
+      "developerName": "Fufcord",
+      "subtitle": "Custom Discord Rich Presence",
+      "localizedDescription": "Dein eigener Discord-Status vom iPhone: Texte, Bilder, Buttons und Timer — mit Setup-Assistent, Presets, Studio und Live-Vorschau. Benötigt einen Discord-Token und (für Bilder) eine App-ID.",
+      "iconURL": "https://raw.githubusercontent.com/Fufi1925/Fufcord/main/ios/Fufcord/Assets.xcassets/AppIcon.appiconset/Icon-1024.png",
+      "tintColor": "5856F2",
+      "category": "utilities",
+      "version": "1.14",
+      "versionDate": "2026-09-11T20:45:00+02:00",
+      "versionDescription": "Erste iOS-Version: alle Android-Funktionen als native App, Hintergrund-Modus per lautlosem Audio.",
+      "downloadURL": "https://github.com/Fufi1925/Fufcord/releases/latest/download/Fufcord-iOS-unsigned.ipa",
+      "size": 2515949
+    }
+  ],
+  "news": [
+    {
+      "title": "Fufcord für iOS ist da! 🍎",
+      "identifier": "v1.14",
+      "caption": "Die komplette App als native iPhone-Version — mit Hintergrund-Modus und Auto-Updates über diese Quelle.",
+      "date": "2026-09-11T20:45:00+02:00",
+      "tintColor": "5856F2",
+      "imageURL": "https://raw.githubusercontent.com/Fufi1925/Fufcord/main/ios/Fufcord/Assets.xcassets/AppIcon.appiconset/Icon-1024.png",
+      "appID": "com.fufcord.app"
+    }
+  ]
+}
