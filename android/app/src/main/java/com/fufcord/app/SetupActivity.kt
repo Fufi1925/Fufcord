@@ -7,6 +7,7 @@
 package com.fufcord.app
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -91,8 +92,19 @@ class SetupActivity : AppCompatActivity() {
 
         b.btnFinish.setOnClickListener {
             prefs.setupDone = true
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            // RPC sofort starten (Token ist eingetragen) ...
+            try {
+                if (prefs.token.isNotEmpty()) {
+                    val i = Intent(this, RpcService::class.java).setAction(RpcService.ACTION_START)
+                    if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
+                    Toast.makeText(this, "RPC startet im Hintergrund...", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) { }
+            // ... und Akku-Ausnahme erfragen, damit es so bleibt.
+            PowerHelper.explainAndRequest(this) {
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
         }
     }
 

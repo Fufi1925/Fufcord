@@ -35,6 +35,7 @@ class RpcService : Service() {
         @Volatile var isRunning = false
         @Volatile var statusText = "Gestoppt"
         @Volatile var activityName = ""
+        @Volatile var startedAtMs = 0L
 
         fun refresh(ctx: Context) {
             try {
@@ -86,6 +87,7 @@ class RpcService : Service() {
         }
         isRunning = true
         startTs = System.currentTimeMillis()
+        startedAtMs = startTs
         connect()
         startWatchdog()
         return START_STICKY
@@ -210,12 +212,23 @@ class RpcService : Service() {
         } catch (e: Exception) { /* egal */ }
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        // App weggewischt? RPC laeuft trotzdem weiter -> Service neu starten.
+        if (!isRunning) return
+        try {
+            val i = Intent(this, RpcService::class.java).setAction(ACTION_START)
+            if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
+        } catch (e: Exception) { }
+    }
+
     override fun onDestroy() {
         cancelReconnect()
         stopWatchdog()
         gw?.disconnect()
         gw = null
         isRunning = false
+        startedAtMs = 0L
         statusText = "Gestoppt"
         super.onDestroy()
     }

@@ -15,7 +15,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
-import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -32,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var b: ActivityMainBinding
     private lateinit var prefs: PrefsManager
     private val handler = Handler(Looper.getMainLooper())
+    private var ticker: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +51,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         b.btnToggle.setOnClickListener { toggleService() }
+        b.btnReconnect.setOnClickListener { reconnectService() }
         b.btnEdit.setOnClickListener { startActivity(Intent(this, EditorActivity::class.java)) }
         b.btnDoctor.setOnClickListener { startActivity(Intent(this, DoctorActivity::class.java)) }
         b.btnExport.setOnClickListener { exportJson() }
         b.btnImport.setOnClickListener { importDialog() }
         b.btnSettings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
+        b.swipeRefresh.setColorSchemeColors(0xFF7C5CFF.toInt(), 0xFF22D3EE.toInt())
+        b.swipeRefresh.setOnRefreshListener {
+            refresh()
+            b.swipeRefresh.isRefreshing = false
+        }
         try {
             val p = packageManager.getPackageInfo(packageName, 0)
             b.txtVersion.text = "v${p.versionName} • Custom Rich Presence"
@@ -66,13 +72,47 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refresh()
+        startTicker()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopTicker()
+    }
+
+    private fun startTicker() {
+        stopTicker()
+        ticker = object : Runnable {
+            override fun run() {
+                try { updateLive() } catch (e: Exception) { }
+                ticker?.let { handler.postDelayed(it, 1000) }
+            }
+        }
+        handler.post(ticker!!)
+    }
+
+    private fun stopTicker() {
+        ticker?.let { handler.removeCallbacks(it) }
+        ticker = null
+    }
+
+    private fun updateLive() {
+        val running = RpcService.isRunning
+        b.statusDot.text = if (running) "🟢" else "🔴"
+        b.statusText.text = if (running) RpcService.statusText else "Gestoppt — tippe START!"
+        b.btnToggle.text = if (running) "⏹ STOP" else "🚀 START"
+        b.txtUptime.text = if (running && RpcService.startedAtMs > 0)
+            fmtUptime(System.currentTimeMillis() - RpcService.startedAtMs) else "--:--:--"
+        b.txtActivePreset.text = prefs.lastPreset
+    }
+
+    private fun fmtUptime(ms: Long): String {
+        val s = ms / 1000
+        return "%02d:%02d:%02d".format(s / 3600, (s % 3600) / 60, s % 60)
     }
 
     private fun refresh() {
-        val running = RpcService.isRunning
-        b.statusDot.text = if (running) "🟢" else "🔴"
-        b.statusText.text = if (running) RpcService.statusText else "Gestoppt — tippe Start!"
-        b.btnToggle.text = if (running) "⏹ STOP" else "🚀 START"
+        updateLive()
         val act = prefs.loadAct()
         PreviewBinder.bind(b.previewCard, act, prefs.safeMode)
         buildPresetRow()
@@ -95,6 +135,26 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Start blockiert: ${e.message}", Toast.LENGTH_LONG).show()
         }
         handler.postDelayed({ refresh() }, 900)
+    }
+
+    private fun reconnectService() {
+        if (!RpcService.isRunning) {
+            toggleService()
+            return
+        }
+        try {
+            startService(Intent(this, RpcService::class.java).setAction(RpcService.ACTION_STOP))
+            Toast.makeText(this, "🔄 Verbinde neu...", Toast.LENGTH_SHORT).show()
+            handler.postDelayed({
+                try {
+                    val i = Intent(this, RpcService::class.java).setAction(RpcService.ACTION_START)
+                    if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
+                } catch (e: Exception) { }
+                handler.postDelayed({ refresh() }, 900)
+            }, 1200)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Fehler: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     // ---------------- Presets ----------------
@@ -132,6 +192,7 @@ class MainActivity : AppCompatActivity() {
     private fun applyPreset(p: Preset) {
         p.act.status = p.status
         prefs.saveAct(p.act)
+        prefs.lastPreset = p.title
         if (RpcService.isRunning) RpcService.refresh(this)
         refresh()
         Toast.makeText(this, "✅ Preset '${p.title}' geladen!", Toast.LENGTH_SHORT).show()
@@ -143,6 +204,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage("'${p.title}' wirklich löschen?")
             .setPositiveButton("Löschen") { _, _ ->
                 prefs.deleteCustomPreset(p.file)
+                if (prefs.lastPreset == p.title) prefs.lastPreset = "—"
                 refresh()
             }
             .setNegativeButton("Abbrechen", null)
@@ -207,6 +269,7 @@ class MainActivity : AppCompatActivity() {
             }
             val (clean, warns) = ActConfig.sanitize(actRaw)
             prefs.saveAct(clean)
+            prefs.lastPreset = "📥 Import"
             refresh()
             val msg = StringBuilder("✅ Importiert!")
             for (w in warns.take(3)) msg.append("\n• $w")
@@ -229,6 +292,7 @@ class MainActivity : AppCompatActivity() {
                     .replace(Regex("[^a-z0-9-_ ]"), "").replace(" ", "-")
                 if (n.isNotEmpty()) {
                     prefs.saveCustomPreset(n, act.status, prefs.appId, act)
+                    prefs.lastPreset = n
                     refresh()
                     Toast.makeText(this, "✅ Preset '$n' gespeichert!", Toast.LENGTH_SHORT).show()
                 }

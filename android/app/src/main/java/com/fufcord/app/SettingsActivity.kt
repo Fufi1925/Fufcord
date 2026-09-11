@@ -32,9 +32,13 @@ class SettingsActivity : AppCompatActivity() {
             b.txtSetVersion.text = "Installiert: v${p.versionName}"
         } catch (_: Exception) { }
 
+        refreshBattery()
         b.btnSetTestToken.setOnClickListener { testToken() }
         b.btnSetTestApp.setOnClickListener { testApp() }
         b.btnSetUpdate.setOnClickListener { manualUpdate() }
+        b.btnSetBattery.setOnClickListener {
+            PowerHelper.explainAndRequest(this) { refreshBattery() }
+        }
         b.btnSetGitHub.setOnClickListener {
             try {
                 startActivity(Intent(Intent.ACTION_VIEW,
@@ -46,6 +50,17 @@ class SettingsActivity : AppCompatActivity() {
         b.btnSetReset.setOnClickListener { confirmReset() }
         b.btnSetSave.setOnClickListener { saveAll() }
         b.btnSetBack.setOnClickListener { finish() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshBattery()
+    }
+
+    private fun refreshBattery() {
+        b.txtSetBattery.text = if (PowerHelper.isExempt(this))
+            "🟢 Akku-Optimierung AUS — läuft immer im Hintergrund"
+        else "🟡 Akku-Optimierung AN — bitte erlauben (sonst stoppt das Handy die App)!"
     }
 
     private fun loadFields() {

@@ -96,6 +96,19 @@ class DoctorActivity : AppCompatActivity() {
         if (act.buttons.isNotEmpty())
             row("🟡", "Hinweis: Buttons werden von Discord manchmal ignoriert — im Zweifel entfernen.")
 
+        if (PowerHelper.isExempt(this))
+            row("🟢", "Akku-Optimierung AUS — Hintergrund läuft immer.")
+        else
+            row("🟡", "Akku-Optimierung AN! -> Einstellungen -> Hintergrund-Erlaubnis (sonst stoppt das Handy die App).")
+        if (prefs.autostart)
+            row("🟢", "Autostart AN — RPC startet nach Handy-Neustart.")
+        else
+            row("🟡", "Autostart AUS — nach Neustart manuell starten (oder in Einstellungen einschalten).")
+        if (RpcService.isRunning)
+            row("🟢", "Service LÄUFT (" + RpcService.statusText + ").")
+        else
+            row("🔴", "Service GESTOPPT — START auf dem Hauptbildschirm tippen!")
+
         val netRow = TextView(this)
         netRow.text = "🌐 Frage Discord-API..."
         netRow.setTextColor(0xFF8B93B0.toInt())

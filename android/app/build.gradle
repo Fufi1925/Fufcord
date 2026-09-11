@@ -17,8 +17,8 @@ android {
         applicationId = "com.fufcord.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "3.3"
+        versionCode = 5
+        versionName = "3.4"
     }
 
     buildTypes {
@@ -46,4 +46,5 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("androidx.security:security-crypto:1.0.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

@@ -190,6 +190,23 @@
                 android:text="RPC startet automatisch, wenn das Handy hochfährt"
                 android:textColor="@color/muted"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txtSetBattery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="🔋 Akku-Optimierung: ..."
+                android:textColor="@color/ink"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSetBattery"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="🔋 Hintergrund-Erlaubnis einrichten" />
         </LinearLayout>
 
         <!-- UPDATES -->

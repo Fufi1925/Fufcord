@@ -55,6 +55,10 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getString("skip_version", "") ?: ""
         set(v) = prefs.edit().putString("skip_version", v).apply()
 
+    var lastPreset: String
+        get() = prefs.getString("last_preset", "\u2014") ?: "\u2014"
+        set(v) = prefs.edit().putString("last_preset", v).apply()
+
     fun loadAct(): ActConfig {
         val raw = prefs.getString("activity", "") ?: ""
         if (raw.isEmpty()) return ActConfig(
