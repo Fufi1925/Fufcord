@@ -1,0 +1,46 @@
+name: iOS IPA bauen
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Code holen
+        uses: actions/checkout@v4
+
+      - name: XcodeGen installieren
+        run: brew install xcodegen || true
+
+      - name: Projekt erzeugen
+        run: cd ios && xcodegen generate
+
+      - name: IPA bauen (unsigniert)
+        run: |
+          cd ios
+          xcodebuild -project Fufcord.xcodeproj -scheme Fufcord \
+            -destination 'generic/platform=iOS' -configuration Release \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+          APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -1)
+          echo "APP: $APP"
+          rm -rf Payload Fufcord-iOS-unsigned.ipa
+          mkdir -p Payload && cp -R "$APP" Payload/
+          zip -r -y Fufcord-iOS-unsigned.ipa Payload
+
+      - name: IPA hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fufcord-iOS-IPA
+          path: ios/Fufcord-iOS-unsigned.ipa
+
+      - name: Release anhängen (nur bei Tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ios/Fufcord-iOS-unsigned.ipa

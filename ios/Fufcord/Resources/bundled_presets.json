@@ -1,0 +1,182 @@
+{
+ "presets": [
+  {
+   "file": "coding",
+   "title": "💻 Coding",
+   "status": "dnd",
+   "icon": "vscode",
+   "activity": {
+    "name": "Visual Studio Code",
+    "type": 0,
+    "details": "💻 Coded an Fufcord RPC",
+    "state": "📝 main.py",
+    "large_image": "vscode",
+    "large_text": "VS Code",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [
+     {
+      "label": "GitHub",
+      "url": "https://github.com/"
+     }
+    ],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+   }
+  },
+  {
+   "file": "fortnite",
+   "title": "🏆 Fortnite",
+   "status": "online",
+   "icon": "fortnite",
+   "activity": {
+    "name": "Fortnite",
+    "type": 0,
+    "details": "🏆 Battle Royale – Solo",
+    "state": "🔫 12 Kills – Top 10",
+    "large_image": "fortnite",
+    "large_text": "Fortnite",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+   }
+  },
+  {
+   "file": "gaming",
+   "title": "⛏️ Gaming",
+   "status": "online",
+   "icon": "minecraft",
+   "activity": {
+    "name": "Minecraft",
+    "type": 0,
+    "details": "⛏️ Grinding Diamonds",
+    "state": "Server: Fufcord SMP",
+    "large_image": "minecraft",
+    "large_text": "Minecraft",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+   }
+  },
+  {
+   "file": "musik",
+   "title": "🎧 Musik",
+   "status": "idle",
+   "icon": "spotify",
+   "activity": {
+    "name": "Spotify",
+    "type": 2,
+    "details": "🎧 Lieblingssong auf Loop",
+    "state": "🎵 Vibe Mode",
+    "large_image": "spotify",
+    "large_text": "Spotify",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": false,
+    "party_current": 0,
+    "party_max": 0
+   }
+  },
+  {
+   "file": "netflix",
+   "title": "🍿 Netflix",
+   "status": "idle",
+   "icon": "netflix",
+   "activity": {
+    "name": "Netflix",
+    "type": 3,
+    "details": "🍿 Filmabend",
+    "state": "📺 Breaking Bad – S3 E7",
+    "large_image": "netflix",
+    "large_text": "Netflix",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+   }
+  },
+  {
+   "file": "roblox",
+   "title": "🧱 Roblox",
+   "status": "online",
+   "icon": "roblox",
+   "activity": {
+    "name": "Roblox",
+    "type": 0,
+    "details": "🧱 Blox Fruits",
+    "state": "⚔️ Level 2450 – Grinding",
+    "large_image": "roblox",
+    "large_text": "Roblox",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+   }
+  },
+  {
+   "file": "twitch",
+   "title": "🔴 Twitch",
+   "status": "online",
+   "icon": "twitch",
+   "activity": {
+    "name": "Mein Stream",
+    "type": 1,
+    "details": "🔴 LIVE – Chill & Talk",
+    "state": "💬 Chat entscheidet",
+    "large_image": "twitch",
+    "large_text": "Twitch",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "https://twitch.tv/deinname",
+    "buttons": [
+     {
+      "label": "Zuschauen",
+      "url": "https://twitch.tv/deinname"
+     }
+    ],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+   }
+  },
+  {
+   "file": "youtube",
+   "title": "📺 YouTube",
+   "status": "online",
+   "icon": "youtube",
+   "activity": {
+    "name": "YouTube",
+    "type": 3,
+    "details": "📺 Shorts-Marathon",
+    "state": "🔥 Lieblingskanal",
+    "large_image": "youtube",
+    "large_text": "YouTube",
+    "small_image": "",
+    "small_text": "",
+    "stream_url": "",
+    "buttons": [],
+    "use_timestamp": true,
+    "party_current": 0,
+    "party_max": 0
+   }
+  }
+ ]
+}
