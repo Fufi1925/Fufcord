@@ -71,6 +71,11 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getBoolean("token_asked", false)
         set(v) = prefs.edit().putBoolean("token_asked", v).apply()
 
+    /** Asset-Namen mit eigenem Server-Bild (Vorschau zeigt dann das Server-Bild). */
+    var customAssets: Set<String>
+        get() = prefs.getStringSet("custom_assets", emptySet()) ?: emptySet()
+        set(v) = prefs.edit().putStringSet("custom_assets", v).apply()
+
     /** Alles löschen (Gefahrenzone): Einstellungen, Token, Presets. */
     fun clearAll() {
         try { prefs.edit().clear().apply() } catch (e: Exception) { }

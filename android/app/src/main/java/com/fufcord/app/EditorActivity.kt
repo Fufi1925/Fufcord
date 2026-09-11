@@ -143,9 +143,9 @@ class EditorActivity : AppCompatActivity() {
             type = typeKeys.getOrElse(b.spType.selectedItemPosition) { 0 },
             details = b.etDetails.text.toString(),
             state = b.etState.text.toString(),
-            largeImage = b.etLarge.text.toString().trim(),
+            largeImage = b.etLarge.text.toString().trim().lowercase(),
             largeText = b.etLargeText.text.toString(),
-            smallImage = b.etSmall.text.toString().trim(),
+            smallImage = b.etSmall.text.toString().trim().lowercase(),
             smallText = b.etSmallText.text.toString(),
             streamUrl = b.etStream.text.toString().trim(),
             buttons = btns,
@@ -180,7 +180,7 @@ class EditorActivity : AppCompatActivity() {
     private fun updatePreview() {
         try {
             // FIX: Vorschau respektiert den Sicher-Modus (keine falschen Bilder mehr).
-            PreviewBinder.bind(b.previewCard, readFields(), prefs.safeMode, this, prefs.appId, prefs.token) { updatePreview() }
+            PreviewBinder.bind(b.previewCard, readFields(), prefs.safeMode, this, prefs.appId, prefs.token, prefs.customAssets) { updatePreview() }
         } catch (e: Exception) { /* während Tippen egal */ }
     }
 
@@ -256,6 +256,7 @@ class EditorActivity : AppCompatActivity() {
                 val (ok, res) = DiscordApi.uploadAsset(prefs.token, prefs.appId, name, dataUrl)
                 runOnUiThread {
                     if (ok) {
+                        prefs.customAssets = prefs.customAssets + name
                         if (uploadTarget == "large") b.etLarge.setText(name)
                         else b.etSmall.setText(name)
                         updatePreview()
@@ -269,7 +270,7 @@ class EditorActivity : AppCompatActivity() {
                             else -> "Upload fehlgeschlagen: $res"
                         }
                         Toast.makeText(this, "❌ $msg", Toast.LENGTH_LONG).show()
-                        if (res.contains("400")) showUploadError(res)
+                        if (res.contains("400") || res.contains("404")) showUploadError(res)
                     }
                 }
             } catch (e: Exception) {
@@ -366,6 +367,7 @@ class EditorActivity : AppCompatActivity() {
                     b.txtAssetsHint.visibility = View.VISIBLE
                     return@runOnUiThread
                 }
+                b.txtAssetsTitle.text = "${getString(R.string.ed_assets_title)} (${assets.size})"
                 if (assets.isEmpty()) {
                     b.txtAssetsHint.text = "Noch keine Bilder — lade oben per Upload-Button eins hoch."
                     b.txtAssetsHint.visibility = View.VISIBLE
@@ -383,7 +385,10 @@ class EditorActivity : AppCompatActivity() {
                             .setPositiveButton(getString(R.string.dlg_delete)) { _, _ ->
                                 Thread {
                                     DiscordApi.deleteAsset(prefs.token, prefs.appId, id)
-                                    runOnUiThread { loadAssets() }
+                                    runOnUiThread {
+                                        prefs.customAssets = prefs.customAssets - name
+                                        loadAssets()
+                                    }
                                 }.start()
                             }
                             .setNegativeButton(getString(R.string.dlg_no), null)
@@ -402,6 +407,7 @@ class EditorActivity : AppCompatActivity() {
             .setItems(arrayOf(
                 getString(R.string.asset_take_large),
                 getString(R.string.asset_take_small))) { _, which ->
+                prefs.customAssets = prefs.customAssets + name
                 if (which == 0) b.etLarge.setText(name) else b.etSmall.setText(name)
                 updatePreview()
                 Toast.makeText(this, "'$name' übernommen ✓", Toast.LENGTH_SHORT).show()

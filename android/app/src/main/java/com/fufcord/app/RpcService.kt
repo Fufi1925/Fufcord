@@ -30,7 +30,7 @@ class RpcService : Service() {
         const val ACTION_STOP = "com.fufcord.app.STOP"
         const val ACTION_REFRESH = "com.fufcord.app.REFRESH"
         const val NOTIF_ID = 1001
-        const val CHANNEL_ID = "fufcord_rpc"
+        const val CHANNEL_ID = "fufcord_status"
 
         @Volatile var isRunning = false
         @Volatile var statusText = "Gestoppt"
@@ -193,26 +193,64 @@ class RpcService : Service() {
 
     private fun createChannel() {
         val nm = getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(NotificationChannel(
-            CHANNEL_ID, "Fufcord RPC", NotificationManager.IMPORTANCE_LOW))
+        try { nm.deleteNotificationChannel("fufcord_rpc") } catch (e: Exception) { }
+        val ch = NotificationChannel(CHANNEL_ID, "Fufcord Status", NotificationManager.IMPORTANCE_LOW)
+        ch.description = "Zeigt den laufenden Discord-Status (Stopp jederzeit möglich)."
+        nm.createNotificationChannel(ch)
     }
 
-    private fun buildNotif(text: String): Notification {
+    /** Mitteilung neu: Logo, Laufzeit-Uhr, Status + Aktivität, Öffnen/Stop. */
+    private fun buildNotif(statusLine: String): Notification {
         val openApp = PendingIntent.getActivity(
             this, 0, Intent(this, MainActivity::class.java),
+            android.app.PendingIntent.FLAG_IMMUTABLE)
+        val openAction = PendingIntent.getActivity(
+            this, 2, Intent(this, MainActivity::class.java),
             android.app.PendingIntent.FLAG_IMMUTABLE)
         val stopIt = PendingIntent.getService(
             this, 1, Intent(this, RpcService::class.java).setAction(ACTION_STOP),
             android.app.PendingIntent.FLAG_IMMUTABLE)
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Fufcord RPC läuft")
-            .setContentText(text)
+        val details = if (activityName.isNotEmpty()) "$statusLine\n🎮 $activityName" else statusLine
+        val n = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("⚡ Fufcord läuft")
+            .setContentText(statusLine)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(details))
             .setSmallIcon(R.drawable.ic_notif)
+            .setColor(0xFF5865F2.toInt())
+            .setUsesChronometer(true)
+            .setWhen(startTs)
+            .setShowWhen(true)
             .setContentIntent(openApp)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", stopIt)
+            .addAction(R.drawable.ic_eye, "Öffnen", openAction)
+            .addAction(R.drawable.ic_stop, "Stop", stopIt)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
-            .build()
+        try {
+            largeIcon()?.let { n.setLargeIcon(it) }
+        } catch (e: Exception) { }
+        return n.build()
+    }
+
+    /** Rundes Logo (Blitz auf Discord-Blau) für die Mitteilung. */
+    private fun largeIcon(): android.graphics.Bitmap? {
+        return try {
+            val d = getDrawable(R.drawable.ic_bolt) ?: return null
+            val size = (64 * resources.displayMetrics.density).toInt()
+            val bmp = android.graphics.Bitmap.createBitmap(
+                size, size, android.graphics.Bitmap.Config.ARGB_8888)
+            val c = android.graphics.Canvas(bmp)
+            val bg = android.graphics.Paint().apply {
+                color = 0xFF5865F2.toInt()
+                isAntiAlias = true
+            }
+            c.drawCircle(size / 2f, size / 2f, size / 2f, bg)
+            d.setBounds(size / 4, size / 4, size * 3 / 4, size * 3 / 4)
+            d.draw(c)
+            bmp
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun updateNotif(text: String) {

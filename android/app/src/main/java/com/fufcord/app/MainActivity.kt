@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity() {
             b.btnToggle.setBackgroundResource(R.drawable.btn_primary)
         }
         val act = prefs.loadAct()
-        PreviewBinder.bind(b.previewCard, act, prefs.safeMode, this, prefs.appId, prefs.token) { refresh() }
+        PreviewBinder.bind(b.previewCard, act, prefs.safeMode, this, prefs.appId, prefs.token, prefs.customAssets) { refresh() }
         buildPresetRow()
         updatePermPill()
     }
@@ -284,6 +284,13 @@ class MainActivity : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
                 Toast.makeText(this, "Starte … (läuft im Hintergrund weiter)", Toast.LENGTH_SHORT).show()
                 ensureActivityImages()
+                val act0 = prefs.loadAct()
+                if (act0.largeImage.isNotEmpty() || act0.smallImage.isNotEmpty()) {
+                    if (prefs.safeMode)
+                        Toast.makeText(this, "💡 Sicher-Modus an: Status läuft ohne Bilder!", Toast.LENGTH_LONG).show()
+                    else if (!validAppId(prefs.appId))
+                        Toast.makeText(this, "💡 Keine gültige App-ID: ohne Bilder! (Tab Einstellungen)", Toast.LENGTH_LONG).show()
+                }
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Start blockiert: ${e.message}", Toast.LENGTH_LONG).show()

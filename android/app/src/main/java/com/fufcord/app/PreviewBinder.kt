@@ -23,6 +23,7 @@ object PreviewBinder {
 
     fun bind(p: ViewPreviewBinding, act: ActConfig, safe: Boolean,
              ctx: Context? = null, appId: String = "", token: String = "",
+             preferServer: Set<String> = emptySet(),
              rebind: (() -> Unit)? = null) {
         p.previewType.text = when (act.type) {
             0 -> "SPIELT GERADE"
@@ -52,11 +53,11 @@ object PreviewBinder {
         if (showRich && act.largeImage.isNotEmpty()) {
             p.previewLargeWrap.visibility = View.VISIBLE
             bindImage(ctx, appId, token, act.largeImage.trim(),
-                p.previewLarge, p.previewLargeLabel, true, rebind)
+                p.previewLarge, p.previewLargeLabel, true, preferServer, rebind)
             if (act.smallImage.isNotEmpty()) {
                 p.previewSmallWrap.visibility = View.VISIBLE
                 bindImage(ctx, appId, token, act.smallImage.trim(),
-                    p.previewSmall, p.previewSmallLabel, false, rebind)
+                    p.previewSmall, p.previewSmallLabel, false, preferServer, rebind)
             } else {
                 p.previewSmallWrap.visibility = View.GONE
             }
@@ -84,10 +85,12 @@ object PreviewBinder {
     /** Bild in die Vorschau laden: 1) lokal (alle Preset-Bilder), 2) Discord-CDN. */
     private fun bindImage(ctx: Context?, appId: String, token: String, name: String,
                           img: ImageView, label: TextView, big: Boolean,
+                          preferServer: Set<String>,
                           rebind: (() -> Unit)?) {
         if (name.isEmpty()) return
         // 1) Lokales Bild aus der App → sofort da, geht auch offline.
-        if (ctx != null) {
+        // Ausgenommen: Namen mit eigenem Server-Bild (Custom-Uploads).
+        if (ctx != null && !preferServer.contains(name)) {
             val resId = ctx.resources.getIdentifier(name, "drawable", ctx.packageName)
             if (resId != 0) {
                 img.setImageResource(resId)
