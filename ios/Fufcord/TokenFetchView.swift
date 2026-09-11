@@ -70,7 +70,8 @@ struct TokenFetchView: View {
             return
         }
         status = "⏳ Lese Token …"
-        let js = #"""(() => {
+        let js = #"""
+(() => {
   try {
     const raw = localStorage.getItem('token');
     if (raw && raw.length > 10) return raw;
@@ -87,7 +88,8 @@ struct TokenFetchView: View {
     }
     return '';
   } catch (e) { return ''; }
-})()"""#
+})()
+"""#
         w.evaluateJavaScript(js) { res, _ in
             DispatchQueue.main.async {
                 self.handleExtractResult(res as? String ?? "")
