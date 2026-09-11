@@ -739,11 +739,11 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:text="Fufcord v1.08" />
+                android:text="Fufcord v1.09" />
         </LinearLayout>
     </ScrollView>
 
-    <!-- TAB: CREDITS -->
+    <!-- TAB: CREDITS (neu: Hero + Über + Dank + Open Source) -->
     <ScrollView
         android:id="@+id/tabCredits"
         android:layout_width="match_parent"
@@ -763,6 +763,7 @@
             android:paddingEnd="20dp"
             android:paddingBottom="20dp">
 
+            <!-- HERO-KARTE -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -772,26 +773,34 @@
                 android:padding="24dp">
 
                 <FrameLayout
-                    android:layout_width="96dp"
-                    android:layout_height="96dp">
+                    android:layout_width="104dp"
+                    android:layout_height="104dp">
 
                     <TextView
-                        android:layout_width="96dp"
-                        android:layout_height="96dp"
+                        android:layout_width="104dp"
+                        android:layout_height="104dp"
                         android:background="@drawable/credits_avatar_fallback"
                         android:gravity="center"
                         android:text="F"
                         android:textColor="@color/white"
-                        android:textSize="36sp"
+                        android:textSize="38sp"
                         android:textStyle="bold" />
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/credAvatar"
-                        android:layout_width="96dp"
-                        android:layout_height="96dp"
+                        android:layout_width="104dp"
+                        android:layout_height="104dp"
                         android:scaleType="centerCrop"
                         android:visibility="invisible"
                         app:shapeAppearanceOverlay="@style/Shape.Fufcord.Circle" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:src="@drawable/dot_on" />
                 </FrameLayout>
 
                 <TextView
@@ -801,24 +810,34 @@
                     android:layout_marginTop="14dp"
                     android:text="@string/credits_fallback"
                     android:textColor="@color/text_primary"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txtCredMade"
+                    android:id="@+id/txtCredRole"
                     style="@style/Text.Fufcord.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/credits_made" />
+                    android:text="@string/credits_role"
+                    android:textColor="@color/cyan" />
 
                 <TextView
                     android:id="@+id/txtCredId"
                     style="@style/Text.Fufcord.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:text="@string/credits_id" />
+
+                <TextView
+                    style="@style/Text.Fufcord.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/credits_copy" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCredDiscord"
@@ -843,6 +862,321 @@
                     android:textColor="@color/text_primary" />
             </LinearLayout>
 
+            <!-- ÜBER -->
+            <TextView
+                style="@style/Text.Fufcord.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/credits_about_title" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/card_glass_soft"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Text.Fufcord.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/credits_about_text" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/stroke" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/credits_version" />
+
+                    <TextView
+                        android:id="@+id/txtCredVersion"
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="v1.09"
+                        android:textColor="@color/text_primary" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- DANK -->
+            <TextView
+                style="@style/Text.Fufcord.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/credits_thanks_title" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/card_glass_soft"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Text.Fufcord.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/credits_thanks_text" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check"
+                        android:tint="@color/success" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/credits_thanks_1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check"
+                        android:tint="@color/success" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/credits_thanks_2" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check"
+                        android:tint="@color/success" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/credits_thanks_3" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- OPEN SOURCE -->
+            <TextView
+                style="@style/Text.Fufcord.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/credits_oss_title" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/card_glass_soft"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Text.Fufcord.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/credits_oss_text" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="OkHttp"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4.12.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Material Components"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.12.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="AndroidX Core"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.13.1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="AppCompat"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.7.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ConstraintLayout"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2.1.4" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ViewPager2"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.0.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Fufcord.Body"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Security Crypto"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        style="@style/Text.Fufcord.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.0.0" />
+                </LinearLayout>
+            </LinearLayout>
+
             <TextView
                 style="@style/Text.Fufcord.Caption"
                 android:layout_width="match_parent"
@@ -850,6 +1184,14 @@
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:text="@string/credits_thanks" />
+
+            <TextView
+                style="@style/Text.Fufcord.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="@string/credits_copyright" />
         </LinearLayout>
     </ScrollView>
 

@@ -105,6 +105,11 @@ class MainActivity : AppCompatActivity() {
             val p = packageManager.getPackageInfo(packageName, 0)
             b.txtMoreVersion.text = "Fufcord v${p.versionName}"
         } catch (_: Exception) { }
+        try {
+            @Suppress("DEPRECATION")
+            val p = packageManager.getPackageInfo(packageName, 0)
+            b.txtCredVersion.text = "v${p.versionName}"
+        } catch (_: Exception) { }
         UpdateChecker.check(this)
         currentTab = savedInstanceState?.getInt("tab", 0) ?: 0
         selectTab(currentTab, false)
@@ -119,6 +124,13 @@ class MainActivity : AppCompatActivity() {
         }
         b.btnCredDiscord.setOnClickListener { openUrl("https://discord.gg/8EzjRTksJP") }
         b.btnCredGithub.setOnClickListener { openUrl("https://github.com/Fufi1925/Fufcord") }
+        b.txtCredId.setOnClickListener {
+            try {
+                val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                cm.setPrimaryClip(android.content.ClipData.newPlainText("Discord-ID", "1303627964734246944"))
+                Toast.makeText(this, getString(R.string.credits_copied), Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) { }
+        }
         loadCredits()
     }
 
