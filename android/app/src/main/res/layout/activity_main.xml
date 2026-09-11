@@ -57,7 +57,7 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="4dp"
-                android:text="v1.07"
+                android:text="v1.08"
                 android:textColor="@color/cyan"
                 android:textSize="11sp"
                 android:textStyle="bold" />
@@ -739,7 +739,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:text="Fufcord v1.07" />
+                android:text="Fufcord v1.08" />
         </LinearLayout>
     </ScrollView>
 
