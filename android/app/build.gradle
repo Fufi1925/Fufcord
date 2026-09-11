@@ -22,17 +22,17 @@ android {
     }
 
     signingConfigs {
-        create("stable") {
+        stable {
             // Stabile Signierung ab v1.10: gleiche Signatur bei jedem Build → Updates
             // installieren sich direkt darüber (kein Deinstallieren mehr nötig).
-            // Ohne Env-Variablen (lokal) alles leer → Standard-Debug-Signatur.
-            val ksPath = System.getenv("FUF_KEYSTORE_PATH")
-            if (!ksPath.isNullOrEmpty()) {
-                storeFile = file(ksPath)
-                storeType = "PKCS12"
-                storePassword = System.getenv("FUF_STORE_PASSWORD")
-                keyAlias = System.getenv("FUF_KEY_ALIAS")
-                keyPassword = System.getenv("FUF_KEY_PASSWORD")
+            // Ohne Env-Variablen (lokal) → Standard-Debug-Signatur.
+            def ksPath = System.getenv("FUF_KEYSTORE_PATH")
+            if (ksPath) {
+                storeFile file(ksPath)
+                storeType "PKCS12"
+                storePassword System.getenv("FUF_STORE_PASSWORD")
+                keyAlias System.getenv("FUF_KEY_ALIAS")
+                keyPassword System.getenv("FUF_KEY_PASSWORD")
             }
         }
     }
@@ -40,8 +40,8 @@ android {
     buildTypes {
         debug {
             // Nur mit vorhandenem Schlüssel stabil signieren, sonst normal bauen.
-            if (!System.getenv("FUF_KEYSTORE_PATH").isNullOrEmpty()) {
-                signingConfig = signingConfigs.getByName("stable")
+            if (System.getenv("FUF_KEYSTORE_PATH")) {
+                signingConfig signingConfigs.stable
             }
         }
         release {
