@@ -87,7 +87,7 @@ struct TokenFetchView: View {
     }
     return '';
   } catch (e) { return ''; }
-})()"#
+})()"""#
         w.evaluateJavaScript(js) { res, _ in
             DispatchQueue.main.async {
                 self.handleExtractResult(res as? String ?? "")
