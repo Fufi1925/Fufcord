@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.fufcord.app.databinding.ActivitySetupBinding
 
@@ -47,6 +48,9 @@ class SetupActivity : AppCompatActivity() {
                     }
                 }
             }.start()
+        }
+        b.btnAutoToken.setOnClickListener {
+            startActivity(Intent(this, TokenFetchActivity::class.java))
         }
         b.btnNext1.setOnClickListener {
             val t = b.etToken.text.toString().trim().replace(" ", "")
@@ -102,6 +106,41 @@ class SetupActivity : AppCompatActivity() {
             finish()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
+        // Einmalig beim Einrichten: Token schon da? Sonst automatisch holen anbieten.
+        if (prefs.token.isEmpty() && !prefs.tokenAsked) askToken()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Rückkehr vom automatischen Holen: Feld füllen.
+        if (b.etToken.text.isNullOrEmpty() && prefs.token.isNotEmpty()) {
+            b.etToken.setText(prefs.token)
+            b.txtTokenResult.text = getString(R.string.fetch_fetched)
+        }
+    }
+
+    /** „Hast du schon einen Token?" → Nein → automatisch holen anbieten. */
+    private fun askToken() {
+        prefs.tokenAsked = true
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.setup_token_q_title))
+            .setMessage(getString(R.string.setup_token_q_text))
+            .setPositiveButton(getString(R.string.setup_token_q_yes), null)
+            .setNegativeButton(getString(R.string.setup_token_q_no)) { _, _ -> askAutofetch() }
+            .setCancelable(true)
+            .show()
+    }
+
+    private fun askAutofetch() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.setup_autofetch_title))
+            .setMessage(getString(R.string.setup_autofetch_text))
+            .setPositiveButton(getString(R.string.setup_autofetch_yes)) { _, _ ->
+                startActivity(Intent(this, TokenFetchActivity::class.java))
+            }
+            .setNegativeButton(getString(R.string.setup_autofetch_no), null)
+            .setCancelable(true)
+            .show()
     }
 
     private fun showStep(n: Int, animate: Boolean = true) {

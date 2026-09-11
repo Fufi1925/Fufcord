@@ -67,6 +67,10 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getBoolean("permissions_done", false)
         set(v) = prefs.edit().putBoolean("permissions_done", v).apply()
 
+    var tokenAsked: Boolean
+        get() = prefs.getBoolean("token_asked", false)
+        set(v) = prefs.edit().putBoolean("token_asked", v).apply()
+
     /** Alles löschen (Gefahrenzone): Einstellungen, Token, Presets. */
     fun clearAll() {
         try { prefs.edit().clear().apply() } catch (e: Exception) { }

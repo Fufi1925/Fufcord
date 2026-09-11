@@ -243,4 +243,24 @@
     <string name="set_wiped">🗑 Alles gelöscht — Neustart …</string>
     <string name="set_token_removed">Token entfernt.</string>
     <string name="set_saved">✅ Gespeichert!</string>
+    <string name="setup_token_q_title">User-Token?</string>
+    <string name="setup_token_q_text">Hast du deinen Discord User-Token schon? (Den langen Code)</string>
+    <string name="setup_token_q_yes">Ja, weiter</string>
+    <string name="setup_token_q_no">Nein</string>
+    <string name="setup_autofetch_title">Automatisch holen?</string>
+    <string name="setup_autofetch_text">Soll Fufcord den Token automatisch für dich holen?
+
+Du meldest dich dazu einmal auf der offiziellen Discord-Seite an (oder scannst den QR-Code mit deiner Discord-App). Dein Passwort sieht die App dabei nie – sie liest danach nur den Anmelde-Code aus und speichert ihn sicher auf deinem Handy.</string>
+    <string name="setup_autofetch_yes">Ja, automatisch holen</string>
+    <string name="setup_autofetch_no">Nein, selbst eintragen</string>
+    <string name="setup1_autofetch">🔑 Token automatisch holen</string>
+    <string name="fetch_title">Token automatisch holen</string>
+    <string name="fetch_hint">Melde dich unten auf discord.com an – oder scanne den QR-Code mit deiner Discord-App. Danach tippe auf „Token jetzt holen“.</string>
+    <string name="fetch_check">🔍 Token jetzt holen</string>
+    <string name="fetch_working">⏳ Hole Token …</string>
+    <string name="fetch_checking">⏳ Prüfe Token …</string>
+    <string name="fetch_ok">✅ Token geholt! Account: %1$s</string>
+    <string name="fetch_fail">❌ Noch nichts gefunden – erst oben einloggen, dann erneut tippen.</string>
+    <string name="fetch_invalid">❌ Token ungültig – bitte neu einloggen und erneut versuchen.</string>
+    <string name="fetch_fetched">✅ Automatisch geholt – Weiter tippen!</string>
 </resources>
