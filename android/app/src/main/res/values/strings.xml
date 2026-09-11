@@ -46,16 +46,6 @@
     <string name="main_section_preview_sub">Exakt so sieht es in Discord aus</string>
     <string name="main_section_presets">Presets</string>
     <string name="main_section_presets_sub">Antippen = laden · Lange drücken = eigene löschen</string>
-    <string name="main_section_tools">Werkzeuge</string>
-    <string name="main_tool_studio">Studio</string>
-    <string name="main_tool_studio_sub">Presence gestalten</string>
-    <string name="main_tool_help">Hilfe</string>
-    <string name="main_tool_help_sub">Prüfen &amp; Antworten</string>
-    <string name="main_tool_export">Export</string>
-    <string name="main_tool_export_sub">JSON für KI teilen</string>
-    <string name="main_tool_import">Import</string>
-    <string name="main_tool_import_sub">JSON einfügen</string>
-    <string name="main_footer">Token bleibt verschlüsselt auf deinem Handy</string>
 
     <!-- Editor -->
     <string name="ed_title">Studio</string>
@@ -190,4 +180,41 @@
     <string name="credits_github">GitHub öffnen</string>
     <string name="credits_thanks">Danke, dass du Fufcord nutzt ❤</string>
     <string name="preset_tap_to_load">Antippen zum Laden</string>
+    <string name="more_sec_custom">Anpassen</string>
+    <string name="more_studio">Studio</string>
+    <string name="more_studio_sub">Presence gestalten</string>
+    <string name="more_import">Import</string>
+    <string name="more_import_sub">JSON einfügen</string>
+    <string name="more_export">Export</string>
+    <string name="more_export_sub">JSON für KI teilen</string>
+    <string name="more_sec_system">System</string>
+    <string name="more_perms">Hintergrund &amp; Rechte</string>
+    <string name="more_perms_sub">Immer aktiv bleiben</string>
+    <string name="more_update">Update prüfen</string>
+    <string name="more_update_sub">Neueste Version laden</string>
+    <string name="more_sec_social">Community</string>
+    <string name="more_help">Hilfe &amp; FAQ</string>
+    <string name="more_help_sub">Prüfen &amp; Antworten</string>
+    <string name="more_discord">Discord</string>
+    <string name="more_discord_sub">Community beitreten</string>
+    <string name="more_share">App teilen</string>
+    <string name="more_share_sub">Freunden zeigen</string>
+    <string name="more_share_text">Schau dir Fufcord an — Custom Discord Rich Presence vom Handy: https://github.com/Fufi1925/Fufcord</string>
+    <string name="perm_title">Immer aktiv bleiben</string>
+    <string name="perm_sub">3 Schritte, damit Fufcord auch bei geschlossener App weiterläuft.</string>
+    <string name="perm_notif">Mitteilungen</string>
+    <string name="perm_notif_sub">Pflicht für Dauerbetrieb</string>
+    <string name="perm_battery">Akku-Optimierung aus</string>
+    <string name="perm_battery_sub">System darf die App nicht stoppen</string>
+    <string name="perm_auto">Autostart erlauben</string>
+    <string name="perm_auto_sub">Nach Neustart + im Hintergrund</string>
+    <string name="perm_on">An</string>
+    <string name="perm_off">Aus</string>
+    <string name="perm_btn_notif">Aktivieren</string>
+    <string name="perm_btn_battery">Ausschalten</string>
+    <string name="perm_btn_auto">Anleitung öffnen</string>
+    <string name="perm_btn_auto_done">Bereits aktiviert ✓</string>
+    <string name="perm_auto_ok">✅ Autostart aktiviert!</string>
+    <string name="perm_next">Weiter</string>
+    <string name="perm_later">Später</string>
 </resources>

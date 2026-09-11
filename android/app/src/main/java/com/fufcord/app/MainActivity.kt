@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
+        if (!prefs.permissionsDone) {
+            startActivity(Intent(this, PermissionActivity::class.java))
+            finish()
+            return
+        }
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
 
@@ -74,15 +79,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         b.btnToggle.setOnClickListener { toggleService() }
-        b.btnEdit.setOnClickListener { AnimUtils.launch(this, EditorActivity::class.java) }
-        b.btnHelp.setOnClickListener { AnimUtils.launch(this, HelpActivity::class.java) }
-        b.btnExport.setOnClickListener { exportJson() }
-        b.btnImport.setOnClickListener { importDialog() }
         b.btnSettings.setOnClickListener { AnimUtils.launch(this, SettingsActivity::class.java) }
+        b.rowStudio.setOnClickListener { AnimUtils.launch(this, EditorActivity::class.java) }
+        b.rowImport.setOnClickListener { importDialog() }
+        b.rowExport.setOnClickListener { exportJson() }
+        b.rowPerms.setOnClickListener { AnimUtils.launch(this, PermissionActivity::class.java) }
+        b.rowUpdate.setOnClickListener {
+            prefs.skipVersion = ""
+            UpdateChecker.check(this)
+            Toast.makeText(this, R.string.help_updating, Toast.LENGTH_SHORT).show()
+        }
+        b.rowHelp.setOnClickListener { AnimUtils.launch(this, HelpActivity::class.java) }
+        b.rowDiscord.setOnClickListener { openUrl("https://discord.gg/8EzjRTksJP") }
+        b.rowShare.setOnClickListener { shareApp() }
         try {
             @Suppress("DEPRECATION")
             val p = packageManager.getPackageInfo(packageName, 0)
             b.txtVersion.text = "v${p.versionName}"
+        } catch (_: Exception) { }
+        try {
+            @Suppress("DEPRECATION")
+            val p = packageManager.getPackageInfo(packageName, 0)
+            b.txtMoreVersion.text = "Fufcord v${p.versionName}"
         } catch (_: Exception) { }
         UpdateChecker.check(this)
         currentTab = savedInstanceState?.getInt("tab", 0) ?: 0
@@ -185,6 +203,26 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) { }
     }
 
+    /** Rechte-Pille im Mehr-Tab (x/3 aktiv). */
+    private fun updatePermPill() {
+        var n = 0
+        try {
+            if (androidx.core.app.NotificationManagerCompat.from(this).areNotificationsEnabled()) n++
+            val pm = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+            if (pm.isIgnoringBatteryOptimizations(packageName)) n++
+            if (prefs.autostart) n++
+        } catch (e: Exception) { }
+        b.morePermPill.text = "$n/3 an"
+        b.morePermPill.setTextColor(getColor(if (n == 3) R.color.success else R.color.warning))
+    }
+
+    private fun shareApp() {
+        val send = Intent(Intent.ACTION_SEND)
+        send.type = "text/plain"
+        send.putExtra(Intent.EXTRA_TEXT, getString(R.string.more_share_text))
+        startActivity(Intent.createChooser(send, getString(R.string.more_share)))
+    }
+
     private fun refresh() {
         val running = RpcService.isRunning
         if (running) {
@@ -210,6 +248,7 @@ class MainActivity : AppCompatActivity() {
         val act = prefs.loadAct()
         PreviewBinder.bind(b.previewCard, act, prefs.safeMode)
         buildPresetRow()
+        updatePermPill()
     }
 
     private fun toggleService() {

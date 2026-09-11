@@ -97,7 +97,8 @@ class SetupActivity : AppCompatActivity() {
 
         b.btnFinish.setOnClickListener {
             prefs.setupDone = true
-            startActivity(Intent(this, MainActivity::class.java))
+            val next = if (prefs.permissionsDone) MainActivity::class.java else PermissionActivity::class.java
+            startActivity(Intent(this, next))
             finish()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }

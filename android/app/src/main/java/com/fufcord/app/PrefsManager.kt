@@ -63,6 +63,10 @@ class PrefsManager(ctx: Context) {
         get() = prefs.getBoolean("discord_promo_seen", false)
         set(v) = prefs.edit().putBoolean("discord_promo_seen", v).apply()
 
+    var permissionsDone: Boolean
+        get() = prefs.getBoolean("permissions_done", false)
+        set(v) = prefs.edit().putBoolean("permissions_done", v).apply()
+
     fun loadAct(): ActConfig {
         val raw = prefs.getString("activity", "") ?: ""
         if (raw.isEmpty()) return ActConfig(
