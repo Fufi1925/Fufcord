@@ -63,10 +63,10 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         for (m in cls.declaredMethods) {
             if (m.name != name || m.parameterTypes.size != 3) continue
             try {
-                // NACH dem Original laden: Dann existieren Metro + Timer sicher.
-                // (VOR dem Laden gibt es noch keine Timer → Skript stirbt sofort.)
+                // VOR dem Original laden (stabil, kein Nested-Risiko):
+                // Das Skript legt Fallen auf __r/__d und wrappt __d (Timer-frei).
                 XposedBridge.hookMethod(m, object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
+                    override fun beforeHookedMethod(param: MethodHookParam) {
                         inject(param)
                     }
                 })
@@ -142,7 +142,7 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
                 }
             }
             if (ok) {
-                toast(app, "⚡ Fufcord v1.3 geladen! (DC ${discordVersion(app)} → Einstellungen → Fufcord)")
+                toast(app, "⚡ Fufcord v1.4 bereit! (DC ${discordVersion(app)} → Einstellungen → Fufcord)")
             } else {
                 toast(app, "Fufcord-Fehler: $err")
                 injected.set(false)

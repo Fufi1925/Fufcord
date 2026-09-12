@@ -8,7 +8,7 @@
 (function () {
 "use strict";
 
-var VERSION = "1.3";
+var VERSION = "1.4";
 var G = (typeof window !== "undefined" && window) ? window : globalThis;
 
 function LOG() {
@@ -27,10 +27,12 @@ function onModule(cb) { moduleCbs.push(cb); }
 
 var finding = 0;
 var pendingInject = false;
+var emitCount = 0;
 
 function emit(ex, id) {
     if (!ex) return;
     try { registry[id] = ex; } catch (e) { return; }
+    try { emitCount++; } catch (e) {}
     // Während einer Suche nichts sofort tun (sonst Endlos-Verschachtelung!)
     if (finding > 0) { pendingInject = true; return; }
     runModuleCbs(ex, id);
@@ -58,71 +60,50 @@ function wrapFactory(rec, id) {
     } catch (e) {}
 }
 
-function scanExisting(mods) {
-    var count = 0, seen = 0;
+function handleRecord(rec, id) {
+    if (!rec) return;
+    var ex = null;
     try {
-        for (var k in mods) {
-            if (!Object.prototype.hasOwnProperty.call(mods, k)) continue;
-            var rec = mods[k];
-            if (!rec) continue;
-            count++;
-            // Nur beobachten, nie selbst laden (Methode von Revenge)
-            var ex = null;
-            try {
-                if (rec.publicModule && rec.publicModule.exports) ex = rec.publicModule.exports;
-                else if (rec.module && rec.module.exports) ex = rec.module.exports;
-            } catch (e) { ex = null; }
-            if (ex && !isBad(ex)) { seen++; emit(ex, k); }
-            wrapFactory(rec, k);
-        }
-    } catch (e) {}
-    LOG("Module gescannt:", count, "| erkannt:", seen);
+        if (rec.publicModule && rec.publicModule.exports) ex = rec.publicModule.exports;
+    } catch (e) { ex = null; }
+    if (ex && !isBad(ex)) emit(ex, id);
+    else wrapFactory(rec, id);
 }
 
-// ---- Sicheres Nachladen einzelner Module (Methode von Revenge) ----
-// Fehler-Handler wird kurz stumm geschaltet, Fehlschläge blackgelistet.
-var MODS = null;
-var R__ = null;
-var blacklisted = {};
+// Bonus-Scan f\u00fcr alte Metros (Objekt-Registry) oder Dev-Laufzeiten (Map-Registry)
+function scanRegistry(mods) {
+    if (!mods) return 0;
+    var n = 0;
+    try {
+        if (typeof mods.forEach === "function" && typeof mods.get === "function") {
+            mods.forEach(function (rec, id) { n++; try { handleRecord(rec, id); } catch (e) {} });
+        } else {
+            for (var k in mods) {
+                try {
+                    if (!Object.prototype.hasOwnProperty.call(mods, k)) continue;
+                } catch (e) { continue; }
+                n++;
+                handleRecord(mods[k], k);
+            }
+        }
+    } catch (e) {}
+    if (n > 0) LOG("Registry-Scan:", n, "Eintr\u00e4ge");
+    return n;
+}
 
+// ---- Modul-Finder (nur beobachtete Module \u2014 nie selbst laden!) ----
+// Neues Metro: Registry ist intern, getModules nur in Dev-Builds.
+// Wir sehen alles \u00fcber den __d-Wrapper (Fabriken beim Definieren).
 function isBad(ex) {
     if (!ex) return true;
     try { if (ex === G) return true; } catch (e) {}
     return false;
 }
 
-function safeRequire(id) {
-    if (blacklisted[id]) return null;
-    try {
-        var rec = null;
-        try { rec = MODS ? MODS[id] : null; } catch (e) { rec = null; }
-        if (rec && rec.isInitialized && !rec.hasError) {
-            try { return R__(+id); } catch (e) { return null; }
-        }
-        var EU = null;
-        try { EU = G.ErrorUtils; } catch (e) { EU = null; }
-        var origHandler = null;
-        var muted = false;
-        try {
-            if (EU && EU.getGlobalHandler && EU.setGlobalHandler) {
-                origHandler = EU.getGlobalHandler();
-                EU.setGlobalHandler(function () {});
-                muted = true;
-            }
-        } catch (e) { muted = false; }
-        var ex = null;
-        try { ex = R__(+id); } catch (e) { blacklisted[id] = true; ex = null; }
-        try { if (muted) EU.setGlobalHandler(origHandler); } catch (e) {}
-        return ex;
-    } catch (e) { return null; }
-}
-
 function eachModule(cb) {
     finding++;
     var result = false;
-    try {
-        result = eachModuleInner(cb);
-    } catch (e) { result = false; }
+    try { result = eachModuleInner(cb); } catch (e) { result = false; }
     finding--;
     if (finding <= 0) {
         finding = 0;
@@ -135,29 +116,9 @@ function eachModule(cb) {
 }
 
 function eachModuleInner(cb) {
-    var id;
-    for (id in registry) {
+    for (var id in registry) {
         try { if (cb(registry[id], id)) return true; } catch (e) {}
     }
-    if (!MODS || typeof R__ !== "function") return false;
-    try {
-        try {
-            var r0 = null;
-            try { r0 = MODS[0]; } catch (e) { r0 = null; }
-            if (r0 && !r0.isInitialized) { try { R__(0); } catch (e) {} }
-        } catch (e) {}
-        for (var k in MODS) {
-            try {
-                if (!Object.prototype.hasOwnProperty.call(MODS, k)) continue;
-            } catch (e) { continue; }
-            if (registry[k]) continue;
-            var ex = safeRequire(k);
-            if (ex && !isBad(ex)) {
-                emit(ex, k);
-                try { if (cb(ex, k)) return true; } catch (e) {}
-            }
-        }
-    } catch (e) {}
     return false;
 }
 
@@ -405,6 +366,7 @@ function rpcConnect() {
 
 function rpcStart() {
     if (!cfg.token) { rpcStatus("Kein Token!"); return; }
+    if (typeof setTimeout !== "function" || typeof setInterval !== "function") { rpcStatus("Timer fehlen?!"); return; }
     clearRetry();
     rpc.running = true;
     rpc.backoff = 5;
@@ -701,15 +663,12 @@ function injectSettings() {
 }
 
 // ------------------------------------------------- Diagnose
-// Falls die Einstellungen nach 25s immer noch fehlen: Toast mit Status,
-// damit wir sehen, welche Bausteine Discord hat (Screenshot schicken!).
+// Falls die Einstellungen fehlen: Status-Toast/Dialog (Screenshot schicken!).
 function diagCheck() {
     if (injected) return;
     var lines = [];
-    lines.push("Fufcord v" + VERSION + " Diagnose:");
-    var n = 0;
-    try { for (var k in registry) n++; } catch (e) {}
-    lines.push("Module: " + n);
+    lines.push("Fufcord v" + VERSION + " Diagnose (" + bootMode + "):");
+    lines.push("Module: " + emitCount);
     try {
         lines.push("React: " + (findByProps("createElement", "useState") ? "ja" : "NEIN"));
         lines.push("RN: " + (findByProps("View", "Text", "TextInput") ? "ja" : "NEIN"));
@@ -734,55 +693,185 @@ function diagCheck() {
 }
 
 // ------------------------------------------------- Start
-function init(__r, mods) {
-    try {
-        LOG("FufcordPatch v" + VERSION + " startet");
-        MODS = mods;
-        R__ = (typeof __r === "function") ? __r : G.__r;
-        scanExisting(mods);
-        onModule(function () { injectSettings(); });
-        injectSettings();
-        try { setTimeout(function () { try { diagCheck(); } catch (e) {} }, 25000); } catch (e) {}
-    } catch (e) {
-        LOG("init Fehler:", (e && e.message) || e);
+// ------------------------------------------------- Start ohne Timer
+// Unser Skript l\u00e4uft VOR Discords Bundle: keine Timer, kein Metro.
+// L\u00f6sung: Fallen auf __r/__d (Metro weist sie schlicht zu: global.__r = ...)
+// + __d wrappen, um JEDE Modulfabrik schon beim Definieren zu sehen.
+// So entgeht uns kein Modul, ohne je selbst etwas laden zu m\u00fcssen.
+var booted = false;
+var bootMode = "?";
+var cfgLoaded = false;
+var trapTargets = [];
+try {
+    trapTargets.push(globalThis);
+    if (typeof window !== "undefined" && window && window !== globalThis) trapTargets.push(window);
+    if (typeof global !== "undefined" && global && global !== globalThis) trapTargets.push(global);
+} catch (e) { trapTargets = [G]; }
+var origDP = null;
+try { origDP = Object.defineProperty; } catch (e) { origDP = null; }
+
+function isTrapTarget(obj) {
+    for (var i = 0; i < trapTargets.length; i++) {
+        try { if (obj === trapTargets[i]) return true; } catch (e) {}
     }
-    loadCfg(function () {
-        try {
-            G.__fufcord = {
-                version: VERSION,
-                status: function () { return rpc.status; },
-                start: function () { rpcStart(); },
-                stop: function () { rpcStop(); }
+    return false;
+}
+
+function trapKey(T, key) {
+    try {
+        var cur = T[key];
+        if (cur !== undefined) { try { onRuntimeInit("trap"); } catch (e) {} return; }
+        if (!origDP) return;
+        origDP.call(Object, T, key, {
+            configurable: true, enumerable: false,
+            get: function () {
+                try { return T["__fuf_" + key]; } catch (e) { return undefined; }
+            },
+            set: function (v) {
+                try { origDP.call(Object, T, "__fuf_" + key, { value: v, writable: true, configurable: true, enumerable: false }); } catch (e) {}
+                try { origDP.call(Object, T, key, { value: v, writable: true, configurable: true, enumerable: true }); } catch (e) {}
+                try { onRuntimeInit("trap"); } catch (e) {}
+            }
+        });
+    } catch (e) {}
+}
+
+function installTraps() {
+    // 1) defineProperty-Wrapper (falls Metro __r/__d so zuweist)
+    try {
+        if (origDP && !Object.defineProperty.__fuf_w) {
+            var fufDP = function defineProperty(obj, key, desc) {
+                var r = origDP.call(Object, obj, key, desc);
+                try {
+                    if ((key === "__r" || key === "__d") && isTrapTarget(obj)) onRuntimeInit("dp");
+                } catch (e) {}
+                return r;
             };
+            try { fufDP.__fuf_w = true; } catch (e) {}
+            Object.defineProperty = fufDP;
+        }
+    } catch (e) {}
+    // 2) Setter-Fallen (Metro weist schlicht zu)
+    for (var i = 0; i < trapTargets.length; i++) {
+        try {
+            trapKey(trapTargets[i], "__r");
+            trapKey(trapTargets[i], "__d");
         } catch (e) {}
+    }
+}
+
+function onRuntimeInit(how) {
+    if (booted) return;
+    var r = null, d = null;
+    try { r = G.__r; } catch (e) { r = null; }
+    try { d = G.__d; } catch (e) { d = null; }
+    if (typeof r !== "function" || typeof d !== "function") return;
+    booted = true;
+    bootMode = how;
+    try { initRuntime(); }
+    catch (e) { try { LOG("initRuntime: " + ((e && e.message) || e)); } catch (e2) {} }
+}
+
+// Wrapper um __d: sieht JEDE Fabrik schon beim Definieren,
+// und jedes Modulergebnis direkt beim Ausf\u00fchren (ganz ohne Nachladen).
+function wrapDefine(origD) {
+    if (typeof origD !== "function" || origD.__fuf_wd) return origD;
+    var w = function () {
+        try {
+            var factory = arguments[0], id = arguments[1];
+            if (typeof factory === "function" && !factory.__fuf_w) {
+                var origF = factory;
+                var wrappedF = function (glob, req, impDef, impAll, modObj, expo, depMap) {
+                    origF(glob, req, impDef, impAll, modObj, expo, depMap);
+                    try { if (modObj && modObj.exports) emit(modObj.exports, id); } catch (e) {}
+                };
+                try { wrappedF.__fuf_w = true; } catch (e) {}
+                arguments[0] = wrappedF;
+            }
+        } catch (e) {}
+        return origD.apply(this, arguments);
+    };
+    try { w.__fuf_wd = true; } catch (e) {}
+    try { for (var k in origD) { try { w[k] = origD[k]; } catch (e) {} } } catch (e) {}
+    return w;
+}
+
+function initRuntime() {
+    LOG("FufcordPatch v" + VERSION + " startet (" + bootMode + ")");
+    // __d auf allen Zielen wrappen (Fabriken schon beim Definieren sehen)
+    for (var i = 0; i < trapTargets.length; i++) {
+        try {
+            var T = trapTargets[i];
+            if (T && typeof T.__d === "function") T.__d = wrapDefine(T.__d);
+        } catch (e) {}
+    }
+    // Bonus-Scans (alte Metros / Dev-Modus mit sichtbarer Registry)
+    try { scanRegistry(G.modules); } catch (e) {}
+    try {
+        var r = G.__r;
+        if (r && r.getModules) scanRegistry(r.getModules());
+    } catch (e) {}
+    onModule(function () {
+        try { injectSettings(); } catch (e) {}
+        try { afterEmit(); } catch (e) {}
+    });
+    injectSettings();
+    tryLoadCfg();
+    try { if (typeof setTimeout === "function") setTimeout(function () { try { diagCheck(); } catch (e) {} }, 25000); } catch (e) {}
+    try {
+        G.__fufcord = {
+            version: VERSION,
+            mode: bootMode,
+            status: function () { return rpc.status; },
+            start: function () { rpcStart(); },
+            stop: function () { rpcStop(); }
+        };
+    } catch (e) {}
+}
+
+// Nach jedem beobachteten Modul: Config laden (sobald Storage da),
+// Diagnose per Z\u00e4hler (falls Timer fehlen, greift kein 25s-Timer).
+function afterEmit() {
+    if (!cfgLoaded) tryLoadCfg();
+    if (!injected && (emitCount === 800 || emitCount === 2500)) {
+        try { diagCheck(); } catch (e) {}
+    }
+}
+
+function tryLoadCfg() {
+    if (cfgLoaded) return;
+    if (!getStorage()) return;
+    cfgLoaded = true;
+    loadCfg(function () {
         if (cfg.autorun && cfg.token) {
-            LOG("Autostart in 3s...");
-            setTimeout(function () { try { rpcStart(); } catch (e) {} }, 3000);
+            LOG("Autostart...");
+            try {
+                if (typeof setTimeout === "function") setTimeout(function () { try { rpcStart(); } catch (e) {} }, 3000);
+                else rpcStart();
+            } catch (e) { try { rpcStart(); } catch (e2) {} }
         }
     });
 }
 
 var bootTries = 0;
 function boot() {
+    if (booted) return;
     bootTries++;
     try {
-        var r = G.__r;
-        var mods = G.modules || (r && r.getModules ? r.getModules() : null);
-        if (typeof r === "function" && mods) {
-            init(r, mods);
-            return;
-        }
-    } catch (e) { LOG("Boot:", e && e.message); }
+        var r = G.__r, d = G.__d;
+        if (typeof r === "function" && typeof d === "function") { onRuntimeInit("poll"); return; }
+    } catch (e) {}
     if (bootTries < 300) {
         try {
             if (typeof setTimeout === "function") setTimeout(boot, 100);
             else if (typeof Promise === "function") Promise.resolve().then(function () { try { boot(); } catch (e) {} });
         } catch (e2) {}
-    } else {
-        LOG("Metro nie gefunden — Abbruch");
     }
 }
 
+try {
+    installTraps();
+} catch (e) {}
 try {
     boot();
 } catch (e) {
