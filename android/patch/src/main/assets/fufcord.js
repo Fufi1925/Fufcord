@@ -8,7 +8,7 @@
 (function () {
 "use strict";
 
-var VERSION = "1.2";
+var VERSION = "1.3";
 var G = (typeof window !== "undefined" && window) ? window : globalThis;
 
 function LOG() {
@@ -646,6 +646,12 @@ function injectSettings() {
             type: "pressable",
             useTitle: function () { return "Fufcord"; },
             title: function () { return "Fufcord"; },
+            IconComponent: function () {
+                try {
+                    if (needUI()) return React_.createElement(RN_.Text, { style: { fontSize: 22 } }, "\u26A1");
+                } catch (e) {}
+                return null;
+            },
             onPress: fufOnPress,
             withArrow: true
         };
@@ -718,7 +724,12 @@ function diagCheck() {
     try { G.__fufcord_diag = msg; } catch (e) {}
     try {
         var TA = findByProps("showWithGravity", "SHORT", "LONG");
-        if (TA && TA.show) TA.show(msg, TA.LONG || 1);
+        if (TA && TA.show) { TA.show(msg, TA.LONG || 1); return; }
+    } catch (e) {}
+    try {
+        var AL = findByProps("alert");
+        var fn = AL && (AL.alert || (AL.default && AL.default.alert));
+        if (typeof fn === "function") fn("Fufcord-Diagnose", msg);
     } catch (e) {}
 }
 
@@ -763,7 +774,10 @@ function boot() {
         }
     } catch (e) { LOG("Boot:", e && e.message); }
     if (bootTries < 300) {
-        try { setTimeout(boot, 100); } catch (e2) {}
+        try {
+            if (typeof setTimeout === "function") setTimeout(boot, 100);
+            else if (typeof Promise === "function") Promise.resolve().then(function () { try { boot(); } catch (e) {} });
+        } catch (e2) {}
     } else {
         LOG("Metro nie gefunden — Abbruch");
     }

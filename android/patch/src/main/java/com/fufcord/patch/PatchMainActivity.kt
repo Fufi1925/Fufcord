@@ -57,7 +57,7 @@ class PatchMainActivity : Activity() {
             })
         }
 
-        title("⚡ Fufcord Patch v1.2")
+        title("⚡ Fufcord Patch v1.3")
         text("So kommt Fufcord IN deine Discord-App:")
         text(
             "1️⃣ Discord installieren (Play Store)\n" +

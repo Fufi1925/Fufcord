@@ -1,8 +1,9 @@
 /*
  * Fufcord Patch — Xposed-Hook: lädt fufcord.js in Discord.
- * Methode exakt wie Revenge (ScriptLoader): VOR dem Laden von Discords
+ * Methode angelehnt an Revenge (ScriptLoader): NACH dem Laden von Discords
  * React-Native-Bundle wird unser Skript per loadScriptFromAssets aus der
  * Modul-APK nachgeladen (Fallback: Datei + loadScriptFromFile).
+ * (VOR dem Laden gibt es noch keine Timer → Skript würde sofort sterben.)
  * https://github.com/Fufi1925/Fufcord
  * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten (MIT-Lizenz).
  */
@@ -62,9 +63,10 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         for (m in cls.declaredMethods) {
             if (m.name != name || m.parameterTypes.size != 3) continue
             try {
-                // WICHTIG: VOR dem Original laden (wie Revenge) — danach ist riskant.
+                // NACH dem Original laden: Dann existieren Metro + Timer sicher.
+                // (VOR dem Laden gibt es noch keine Timer → Skript stirbt sofort.)
                 XposedBridge.hookMethod(m, object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
+                    override fun afterHookedMethod(param: MethodHookParam) {
                         inject(param)
                     }
                 })
@@ -140,7 +142,7 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
                 }
             }
             if (ok) {
-                toast(app, "⚡ Fufcord v1.1 geladen! (Discord → Einstellungen → Fufcord)")
+                toast(app, "⚡ Fufcord v1.3 geladen! (DC ${discordVersion(app)} → Einstellungen → Fufcord)")
             } else {
                 toast(app, "Fufcord-Fehler: $err")
                 injected.set(false)
