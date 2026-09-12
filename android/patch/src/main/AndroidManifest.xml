@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="false"
+        android:label="Fufcord Patch"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Fufcord direkt in Discord: eigene Einstellungen + Custom-Status." />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
+
+        <activity
+            android:name=".PatchMainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -49,11 +49,22 @@ jobs:
           name: Fufcord-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
+      - name: Patch-APK bauen
+        run: gradle :patch:assembleDebug --no-daemon -p android
+
+      - name: Patch-APK hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fufcord-Patch
+          path: android/patch/build/outputs/apk/debug/patch-debug.apk
+
       - name: Release erstellen (nur bei Tags)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: android/app/build/outputs/apk/debug/app-debug.apk
+          files: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/patch/build/outputs/apk/debug/patch-debug.apk
           generate_release_notes: true
           body: |
             ## 📱 Fufcord — Custom Discord Rich Presence (Android-App)
@@ -62,5 +73,7 @@ jobs:
             Die App läuft im Hintergrund, meldet neue Versionen automatisch per Pop-up und updated per Download von hier.
 
             **Enthalten:** Hintergrund-Service, Bilder-Upload, 1:1-Discord-Vorschau, Setup-Assistent, Presets, JSON Im-/Export (KI), Doktor mit Auto-Reparatur, Sicher-Modus.
+
+            **Neu: Fufcord Patch (Beta)** — `patch-debug.apk`: Fufcord direkt IN Discord (eigene Einstellungen + Status). Braucht [LSPatch](https://github.com/LSPosed/LSPatch/releases) zum Einbetten, [Anleitung](https://github.com/Fufi1925/Fufcord/blob/main/android/patch/README-PATCH.md). Experimentell!
 
             **Quellcode:** Vollständig Open Source (MIT-Lizenz) — siehe Tab **Code** → Ordner `android/`. © 2026 Fufcord, alle Rechte vorbehalten.
