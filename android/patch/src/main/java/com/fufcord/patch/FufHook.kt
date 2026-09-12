@@ -198,6 +198,14 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         }
     }
 
+    private fun discordVersion(app: Application): String {
+        return try {
+            app.packageManager.getPackageInfo(app.packageName, 0)?.versionName ?: "?"
+        } catch (e: Throwable) {
+            "?"
+        }
+    }
+
     private fun toast(app: Application, msg: String) {
         try {
             Handler(Looper.getMainLooper()).post {

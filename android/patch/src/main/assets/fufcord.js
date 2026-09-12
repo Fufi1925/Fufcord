@@ -8,7 +8,7 @@
 (function () {
 "use strict";
 
-var VERSION = "1.1";
+var VERSION = "1.2";
 var G = (typeof window !== "undefined" && window) ? window : globalThis;
 
 function LOG() {
@@ -25,9 +25,18 @@ var moduleCbs = [];
 
 function onModule(cb) { moduleCbs.push(cb); }
 
+var finding = 0;
+var pendingInject = false;
+
 function emit(ex, id) {
     if (!ex) return;
     try { registry[id] = ex; } catch (e) { return; }
+    // Während einer Suche nichts sofort tun (sonst Endlos-Verschachtelung!)
+    if (finding > 0) { pendingInject = true; return; }
+    runModuleCbs(ex, id);
+}
+
+function runModuleCbs(ex, id) {
     for (var i = 0; i < moduleCbs.length; i++) {
         try { moduleCbs[i](ex, id); } catch (e) {}
     }
@@ -88,7 +97,7 @@ function safeRequire(id) {
         var rec = null;
         try { rec = MODS ? MODS[id] : null; } catch (e) { rec = null; }
         if (rec && rec.isInitialized && !rec.hasError) {
-            try { return R__(id); } catch (e) { return null; }
+            try { return R__(+id); } catch (e) { return null; }
         }
         var EU = null;
         try { EU = G.ErrorUtils; } catch (e) { EU = null; }
@@ -102,13 +111,30 @@ function safeRequire(id) {
             }
         } catch (e) { muted = false; }
         var ex = null;
-        try { ex = R__(id); } catch (e) { blacklisted[id] = true; ex = null; }
+        try { ex = R__(+id); } catch (e) { blacklisted[id] = true; ex = null; }
         try { if (muted) EU.setGlobalHandler(origHandler); } catch (e) {}
         return ex;
     } catch (e) { return null; }
 }
 
 function eachModule(cb) {
+    finding++;
+    var result = false;
+    try {
+        result = eachModuleInner(cb);
+    } catch (e) { result = false; }
+    finding--;
+    if (finding <= 0) {
+        finding = 0;
+        if (pendingInject) {
+            pendingInject = false;
+            try { injectSettings(); } catch (e) {}
+        }
+    }
+    return result;
+}
+
+function eachModuleInner(cb) {
     var id;
     for (id in registry) {
         try { if (cb(registry[id], id)) return true; } catch (e) {}
@@ -668,6 +694,34 @@ function injectSettings() {
     }
 }
 
+// ------------------------------------------------- Diagnose
+// Falls die Einstellungen nach 25s immer noch fehlen: Toast mit Status,
+// damit wir sehen, welche Bausteine Discord hat (Screenshot schicken!).
+function diagCheck() {
+    if (injected) return;
+    var lines = [];
+    lines.push("Fufcord v" + VERSION + " Diagnose:");
+    var n = 0;
+    try { for (var k in registry) n++; } catch (e) {}
+    lines.push("Module: " + n);
+    try {
+        lines.push("React: " + (findByProps("createElement", "useState") ? "ja" : "NEIN"));
+        lines.push("RN: " + (findByProps("View", "Text", "TextInput") ? "ja" : "NEIN"));
+        lines.push("Storage: " + (findByProps("getItem", "setItem") ? "ja" : "NEIN"));
+        lines.push("NavRef: " + (findByProps("getRootNavigationRef") ? "ja" : "NEIN"));
+        lines.push("SET_CFG: " + (findByProps("SETTING_RENDERER_CONFIG") ? "ja" : "NEIN"));
+        lines.push("createList: " + (findByProps("createList") ? "ja" : "NEIN"));
+        lines.push("Overview: " + (findByName("SettingsOverviewScreen") ? "ja" : "NEIN"));
+    } catch (e) { lines.push("Check-Fehler"); }
+    var msg = lines.join("\n");
+    LOG(msg);
+    try { G.__fufcord_diag = msg; } catch (e) {}
+    try {
+        var TA = findByProps("showWithGravity", "SHORT", "LONG");
+        if (TA && TA.show) TA.show(msg, TA.LONG || 1);
+    } catch (e) {}
+}
+
 // ------------------------------------------------- Start
 function init(__r, mods) {
     try {
@@ -677,6 +731,7 @@ function init(__r, mods) {
         scanExisting(mods);
         onModule(function () { injectSettings(); });
         injectSettings();
+        try { setTimeout(function () { try { diagCheck(); } catch (e) {} }, 25000); } catch (e) {}
     } catch (e) {
         LOG("init Fehler:", (e && e.message) || e);
     }
