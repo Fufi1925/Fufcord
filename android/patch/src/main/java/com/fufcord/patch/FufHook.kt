@@ -1,7 +1,8 @@
 /*
  * Fufcord Patch — Xposed-Hook: lädt fufcord.js in Discord.
- * Technik angelehnt an Revenge (ScriptLoader): Nach dem Laden von Discords
- * React-Native-Bundle wird unser Skript per loadScriptFromFile nachgeladen.
+ * Methode exakt wie Revenge (ScriptLoader): VOR dem Laden von Discords
+ * React-Native-Bundle wird unser Skript per loadScriptFromAssets aus der
+ * Modul-APK nachgeladen (Fallback: Datei + loadScriptFromFile).
  * https://github.com/Fufi1925/Fufcord
  * Copyright (c) 2026 Fufcord. Alle Rechte vorbehalten (MIT-Lizenz).
  */
@@ -9,6 +10,7 @@ package com.fufcord.patch
 
 import android.app.Application
 import android.content.pm.PackageManager
+import android.content.res.XModuleResources
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
@@ -60,8 +62,9 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         for (m in cls.declaredMethods) {
             if (m.name != name || m.parameterTypes.size != 3) continue
             try {
+                // WICHTIG: VOR dem Original laden (wie Revenge) — danach ist riskant.
                 XposedBridge.hookMethod(m, object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
+                    override fun beforeHookedMethod(param: MethodHookParam) {
                         inject(param)
                     }
                 })
@@ -78,44 +81,66 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
                 injected.set(false)
                 return
             }
-            val jsFile = File(app.filesDir, "fufcord.js")
-            val hbcFile = File(app.filesDir, "fufcord.hbc")
-            val haveJs = extractAsset(app, "fufcord.js", jsFile)
-            val haveHbc = extractAsset(app, "fufcord.hbc", hbcFile)
-            val loader = findLoadFromFile(param.thisObject.javaClass)
-            if (loader == null) {
-                toast(app, "Fufcord: Loader-Methode fehlt (Discord zu neu?)")
-                injected.set(false)
-                return
-            }
-            val syncFlag = param.args.size > 2 && param.args[2] == true
+            // Sync-Flag exakt durchreichen (wie Revenge)
+            val syncFlag = if (param.args.size > 2) param.args[2] else true
             var ok = false
-            var err = "kein Bundle gefunden"
-            // 1) Plain-JS (versions-sicher), 2) Bytecode-Fallback
-            if (haveJs) {
-                try {
+            var err = "unbekannt"
+            // 1) Direkt aus der Modul-APK laden (Revenge-Methode, kein Kopieren nötig)
+            try {
+                val apk = moduleApk(app)
+                val mAssets = findMethod(param.thisObject.javaClass, "loadScriptFromAssets")
+                if (apk != null && mAssets != null) {
+                    val res = XModuleResources.createInstance(apk, null)
                     XposedBridge.invokeOriginalMethod(
-                        loader, param.thisObject,
-                        arrayOf(jsFile.absolutePath, jsFile.absolutePath, syncFlag)
+                        mAssets, param.thisObject,
+                        arrayOf(res.assets, "fufcord.js", syncFlag)
                     )
                     ok = true
-                } catch (e: Throwable) {
-                    err = e.message ?: "JS-Fehler"
+                } else {
+                    err = "Asset-Loader fehlt"
                 }
+            } catch (e: Throwable) {
+                err = e.message ?: "Asset-Fehler"
             }
-            if (!ok && haveHbc) {
+            // 2) Fallback: Datei kopieren + loadScriptFromFile (.js, dann .hbc)
+            if (!ok) {
                 try {
-                    XposedBridge.invokeOriginalMethod(
-                        loader, param.thisObject,
-                        arrayOf(hbcFile.absolutePath, hbcFile.absolutePath, syncFlag)
-                    )
-                    ok = true
+                    val jsFile = File(app.filesDir, "fufcord.js")
+                    val hbcFile = File(app.filesDir, "fufcord.hbc")
+                    val haveJs = extractAsset(app, "fufcord.js", jsFile)
+                    val haveHbc = extractAsset(app, "fufcord.hbc", hbcFile)
+                    val mFile = findMethod(param.thisObject.javaClass, "loadScriptFromFile")
+                    if (mFile == null) {
+                        err = "Loader-Methode fehlt"
+                    } else if (haveJs) {
+                        try {
+                            XposedBridge.invokeOriginalMethod(
+                                mFile, param.thisObject,
+                                arrayOf(jsFile.absolutePath, jsFile.absolutePath, syncFlag)
+                            )
+                            ok = true
+                        } catch (e: Throwable) {
+                            err = e.message ?: "JS-Fehler"
+                        }
+                    }
+                    if (!ok && haveHbc && mFile != null) {
+                        try {
+                            XposedBridge.invokeOriginalMethod(
+                                mFile, param.thisObject,
+                                arrayOf(hbcFile.absolutePath, hbcFile.absolutePath, syncFlag)
+                            )
+                            ok = true
+                        } catch (e: Throwable) {
+                            err = e.message ?: "HBC-Fehler"
+                        }
+                    }
+                    if (!ok && !haveJs && !haveHbc) err = "kein Bundle gefunden"
                 } catch (e: Throwable) {
-                    err = e.message ?: "HBC-Fehler"
+                    err = e.message ?: "Fallback-Fehler"
                 }
             }
             if (ok) {
-                toast(app, "⚡ Fufcord geladen! (Discord → Einstellungen → Fufcord)")
+                toast(app, "⚡ Fufcord v1.1 geladen! (Discord → Einstellungen → Fufcord)")
             } else {
                 toast(app, "Fufcord-Fehler: $err")
                 injected.set(false)
@@ -125,13 +150,11 @@ class FufHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         }
     }
 
-    private fun findLoadFromFile(cls: Class<*>): Method? {
+    private fun findMethod(cls: Class<*>, name: String): Method? {
         var c: Class<*>? = cls
         while (c != null) {
             for (m in c.declaredMethods) {
-                if (m.name == "loadScriptFromFile" && m.parameterTypes.size == 3 &&
-                    m.parameterTypes[0] == String::class.java
-                ) return m
+                if (m.name == name && m.parameterTypes.size == 3) return m
             }
             c = c.superclass
         }

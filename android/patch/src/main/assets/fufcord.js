@@ -8,7 +8,7 @@
 (function () {
 "use strict";
 
-var VERSION = "1.0";
+var VERSION = "1.1";
 var G = (typeof window !== "undefined" && window) ? window : globalThis;
 
 function LOG() {
@@ -49,42 +49,90 @@ function wrapFactory(rec, id) {
     } catch (e) {}
 }
 
-function scanExisting(mods, __r) {
-    var count = 0, initGuess = 0;
+function scanExisting(mods) {
+    var count = 0, seen = 0;
     try {
         for (var k in mods) {
             if (!Object.prototype.hasOwnProperty.call(mods, k)) continue;
             var rec = mods[k];
             if (!rec) continue;
             count++;
-            // Bereits initialisierte Module einsammeln (mehrere Metro-Formen)
+            // Nur beobachten, nie selbst laden (Methode von Revenge)
             var ex = null;
             try {
                 if (rec.publicModule && rec.publicModule.exports) ex = rec.publicModule.exports;
                 else if (rec.module && rec.module.exports) ex = rec.module.exports;
-                else if (rec.exports && typeof rec.factory !== "function") ex = rec.exports;
-                else if (rec.isInitialized === true && typeof __r === "function") {
-                    try { ex = __r(k); } catch (e) { ex = null; }
-                }
             } catch (e) { ex = null; }
-            if (ex) { initGuess++; emit(ex, k); }
-            else wrapFactory(rec, k);
+            if (ex && !isBad(ex)) { seen++; emit(ex, k); }
+            wrapFactory(rec, k);
         }
     } catch (e) {}
-    LOG("Module gescannt:", count, "| initialisiert erkannt:", initGuess);
+    LOG("Module gescannt:", count, "| erkannt:", seen);
 }
 
-// Letzter Ausweg: alle Module per __r laden (gecacht, keine Doppel-Ausführung)
-function blanketRequire(mods, __r) {
-    if (typeof __r !== "function") return 0;
-    var n = 0;
-    for (var k in mods) {
-        if (!Object.prototype.hasOwnProperty.call(mods, k)) continue;
-        if (registry[k]) continue;
-        try { var ex = __r(k); if (ex) { n++; emit(ex, k); } } catch (e) {}
+// ---- Sicheres Nachladen einzelner Module (Methode von Revenge) ----
+// Fehler-Handler wird kurz stumm geschaltet, Fehlschläge blackgelistet.
+var MODS = null;
+var R__ = null;
+var blacklisted = {};
+
+function isBad(ex) {
+    if (!ex) return true;
+    try { if (ex === G) return true; } catch (e) {}
+    return false;
+}
+
+function safeRequire(id) {
+    if (blacklisted[id]) return null;
+    try {
+        var rec = null;
+        try { rec = MODS ? MODS[id] : null; } catch (e) { rec = null; }
+        if (rec && rec.isInitialized && !rec.hasError) {
+            try { return R__(id); } catch (e) { return null; }
+        }
+        var EU = null;
+        try { EU = G.ErrorUtils; } catch (e) { EU = null; }
+        var origHandler = null;
+        var muted = false;
+        try {
+            if (EU && EU.getGlobalHandler && EU.setGlobalHandler) {
+                origHandler = EU.getGlobalHandler();
+                EU.setGlobalHandler(function () {});
+                muted = true;
+            }
+        } catch (e) { muted = false; }
+        var ex = null;
+        try { ex = R__(id); } catch (e) { blacklisted[id] = true; ex = null; }
+        try { if (muted) EU.setGlobalHandler(origHandler); } catch (e) {}
+        return ex;
+    } catch (e) { return null; }
+}
+
+function eachModule(cb) {
+    var id;
+    for (id in registry) {
+        try { if (cb(registry[id], id)) return true; } catch (e) {}
     }
-    LOG("Blanket-Require:", n, "Module");
-    return n;
+    if (!MODS || typeof R__ !== "function") return false;
+    try {
+        try {
+            var r0 = null;
+            try { r0 = MODS[0]; } catch (e) { r0 = null; }
+            if (r0 && !r0.isInitialized) { try { R__(0); } catch (e) {} }
+        } catch (e) {}
+        for (var k in MODS) {
+            try {
+                if (!Object.prototype.hasOwnProperty.call(MODS, k)) continue;
+            } catch (e) { continue; }
+            if (registry[k]) continue;
+            var ex = safeRequire(k);
+            if (ex && !isBad(ex)) {
+                emit(ex, k);
+                try { if (cb(ex, k)) return true; } catch (e) {}
+            }
+        }
+    } catch (e) {}
+    return false;
 }
 
 function matchProps(obj, keys) {
@@ -101,30 +149,30 @@ function matchProps(obj, keys) {
 function findByProps() {
     var keys = [];
     for (var i = 0; i < arguments.length; i++) keys.push(arguments[i]);
-    for (var id in registry) {
-        var m = registry[id];
-        if (!m) continue;
+    var found = null;
+    eachModule(function (m) {
         try {
-            if (m.__esModule && m.default && matchProps(m.default, keys)) return m.default;
-            if (matchProps(m, keys)) return m;
+            if (m.__esModule && m.default && matchProps(m.default, keys)) { found = m.default; return true; }
+            if (matchProps(m, keys)) { found = m; return true; }
         } catch (e) {}
-    }
-    return null;
+        return false;
+    });
+    return found;
 }
 
 function findByName(name) {
-    for (var id in registry) {
-        var m = registry[id];
-        if (!m) continue;
+    var found = null;
+    eachModule(function (m) {
         var cands = [m];
         try { if (m.default) cands.push(m.default); } catch (e) {}
         for (var i = 0; i < cands.length; i++) {
             try {
-                if (cands[i] && (cands[i].displayName === name || cands[i].name === name)) return m;
+                if (cands[i] && (cands[i].displayName === name || cands[i].name === name)) { found = m; return true; }
             } catch (e) {}
         }
-    }
-    return null;
+        return false;
+    });
+    return found;
 }
 
 function after(method, obj, cb) {
@@ -622,38 +670,16 @@ function injectSettings() {
 
 // ------------------------------------------------- Start
 function init(__r, mods) {
-    LOG("FufcordPatch v" + VERSION + " startet");
     try {
-        var origR = G.__r;
-        if (typeof origR === "function" && !origR.__fuf_wrapped) {
-            var wrapped = function (id) {
-                var ex = origR(id);
-                try { emit(ex, id); } catch (e) {}
-                return ex;
-            };
-            try {
-                for (var k in origR) { try { wrapped[k] = origR[k]; } catch (e) {} }
-            } catch (e) {}
-            wrapped.__fuf_wrapped = true;
-            G.__r = wrapped;
-        }
-    } catch (e) {}
-    scanExisting(mods, __r);
-    onModule(function () { injectSettings(); });
-    injectSettings();
-    // Falls React/RN & Co. noch fehlen: nachladen erzwingen
-    setTimeout(function () {
-        try {
-            if (!findByProps("createElement", "useState")) {
-                LOG("React fehlt → Blanket-Require");
-                blanketRequire(mods, __r);
-            }
-            if (!findByProps("getItem", "setItem")) {
-                LOG("Storage fehlt → Blanket-Require");
-                blanketRequire(mods, __r);
-            }
-        } catch (e) {}
-    }, 5000);
+        LOG("FufcordPatch v" + VERSION + " startet");
+        MODS = mods;
+        R__ = (typeof __r === "function") ? __r : G.__r;
+        scanExisting(mods);
+        onModule(function () { injectSettings(); });
+        injectSettings();
+    } catch (e) {
+        LOG("init Fehler:", (e && e.message) || e);
+    }
     loadCfg(function () {
         try {
             G.__fufcord = {
